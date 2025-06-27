@@ -40,7 +40,7 @@ Running just threadstepper, without arguments, will also run one loop with the d
 - `--second-half`     tests the second half of the cores/threads (skips 7z tests)
 - `--help`            show this help menu
 
-#### Settings:
+#### Settings
 
 Additional test settings can be found in `settings.sh`
 
@@ -67,4 +67,10 @@ rest_time=5
 ```
 
 #### Logging:
+
 Logs are generated and replaced each run in ./log.txt
+
+### Other Notes:
+
+Whilst stress-ng runs it's own test validation, which is used in threadstepper. It can be helpful to run OCCT in Monitor mode, to improve any error detection. 
+
