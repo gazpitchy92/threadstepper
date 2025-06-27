@@ -11,6 +11,8 @@ The ./install.sh script can be used to help install these dependancies.
 This script will also download the required ungoogled-chroium for our WebGL tests. 
 
 ```bash
+git clone https://github.com/gazpitchy92/threadstepper.git
+cd threadstepper
 sudo ./install
 ```
 
