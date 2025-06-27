@@ -35,7 +35,9 @@ Running just threadstepper, without arguments, will also run one loop with the d
 - `--help`            show this help menu
 
 #### Settings:
-
+```bash
+./threadstepper --help
+```
 Additional test settings can be found in `settings.sh`
 
 The defaults here are fine, only change them if you have a specific use case. 
