@@ -1,3 +1,68 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ThreadStepper 2</title><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><style>body{margin:0;overflow:hidden;position:relative}#watermark{position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:.3;z-index:1}</style></head><body><script>const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer();renderer.setSize(window.innerWidth,window.innerHeight);document.body.appendChild(renderer.domElement);const geometry=new THREE.SphereGeometry(1,32,32);const material=new THREE.MeshBasicMaterial({color:0xff0000,wireframe:true});const sphere=new THREE.Mesh(geometry,material);scene.add(sphere);const particleCount=500;const particles=new THREE.BufferGeometry();const particleMaterial=new THREE.PointsMaterial({color:0x00ff00,size:0.1});const positions=[];for(let i=0;i<particleCount;i++){positions.push(Math.random()*10-5,Math.random()*10-5,Math.random()*10-5);}
-  particles.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));const particleSystem=new THREE.Points(particles,particleMaterial);scene.add(particleSystem);camera.position.z=5;function animate(){requestAnimationFrame(animate);sphere.rotation.x+=0.01;sphere.rotation.y+=0.01;particleSystem.rotation.x+=0.005;particleSystem.rotation.y+=0.005;renderer.render(scene,camera);}
-  animate();</script><img id="watermark" src="logo.png" alt="Watermark" width="200"></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ThreadStepper 2</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    #watermark {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.3;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.SphereGeometry(1, 32, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+    const sphere = new THREE.Mesh(geometry, material);
+    scene.add(sphere);
+
+    const particleCount = 500;
+    const particles = new THREE.BufferGeometry();
+    const particleMaterial = new THREE.PointsMaterial({ color: 0x00ff00, size: 0.1 });
+    const positions = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      positions.push(Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 10 - 5);
+    }
+
+    particles.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+
+    camera.position.z = 5;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      sphere.rotation.x += 0.01;
+      sphere.rotation.y += 0.01;
+
+      particleSystem.rotation.x += 0.005;
+      particleSystem.rotation.y += 0.005;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+  <img id="watermark" src="logo.png" alt="Watermark" width="200" />
+</body>
+</html>

@@ -1,7 +1,95 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ThreadStepper 1</title><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><style>body{margin:0;overflow:hidden;position:relative}#watermark{position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:.3;z-index:1}</style></head><body><script>const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer();renderer.setSize(window.innerWidth,window.innerHeight);document.body.appendChild(renderer.domElement);const material=new THREE.MeshBasicMaterial({color:0x00ff00});let currentObject=new THREE.Mesh(new THREE.BoxGeometry(),material);scene.add(currentObject);const edges=new THREE.EdgesGeometry(new THREE.BoxGeometry());const lineMaterial=new THREE.LineBasicMaterial({color:0xff0000});const line=new THREE.LineSegments(edges,lineMaterial);scene.add(line);camera.position.z=5;let zoomIn=true;let zoomAmount=0.02;function getRandomColor(){return new THREE.Color(Math.random(),Math.random(),Math.random());}
-  function switchObject(){scene.remove(currentObject);const randomShape=Math.floor(Math.random()*3);if(randomShape===0){currentObject=new THREE.Mesh(new THREE.BoxGeometry(),material);}else if(randomShape===1){currentObject=new THREE.Mesh(new THREE.SphereGeometry(1,32,32),material);}else{currentObject=new THREE.Mesh(new THREE.ConeGeometry(1,2,4),material);}
-  scene.add(currentObject);}
-  function animate(){requestAnimationFrame(animate);currentObject.rotation.x+=0.01;currentObject.rotation.y+=0.01;if(zoomIn){camera.position.z-=zoomAmount;if(camera.position.z<=3)zoomIn=false;}else{camera.position.z+=zoomAmount;if(camera.position.z>=5){zoomIn=true;material.color.set(getRandomColor());switchObject();}}
-  if(camera.position.z<=3||camera.position.z>=5){const newGeometry=new THREE.BoxGeometry();const newEdges=new THREE.EdgesGeometry(newGeometry);const newLine=new THREE.LineSegments(newEdges,lineMaterial);scene.add(newLine);}
-  renderer.render(scene,camera);}
-  animate();</script><img id="watermark" src="logo.png" alt="Watermark" width="200"></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ThreadStepper 1</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    #watermark {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.3;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    let currentObject = new THREE.Mesh(new THREE.BoxGeometry(), material);
+    scene.add(currentObject);
+
+    const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry());
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+    const line = new THREE.LineSegments(edges, lineMaterial);
+    scene.add(line);
+
+    camera.position.z = 5;
+
+    let zoomIn = true;
+    let zoomAmount = 0.02;
+
+    function getRandomColor() {
+      return new THREE.Color(Math.random(), Math.random(), Math.random());
+    }
+
+    function switchObject() {
+      scene.remove(currentObject);
+      const randomShape = Math.floor(Math.random() * 3);
+      if (randomShape === 0) {
+        currentObject = new THREE.Mesh(new THREE.BoxGeometry(), material);
+      } else if (randomShape === 1) {
+        currentObject = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), material);
+      } else {
+        currentObject = new THREE.Mesh(new THREE.ConeGeometry(1, 2, 4), material);
+      }
+      scene.add(currentObject);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      currentObject.rotation.x += 0.01;
+      currentObject.rotation.y += 0.01;
+
+      if (zoomIn) {
+        camera.position.z -= zoomAmount;
+        if (camera.position.z <= 3) zoomIn = false;
+      } else {
+        camera.position.z += zoomAmount;
+        if (camera.position.z >= 5) {
+          zoomIn = true;
+          material.color.set(getRandomColor());
+          switchObject();
+        }
+      }
+
+      if (camera.position.z <= 3 || camera.position.z >= 5) {
+        const newGeometry = new THREE.BoxGeometry();
+        const newEdges = new THREE.EdgesGeometry(newGeometry);
+        const newLine = new THREE.LineSegments(newEdges, lineMaterial);
+        scene.add(newLine);
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+  <img id="watermark" src="logo.png" alt="Watermark" width="200">
+</body>
+</html>

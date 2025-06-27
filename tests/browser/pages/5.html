@@ -1,5 +1,123 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ThreadStepper 5</title><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><style>body{margin:0;overflow:hidden;position:relative}#watermark{position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:.3;z-index:1}</style></head><body><script>const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer();renderer.setSize(window.innerWidth,window.innerHeight);document.body.appendChild(renderer.domElement);let particles=[];const particleCount=500;const gravity=-0.02;const maxLife=3;const range=15;const spinSpeed=0.02;function createFirework(){const fireworkParticles=new THREE.BufferGeometry();const positions=[];const velocities=[];const lifetimes=[];const spins=[];for(let i=0;i<particleCount;i++){positions.push(Math.random()*range-range/2,Math.random()*range-range/2,Math.random()*range-range/2);velocities.push(Math.random()*2-1,Math.random()*1+1,Math.random()*2-1);spins.push(Math.random()*spinSpeed-spinSpeed/2);lifetimes.push(Math.random()*maxLife);}
-  fireworkParticles.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));fireworkParticles.setAttribute('velocity',new THREE.Float32BufferAttribute(velocities,3));fireworkParticles.setAttribute('lifetime',new THREE.Float32BufferAttribute(lifetimes,1));fireworkParticles.setAttribute('spin',new THREE.Float32BufferAttribute(spins,1));const material=new THREE.PointsMaterial({color:Math.random()*0xffffff,size:0.2,blending:THREE.AdditiveBlending,transparent:true});const particleSystem=new THREE.Points(fireworkParticles,material);scene.add(particleSystem);particles.push(particleSystem);}
-  function animate(){requestAnimationFrame(animate);particles.forEach(particleSystem=>{const positions=particleSystem.geometry.attributes.position.array;const velocities=particleSystem.geometry.attributes.velocity.array;const lifetimes=particleSystem.geometry.attributes.lifetime.array;const spins=particleSystem.geometry.attributes.spin.array;for(let i=0;i<particleCount;i++){const lifetime=lifetimes[i];if(lifetime>0){const index=i*3;positions[index]+=velocities[index];positions[index+1]+=velocities[index+1];positions[index+2]+=velocities[index+2];velocities[index+1]+=gravity;const spin=spins[i];const angle=spin*lifetime;const x=positions[index];const z=positions[index+2];positions[index]=x*Math.cos(angle)-z*Math.sin(angle);positions[index+2]=x*Math.sin(angle)+z*Math.cos(angle);lifetimes[i]-=0.1;}else{positions[i*3]=Math.random()*range-range/2;positions[i*3+1]=Math.random()*range-range/2;positions[i*3+2]=Math.random()*range-range/2;lifetimes[i]=Math.random()*maxLife;velocities[i*3+1]=Math.random()*1+1;spins[i]=Math.random()*spinSpeed-spinSpeed/2;}}
-  particleSystem.geometry.attributes.position.needsUpdate=true;particleSystem.geometry.attributes.lifetime.needsUpdate=true;});renderer.render(scene,camera);}
-  camera.position.z=20;setInterval(createFirework,2000);animate();</script><img id="watermark" src="logo.png" alt="Watermark" width="200"></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ThreadStepper 5</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    #watermark {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.3;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    let particles = [];
+    const particleCount = 500;
+    const gravity = -0.02;
+    const maxLife = 3;
+    const range = 15;
+    const spinSpeed = 0.02;
+
+    function createFirework() {
+      const fireworkParticles = new THREE.BufferGeometry();
+      const positions = [];
+      const velocities = [];
+      const lifetimes = [];
+      const spins = [];
+
+      for (let i = 0; i < particleCount; i++) {
+        positions.push(Math.random() * range - range / 2, Math.random() * range - range / 2, Math.random() * range - range / 2);
+        velocities.push(Math.random() * 2 - 1, Math.random() * 1 + 1, Math.random() * 2 - 1);
+        spins.push(Math.random() * spinSpeed - spinSpeed / 2);
+        lifetimes.push(Math.random() * maxLife);
+      }
+
+      fireworkParticles.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      fireworkParticles.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 3));
+      fireworkParticles.setAttribute('lifetime', new THREE.Float32BufferAttribute(lifetimes, 1));
+      fireworkParticles.setAttribute('spin', new THREE.Float32BufferAttribute(spins, 1));
+
+      const material = new THREE.PointsMaterial({
+        color: Math.random() * 0xffffff,
+        size: 0.2,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+      });
+
+      const particleSystem = new THREE.Points(fireworkParticles, material);
+      scene.add(particleSystem);
+      particles.push(particleSystem);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      particles.forEach(particleSystem => {
+        const positions = particleSystem.geometry.attributes.position.array;
+        const velocities = particleSystem.geometry.attributes.velocity.array;
+        const lifetimes = particleSystem.geometry.attributes.lifetime.array;
+        const spins = particleSystem.geometry.attributes.spin.array;
+
+        for (let i = 0; i < particleCount; i++) {
+          const lifetime = lifetimes[i];
+
+          if (lifetime > 0) {
+            const index = i * 3;
+            positions[index] += velocities[index];
+            positions[index + 1] += velocities[index + 1];
+            positions[index + 2] += velocities[index + 2];
+
+            velocities[index + 1] += gravity;
+
+            const spin = spins[i];
+            const angle = spin * lifetime;
+            const x = positions[index];
+            const z = positions[index + 2];
+
+            positions[index] = x * Math.cos(angle) - z * Math.sin(angle);
+            positions[index + 2] = x * Math.sin(angle) + z * Math.cos(angle);
+
+            lifetimes[i] -= 0.1;
+          } else {
+            positions[i * 3] = Math.random() * range - range / 2;
+            positions[i * 3 + 1] = Math.random() * range - range / 2;
+            positions[i * 3 + 2] = Math.random() * range - range / 2;
+
+            lifetimes[i] = Math.random() * maxLife;
+            velocities[i * 3 + 1] = Math.random() * 1 + 1;
+            spins[i] = Math.random() * spinSpeed - spinSpeed / 2;
+          }
+        }
+
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+        particleSystem.geometry.attributes.lifetime.needsUpdate = true;
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    camera.position.z = 20;
+    setInterval(createFirework, 2000);
+    animate();
+  </script>
+  <img id="watermark" src="logo.png" alt="Watermark" width="200" />
+</body>
+</html>

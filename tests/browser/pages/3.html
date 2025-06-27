@@ -1,3 +1,56 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ThreadStepper 3</title><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><style>body{margin:0;overflow:hidden;position:relative}#watermark{position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:.3;z-index:1}</style></head><body><script>const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer();renderer.setSize(window.innerWidth,window.innerHeight);document.body.appendChild(renderer.domElement);const geometry=new THREE.PlaneGeometry(10,10,50,50);const material=new THREE.MeshBasicMaterial({color:0x00ff00,wireframe:true});const plane=new THREE.Mesh(geometry,material);scene.add(plane);camera.position.z=20;function animate(){requestAnimationFrame(animate);const time=Date.now()*0.001;for(let i=0;i<geometry.attributes.position.count;i++){const x=geometry.attributes.position.getX(i);geometry.attributes.position.setZ(i,Math.sin(x*0.5+time)*2);}
-  geometry.attributes.position.needsUpdate=true;plane.rotation.x+=0.01;plane.rotation.y+=0.01;renderer.render(scene,camera);}
-  animate();</script><img id="watermark" src="logo.png" alt="Watermark" width="200"></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ThreadStepper 3</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    #watermark {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.3;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.PlaneGeometry(10, 10, 50, 50);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    const plane = new THREE.Mesh(geometry, material);
+    scene.add(plane);
+
+    camera.position.z = 20;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const time = Date.now() * 0.001;
+      for (let i = 0; i < geometry.attributes.position.count; i++) {
+        const x = geometry.attributes.position.getX(i);
+        geometry.attributes.position.setZ(i, Math.sin(x * 0.5 + time) * 2);
+      }
+      geometry.attributes.position.needsUpdate = true;
+      plane.rotation.x += 0.01;
+      plane.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+  <img id="watermark" src="logo.png" alt="Watermark" width="200" />
+</body>
+</html>
