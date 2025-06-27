@@ -1,6 +1,6 @@
 ### About ThreadStepper:
 ThreadStepper is a stability and stress tester.
-It applies a varying level of stress to individual cores or threads to emulate real world low, medium and heavy usage. Utilizing 7z benchmarking, stress-ng and WebGL browser tests. 
+It applies a varying level of stress to individual cores or threads to emulate real world low, medium and heavy usage. Utilizing 7z benchmarking, stress-ng and WebGL browser tests written with three.js. 
 
 This tool was developed for testing undervolting and Ryzen CO, where conventional stress tests fail to find instabilities
 
