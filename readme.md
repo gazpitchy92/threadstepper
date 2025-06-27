@@ -72,5 +72,5 @@ Logs are generated and replaced each run in ./log.txt
 
 ### Other Notes:
 
-Whilst stress-ng runs it's own test validation, which is used in threadstepper, t can be helpful to run OCCT in Monitor mode to improve any error detection. 
+Whilst stress-ng runs it's own test validation, which is used in threadstepper, it can be helpful to run OCCT in Monitor mode alongside it to improve any error detection. 
 
