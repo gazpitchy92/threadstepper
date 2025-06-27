@@ -13,6 +13,7 @@ This script will also download the required ungoogled-chroium for our WebGL test
 ```bash
 git clone https://github.com/gazpitchy92/threadstepper.git
 cd threadstepper
+chmod +x install
 sudo ./install
 ```
 
