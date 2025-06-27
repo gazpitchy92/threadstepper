@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This will install 7zip and stress-ng if missing. Continue? [Y/n]"
+echo "This will install 7zip and stress-ng. Continue? [Y/n]"
 read -r response
 
 if [[ "$response" =~ ^[Nn]$ ]]; then
@@ -13,47 +13,21 @@ install_failed() {
     exit 1
 }
 
-is_installed() {
-    command -v "$1" &>/dev/null
-}
-
-install_packages() {
-    if command -v pacman &>/dev/null; then
-        sudo pacman -Sy --noconfirm "$@" || install_failed
-    elif command -v apt &>/dev/null; then
-        sudo apt update && sudo apt install -y "$@" || install_failed
-    elif command -v dnf &>/dev/null; then
-        sudo dnf install -y "$@" || install_failed
-    elif command -v zypper &>/dev/null; then
-        sudo zypper install -y "$@" || install_failed
-    else
-        echo "Unsupported package manager"
-        install_failed
-    fi
-}
-
-missing=()
-
-if ! is_installed 7z; then
-    if command -v pacman &>/dev/null; then
-        missing+=(p7zip)
-    elif command -v apt &>/dev/null; then
-        missing+=(p7zip-full)
-    else
-        missing+=(p7zip)
-    fi
-fi
-
-if ! is_installed stress-ng; then
-    missing+=(stress-ng)
-fi
-
-if [ ${#missing[@]} -ne 0 ]; then
-    echo "Installing missing packages: ${missing[*]}"
-    install_packages "${missing[@]}"
+if command -v pacman &>/dev/null; then
+    sudo pacman -Sy --noconfirm stress-ng || install_failed
+    sudo pacman -Sy --noconfirm p7zip || install_failed
+elif command -v apt &>/dev/null; then
+    sudo apt update && sudo apt install -y p7zip-full stress-ng || install_failed
+elif command -v dnf &>/dev/null; then
+    sudo dnf install -y p7zip stress-ng || install_failed
+elif command -v zypper &>/dev/null; then
+    sudo zypper install -y p7zip stress-ng || install_failed
 else
-    echo "All dependencies are already installed."
+    echo "Unsupported package manager"
+    install_failed
 fi
+
+echo "Dependancies have been installed"
 
 APPIMAGE_URL="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/133.0.6943.126-1/ungoogled-chromium_133.0.6943.126-1.AppImage"
 APPIMAGE_PATH="tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage"
