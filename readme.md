@@ -8,17 +8,20 @@ This tool was developed for testing undervolting and Ryzen CO, where conventiona
 ThreadStepper requires stress-ng and p7zip to be installed. Aswell as a copy of ungoogle-chroium Appimage.
 
 The ./install.sh script can be used to help install these dependancies. 
-
 This script will also download the required ungoogled-chroium for our WebGL tests. 
+
+```bash
+sudo ./install
+```
 
 ### Usage: 
 ```bash
-threadstepper [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]
+./threadstepper [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]
 ```
 
 #### Basic Example: 
 ```bash
-threadstepper -l 2 -t threads -b 2
+./threadstepper -l 2 -t threads -b 2
 ```
 Running just threadstepper, without arguments, will also run one loop with the default values. 
 
