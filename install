@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This will install 7zip and stress-ng. Continue? [Y/n]"
+echo "This will install 7zip, stress-ng and download ungoogled-chromium executable. Continue? [Y/n]"
 read -r response
 
 if [[ "$response" =~ ^[Nn]$ ]]; then
@@ -27,11 +27,10 @@ else
     install_failed
 fi
 
-echo "Dependancies have been installed"
+echo "Dependencies have been installed"
 
 APPIMAGE_URL="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/133.0.6943.126-1/ungoogled-chromium_133.0.6943.126-1.AppImage"
 APPIMAGE_PATH="tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage"
-
 mkdir -p tests/browser
 if [ ! -f "$APPIMAGE_PATH" ]; then
     echo "Downloading ungoogled-chromium AppImage..."
