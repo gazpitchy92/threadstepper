@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# include settings
+source ./settings.sh
+
+# include functions
+source ./functions/testing.sh
+source ./functions/general.sh
+
+# catch exit event
+trap cleanup SIGINT SIGTERM
+
+# configure options
+loops=1
+type="threads"
+second_half=false
+first_half=false
+browsers=1
+while getopts ":l:t:b:-:" opt; do
+    case $opt in
+        l) loops=$OPTARG ;;
+        t) 
+            type=$OPTARG
+            [[ "$type" != "cores" && "$type" != "threads" ]] && { echo "Invalid type: $type."; exit 1; }
+            ;;
+        b) browsers=$OPTARG ;;
+        -) 
+            case $OPTARG in
+                second-half) second_half=true ;;
+                first-half) first_half=true ;;
+                help) helpText; exit 0 ;;
+                *) usageText; exit 1 ;;
+            esac
+            ;;
+        \?) echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]"; exit 1 ;;
+    esac
+done
+if [[ "$first_half" == true && "$second_half" == true ]]; then
+    echo "Error: Only one of --first-half or --second-half can be set."
+    exit 1
+fi
+
+# intro
+startupAscii
+outputOptions
+
+# check dependencies
+checkDeps
+
+# setup logging
+setupLogs
+
+# get core count
+num_cores=$(nproc)
+if [[ "$first_half" == true ]]; then
+    # first-half enabled
+    num_cores=$((num_cores / 2))
+fi
+
+# main loop
+for ((i=1; i<=loops; i++)); do
+    echo "$(tput setaf 5)---- Running loop $i of $loops $(tput sgr0)" | tee -a log.txt
+    # get first core if running half cpu
+    if [[ "$second_half" == true ]]; then
+        start_core=$((num_cores / 2))
+    else
+        start_core=0
+    fi
+    # once per loop tests
+    if [[ "$first_half" == false && "$second_half" == false ]]; then
+        allCoreTest
+        for ((i=1; i<=rapid_tests; i++)); do
+            if [[ "$type" == "cores" ]]; then
+                rapidStressNgCore
+            else
+                rapidStressNgThread
+            fi
+        done
+    fi
+    # once per core/thread tests
+    if [[ "$type" == "cores" ]]; then
+        # testing cores
+        for ((core=$start_core; core<num_cores; core+=2)); do
+            core_second=$((core + 1))
+            echo "$(tput setaf 3)--- Starting tests for core ( $core + $core_second ) $(tput sgr0)" | tee -a log.txt
+            sleep $rest_time
+            runTests $core
+            echo "$(tput setaf 3)---Finished testing core $core $(tput sgr0)" | tee -a log.txt
+        done
+    else
+        # testing threads
+        for ((core=$start_core; core<num_cores; core++)); do
+            echo "$(tput setaf 3)--- Starting tests for thread $core $(tput sgr0)" | tee -a log.txt
+            sleep $rest_time
+            runTests $core
+            echo "$(tput setaf 3)--- Finished testing thread $core $(tput sgr0)" | tee -a log.txt
+        done
+    fi
+done
+
+# fin
+echo "$(tput setaf 3)--- All loops completed sucessfully $(tput sgr0)" | tee -a log.txt

@@ -1,0 +1,1 @@
+{"net":{"http_server_properties":{"servers":[{"anonymization":["DAAAAAcAAABmaWxlOi8vAA==",false],"server":"https://threejs.org","supports_spdy":true},{"anonymization":["DAAAAAcAAABmaWxlOi8vAA==",false],"server":"https://cdnjs.cloudflare.com","supports_spdy":true}],"version":5},"network_qualities":{"CAESABiAgICA+P////8B":"4G"}}}

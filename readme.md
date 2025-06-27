@@ -1,0 +1,55 @@
+### About ThreadStepper:
+ThreadStepper is a stability and stress tester.
+It applies a varying level of stress to individual cores or threads to emulate real world low, medium and heavy usage. Utilizing 7z benchmarking, stress-ng and WebGL browser tests. 
+
+This tool was developed for testing undervolting and Ryzen CO, where conventional stress tests fail to find instabilities
+
+### Installation:
+ThreadStepper requires stress-ng and p7zip to be installed.
+
+The ./install.sh script can be used to help install these.
+
+ThreadStepper uses a packaged AppImage of ungoogled-chrome in tests/browser/ for the WebGL CPU tests. 
+
+### Usage: 
+```bash
+threadstepper [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]
+```
+
+#### Options:
+- `-l`                number of test loops to perform (default: 1)
+- `-t`                'cores' tests all cores  
+                      'threads' tests all threads (default: cores)
+- `-b`                number of browsers to launch (default: 2) (0 to skip test)
+- `--first-half`      tests the first half of the cores/threads (skips 7z tests)
+- `--second-half`     tests the second half of the cores/threads (skips 7z tests)
+- `--help`            show this help menu
+
+#### Settings:
+
+Additional test settings can be found in `settings.sh`
+
+The defaults here are fine, only change them if you have a specific use case. 
+
+```bash
+These are stress-ng methods used for each stage of testing:
+
+light=("bitops" "pi" "gcd" "sieve")
+mixed=("prime" "matrixprod" "fft" "loop")
+heavy=("ackermann" "factorial")
+rapid="bitops"
+```
+```bash
+The following times relate to how long each test is ran:
+
+light_time="1s"
+medium_time="5s"
+heavy_time="15s"
+all_core_time=15
+rapid_tests=2
+rapid_time="2s"
+rest_time=5
+```
+
+#### Logging:
+Logs are generated and replaced each run in ./log.txt

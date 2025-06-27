@@ -1,0 +1,8 @@
+[35m---- Running loop 1 of 1 (B[m
+[34m-- Running 7z warmup on all cores (B[m
+[32m- Running 7z for 1 seconds (B[m
+[32m- Running 7z for 2 seconds (B[m
+[32m- Running 7z for 3 seconds (B[m
+[32m- Running 7z for 4 seconds (B[m
+[32m- Running 7z for 5 seconds (B[m
+[35m---- Stopping tests and cleaning up (B[m

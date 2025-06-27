@@ -1,0 +1,79 @@
+#!/bin/bash
+
+echo "This will install 7zip and stress-ng if missing. Continue? [Y/n]"
+read -r response
+
+if [[ "$response" =~ ^[Nn]$ ]]; then
+    echo "Installation aborted."
+    exit 0
+fi
+
+install_failed() {
+    echo "There has been an error. Please manually install 7zip and stress-ng to use threadstepper."
+    exit 1
+}
+
+is_installed() {
+    command -v "$1" &>/dev/null
+}
+
+install_packages() {
+    if command -v pacman &>/dev/null; then
+        sudo pacman -Sy --noconfirm "$@" || install_failed
+    elif command -v apt &>/dev/null; then
+        sudo apt update && sudo apt install -y "$@" || install_failed
+    elif command -v dnf &>/dev/null; then
+        sudo dnf install -y "$@" || install_failed
+    elif command -v zypper &>/dev/null; then
+        sudo zypper install -y "$@" || install_failed
+    else
+        echo "Unsupported package manager"
+        install_failed
+    fi
+}
+
+missing=()
+
+if ! is_installed 7z; then
+    if command -v pacman &>/dev/null; then
+        missing+=(p7zip)
+    elif command -v apt &>/dev/null; then
+        missing+=(p7zip-full)
+    else
+        missing+=(p7zip)
+    fi
+fi
+
+if ! is_installed stress-ng; then
+    missing+=(stress-ng)
+fi
+
+if [ ${#missing[@]} -ne 0 ]; then
+    echo "Installing missing packages: ${missing[*]}"
+    install_packages "${missing[@]}"
+else
+    echo "All dependencies are already installed."
+fi
+
+APPIMAGE_URL="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/133.0.6943.126-1/ungoogled-chromium_133.0.6943.126-1.AppImage"
+APPIMAGE_PATH="tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage"
+
+mkdir -p tests/browser
+if [ ! -f "$APPIMAGE_PATH" ]; then
+    echo "Downloading ungoogled-chromium AppImage..."
+    wget -O "$APPIMAGE_PATH" "$APPIMAGE_URL" || { echo "Download failed"; exit 1; }
+    chmod +x "$APPIMAGE_PATH"
+else
+    echo "AppImage already exists at $APPIMAGE_PATH"
+fi
+
+chmod +x ./threadstepper
+
+if [ -L /usr/bin/threadstepper ] && [ "$(readlink /usr/bin/threadstepper)" = "$(pwd)/threadstepper" ]; then
+    echo "Symlink /usr/bin/threadstepper already exists and is correct."
+else
+    sudo ln -sf "$(pwd)/threadstepper" /usr/bin/threadstepper
+    echo "Symlink created at /usr/bin/threadstepper"
+fi
+
+echo "You can now launch threadstepper to start testing."
