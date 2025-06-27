@@ -5,11 +5,11 @@ It applies a varying level of stress to individual cores or threads to emulate r
 This tool was developed for testing undervolting and Ryzen CO, where conventional stress tests fail to find instabilities
 
 ### Installation:
-ThreadStepper requires stress-ng and p7zip to be installed.
+ThreadStepper requires stress-ng and p7zip to be installed. Aswell as a copy of ungoogle-chroium Appimage.
 
-The ./install.sh script can be used to help install these.
+The ./install.sh script can be used to help install these dependancies. 
 
-ThreadStepper uses a packaged AppImage of ungoogled-chrome in tests/browser/ for the WebGL CPU tests. 
+This script will also download the required ungoogled-chroium for our WebGL tests. 
 
 ### Usage: 
 ```bash
