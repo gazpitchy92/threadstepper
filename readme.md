@@ -16,6 +16,12 @@ This script will also download the required ungoogled-chroium for our WebGL test
 threadstepper [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]
 ```
 
+### Basic Example: 
+```bash
+threadstepper -l 2 -t threads -b 2
+```
+Running just threadstepper, without arguments, will also run one loop with the default values. 
+
 #### Options:
 - `-l`                number of test loops to perform (default: 1)
 - `-t`                'cores' tests all cores  
