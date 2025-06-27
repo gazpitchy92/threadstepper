@@ -69,11 +69,4 @@ fi
 
 chmod +x ./threadstepper
 
-if [ -L /usr/bin/threadstepper ] && [ "$(readlink /usr/bin/threadstepper)" = "$(pwd)/threadstepper" ]; then
-    echo "Symlink /usr/bin/threadstepper already exists and is correct."
-else
-    sudo ln -sf "$(pwd)/threadstepper" /usr/bin/threadstepper
-    echo "Symlink created at /usr/bin/threadstepper"
-fi
-
-echo "You can now launch threadstepper to start testing."
+echo "You can now launch ./threadstepper to start testing."
