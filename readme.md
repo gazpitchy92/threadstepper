@@ -29,6 +29,9 @@ sudo ./install
 Running just threadstepper, without arguments, will also run one loop with the default values. 
 
 #### Options:
+```bash
+./threadstepper --help
+```
 - `-l`                number of test loops to perform (default: 1)
 - `-t`                'cores' tests all cores  
                       'threads' tests all threads (default: cores)
@@ -38,9 +41,7 @@ Running just threadstepper, without arguments, will also run one loop with the d
 - `--help`            show this help menu
 
 #### Settings:
-```bash
-./threadstepper --help
-```
+
 Additional test settings can be found in `settings.sh`
 
 The defaults here are fine, only change them if you have a specific use case. 
