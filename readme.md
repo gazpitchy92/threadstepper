@@ -1,64 +1,78 @@
-### About ThreadStepper:
-ThreadStepper is a stability and stress tester.
-It applies a varying level of stress to individual cores or threads to emulate real world low, medium and heavy usage. Utilizing 7z benchmarking, stress-ng and WebGL browser tests written with three.js. 
+# ThreadStepper
 
-This tool was developed for testing undervolting and Ryzen CO, where conventional stress tests fail to find instabilities
+A stability and stress tester that applies varying levels of stress to individual CPU cores or threads to emulate real-world usage patterns. Utilizes 7z benchmarking, stress-ng, and WebGL browser tests built with three.js.
 
-### Installation:
-ThreadStepper requires stress-ng and p7zip to be installed. Aswell as a copy of ungoogle-chroium Appimage.
+This tool was developed specifically for testing undervolting and Ryzen Curve Optimizer (CO) configurations, where conventional stress tests often fail to detect instabilities.
 
-The ./install.sh script can be used to help install these dependancies. 
-This script will also download the required ungoogled-chroium for our WebGL tests. 
+## Requirements
 
+- Linux system
+- stress-ng
+- p7zip
+- ungoogled-chromium AppImage
+
+## Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/gazpitchy92/threadstepper.git
+   cd threadstepper
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   chmod +x install.sh
+   sudo ./install.sh
+   ```
+   
+   The install script will automatically install stress-ng, p7zip, and download the required ungoogled-chromium AppImage for WebGL tests.
+
+## Usage
+
+### Basic Syntax
 ```bash
-git clone https://github.com/gazpitchy92/threadstepper.git
-cd threadstepper
-chmod +x install
-sudo ./install
+./threadstepper [-l loops] [-t type] [-b browsers] [--first-half] [--second-half]
 ```
 
-### Usage: 
+### Examples
+
+**Basic test with default settings:**
 ```bash
-./threadstepper [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]
+./threadstepper
 ```
 
-#### Basic Example: 
+**Custom test with 2 loops, testing all threads, using 2 browsers:**
 ```bash
 ./threadstepper -l 2 -t threads -b 2
 ```
-Running just threadstepper, without arguments, will also run one loop with the default values. 
 
-#### Options:
+### Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-l` | Number of test loops to perform | 1 |
+| `-t` | Test type: `cores` or `threads` | cores |
+| `-b` | Number of browsers to launch (0 to skip WebGL tests) | 2 |
+| `--first-half` | Tests only the first half of cores/threads (skips 7z tests) | - |
+| `--second-half` | Tests only the second half of cores/threads (skips 7z tests) | - |
+| `--help` | Show help menu | - |
+
+## Configuration
+
+Additional test settings can be modified in `settings.sh`. The defaults are suitable for most use cases.
+
+### Stress Test Methods
 ```bash
-./threadstepper --help
-```
-- `-l`                number of test loops to perform (default: 1)
-- `-t`                'cores' tests all cores  
-                      'threads' tests all threads (default: cores)
-- `-b`                number of browsers to launch (default: 2) (0 to skip test)
-- `--first-half`      tests the first half of the cores/threads (skips 7z tests)
-- `--second-half`     tests the second half of the cores/threads (skips 7z tests)
-- `--help`            show this help menu
-
-#### Settings
-
-Additional test settings can be found in `settings.sh`
-
-The defaults here are fine, only change them if you have a specific use case. 
-
-```bash
-These are stress-ng methods used for each stage of testing:
-
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")
 heavy=("ackermann" "factorial")
 rapid="bitops"
 ```
-```bash
-The following times relate to how long each test is ran:
 
+### Test Durations
+```bash
 light_time="1s"
-medium_time="5s"
+medium_time="5s" 
 heavy_time="15s"
 all_core_time=15
 rapid_tests=2
@@ -66,11 +80,10 @@ rapid_time="2s"
 rest_time=5
 ```
 
-#### Logging:
+## Logging
 
-Logs are generated and replaced each run in ./log.txt
+Test logs are generated in `./log.txt` and replaced with each new run.
 
-### Other Notes:
+## Additional Notes
 
-Whilst stress-ng runs it's own test validation, which is used in threadstepper, it can be helpful to run OCCT in Monitor mode alongside it to improve any error detection. 
-
+While stress-ng includes built-in test validation (used by ThreadStepper), running OCCT in Monitor mode alongside the tests can improve error detection capabilities.
