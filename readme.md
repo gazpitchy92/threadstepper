@@ -9,7 +9,6 @@ This tool was developed specifically for testing undervolting and Ryzen Curve Op
 - Linux system
 - stress-ng
 - p7zip
-- ungoogled-chromium AppImage
 
 ## Installation
 
