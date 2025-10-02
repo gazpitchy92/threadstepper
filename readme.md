@@ -1,8 +1,10 @@
 # ThreadStepper
 
-A stability and stress tester that applies varying levels of stress to individual CPU cores or threads to emulate real-world usage patterns. Utilizes 7z benchmarking, stress-ng, and WebGL browser tests built with three.js.
+A stability and stress tester for linux which applies varying levels of stress to individual CPU cores or threads to emulate real-world usage patterns. Utilizes 7z benchmarking, stress-ng, and WebGL browser tests built with three.js.
 
 This tool was developed specifically for testing undervolting and Ryzen Curve Optimizer (CO) configurations, where conventional stress tests often fail to detect instabilities.
+
+![threadstepper](https://i.ibb.co/Xr2TTDxk/threadstepper.png)
 
 ## Requirements
 
