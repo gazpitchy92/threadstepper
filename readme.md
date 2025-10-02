@@ -5,6 +5,7 @@ A stability and stress tester for linux which applies varying levels of stress t
 This tool was developed specifically for testing undervolting and Ryzen Curve Optimizer (CO) configurations, where conventional stress tests often fail to detect instabilities.
 
 ![threadstepper](https://iili.io/KVveDMl.png)
+![terminal](https://iili.io/KVvUF5P.png)
 
 ## Requirements
 
