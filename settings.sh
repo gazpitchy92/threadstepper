@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ts_version="1.2"
+
 # stress test types from stress-ng
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")

@@ -58,6 +58,8 @@ startupAscii(){
     echo "#  ..█..▐▌.▐▌▐▌.▐▌▐▙▄▄▖▐▌.▐▌▐▙▄▄▀▗▄▄▞▘..█..▐▙▄▄▖▐▌...▐▌...▐▙▄▄▖▐▌.▐▌"
     echo "#  ................................................................."
     echo ""
+    echo "Version $ts_version"
+    echo ""
     echo "WARNING: SAVE ALL WORK AND CLOSE ALL OTHER PROGRAMS NOW!"
     echo ""
     echo "Press Ctrl+C to exit tests at any time"
