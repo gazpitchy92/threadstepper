@@ -6,7 +6,7 @@ mixed=("prime" "matrixprod" "fft" "loop")
 heavy=("ackermann" "factorial")
 rapid="bitops"
 
-# stress test times - # 280s - 560s - 9m (74m (1.25h) cores) (149m (2.5h) threads)
+# stress test times - # 280s - 560s - 9m (74m (1.25h) 8 cores) (149m (2.5h) 16 threads) - 9800X3d example times
 light_time="5s" # 40s - 80s
 medium_time="15s" # 120s - 240s
 heavy_time="30s" # 120s - 240s
