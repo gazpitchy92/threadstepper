@@ -77,13 +77,13 @@ stressNgCore() {
         # light tests
         echo "$(tput setaf 2)- Testing with method $method on core ( $core + $core_second ) for $light_time (light) $(tput sgr0)" | tee -a log.txt
         stress-ng --cpu 2 --taskset $core,$core_second --timeout $light_time --cpu-method "$method"
-        sleep $light_time
+        sleep $rest_time
     done
     for method in "${mixed[@]}"; do
         # medium tests
         echo "$(tput setaf 2)- Testing with method $method on core ( $core + $core_second ) for $medium_time (medium) $(tput sgr0)" | tee -a log.txt
         stress-ng --cpu 2 --taskset $core,$core_second --timeout $medium_time --cpu-method "$method"
-        sleep $medium_time
+        sleep $rest_time
     done
     for method in "${heavy[@]}"; do
         # heavy tests
@@ -95,7 +95,6 @@ stressNgCore() {
 
 # full cpu 7zip stress
 allCoreTest() {
-    all_core_time=15
     echo "$(tput setaf 4)-- Running 7z warmup on all cores $(tput sgr0)" | tee -a log.txt
     for i in $(seq 1 $all_core_time); do
         # increase test time by 1s until $all_core_time
@@ -110,6 +109,7 @@ allCoreTest() {
 # open browsers for web-gl cpu stress
 browserTest() {
     current_dir=$(pwd)
+    mkdir -p "${current_dir}/tests/browser/tmp"
     for ((i = 0; i < browsers; i++)); do
         random_page=$((RANDOM % 6 + 1))
         file_path="file://$current_dir/tests/browser/pages/$random_page.html"
@@ -120,17 +120,17 @@ browserTest() {
             if [[ "$first_half" == true ]]; then
                 # first half of cpu
                 echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-                taskset -c 0-$((half_cores - 1)) ./tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage --new-window --disable-gpu --disable-accelerated-video-decode "$file_path" > /dev/null 2>&1 &
+                taskset -c 0-$((half_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --disable-gpu --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
             if [[ "$second_half" == true ]]; then
                 # second half of cpu
                 echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-                taskset -c $half_cores-$((num_cores - 1)) ./tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage --new-window --disable-gpu --disable-accelerated-video-decode "$file_path" > /dev/null 2>&1 &
+                taskset -c $half_cores-$((num_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --disable-gpu --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
         else
             # testing all cpu
             echo "$(tput setaf 4)-- Launching $browsers browsers on all cores$(tput sgr0)" | tee -a log.txt
-            ./tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage --new-window --disable-gpu --disable-accelerated-video-decode "$file_path" > /dev/null 2>&1 &
+            ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --disable-gpu --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --incognito --user-data-dir=./tests/browser/tmp"$file_path" > /dev/null 2>&1 &
             sleep $rest_time
         fi
     done
