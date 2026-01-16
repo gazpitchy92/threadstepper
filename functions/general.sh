@@ -81,6 +81,16 @@ checkDeps(){
         echo "$(tput setaf 1)stress-ng is not installed!$(tput sgr0)"
         exit 1
     fi
+    # ungoogled-chromium AppImage
+    shopt -s nullglob
+    appimages=(./tests/browser/*.AppImage)
+    if [ ${#appimages[@]} -gt 0 ]; then
+        echo "$(tput setaf 2)ungoogled-chromium AppImage found$(tput sgr0)"
+    else
+        echo "$(tput setaf 1)ungoogled-chromium AppImage not found!$(tput sgr0)"
+        echo "$(tput setaf 3)Please run install.sh first$(tput sgr0)"
+        exit 1
+    fi
     echo ""
 }
 check_installed() {
@@ -106,7 +116,7 @@ outputOptions(){
     echo "$(tput setaf 5)Light time: ${light_time} $(tput sgr0)" | tee -a log.txt
     echo "$(tput setaf 5)Medium time: ${medium_time} $(tput sgr0)" | tee -a log.txt
     echo "$(tput setaf 5)Heavy time: ${heavy_time} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Prime time: ${all_core_time}s $(tput sgr0)" | tee -a log.txt
+    echo "$(tput setaf 5)All core time: ${all_core_time}s $(tput sgr0)" | tee -a log.txt
     echo "$(tput setaf 5)Rapid tests: ${rapid_tests} $(tput sgr0)" | tee -a log.txt
     echo "$(tput setaf 5)Rapid time: ${rapid_time} $(tput sgr0)" | tee -a log.txt
     echo "$(tput setaf 5)Rest time: ${rest_time}s $(tput sgr0)" | tee -a log.txt
