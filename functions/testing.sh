@@ -120,26 +120,26 @@ browserTest() {
             if [[ "$first_half" == true ]]; then
                 # first half of cpu
                 echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-                taskset -c 0-$((half_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --disable-gpu --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
+                taskset -c 0-$((half_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
             if [[ "$second_half" == true ]]; then
                 # second half of cpu
                 echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-                taskset -c $half_cores-$((num_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --disable-gpu --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
+                taskset -c $half_cores-$((num_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
         else
             # testing all cpu
             echo "$(tput setaf 4)-- Launching $browsers browsers on all cores$(tput sgr0)" | tee -a log.txt
-            ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --disable-gpu --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --incognito --user-data-dir=./tests/browser/tmp"$file_path" > /dev/null 2>&1 &
+            ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             sleep $rest_time
         fi
     done
 }
 stopBrowserTest(){
     # kill running browser tests
-    pgrep -f "ungoogled-chromium_133.0.6943.126-1.AppImage" | while read -r pid; do
+    pgrep -f "ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage" | while read -r pid; do
         kill -9 "$pid" &>/dev/null
     done
-    pkill ungoogled-chromium_133.0.6943.126-1.AppImage &>/dev/null
+    pkill ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage &>/dev/null
     pkill chrome &>/dev/null
 }
