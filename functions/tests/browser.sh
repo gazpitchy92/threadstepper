@@ -11,11 +11,12 @@ browserTest() {
         echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a log.txt
     elif [[ "$second_half" == true ]]; then
         echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-    elif
+    else
         echo "$(tput setaf 4)-- Launching $browsers browsers on all cores$(tput sgr0)" | tee -a log.txt
     fi
     echo "$(tput setaf 3)[DEBUG] Appimage $current_dir/tests/browser/$chromium_appimage"
     echo "$(tput setaf 3)[DEBUG] --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp"
+    
     for ((i = 0; i < browsers; i++)); do
         random_page=$((RANDOM % 6 + 1))
         file_path="file://$current_dir/tests/browser/pages/$random_page.html"

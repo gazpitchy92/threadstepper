@@ -11,6 +11,8 @@ source ./functions/tests/threads/stressng.sh
 source ./functions/tests/cores/rapid.sh
 source ./functions/tests/cores/stressng.sh
 source ./functions/tests/allcore.sh
+source ./functions/tests/browser.sh
+
 
 # configure options
 loops=1
@@ -47,6 +49,7 @@ startupAscii
 outputOptions
 checkDeps
 setupLogs
+startClockLogger
 
 # get core count
 num_cores=$(nproc)
@@ -59,7 +62,13 @@ START_TIME=$SECONDS
 for ((i=1; i<=loops; i++)); do
     ELAPSED=$((SECONDS - START_TIME))
     ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-    echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+    HIGHEST_CLOCK=$(<"$current_dir/clock.log")
+    if [[ "$i" > 1 ]]; then
+        echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
+    else
+        echo "$(tput setaf 5)---- Starting loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+    fi
     if [[ "$second_half" == true ]]; then
         start_core=$((num_cores / 2))
     else
@@ -84,7 +93,9 @@ for ((i=1; i<=loops; i++)); do
             echo "$(tput setaf 3)--- Starting tests for core ($core + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
             sleep $rest_time
             runTests $core
+            HIGHEST_CLOCK=$(<"$current_dir/clock.log")
             echo "$(tput setaf 3)--- Finished testing core $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
         done
     else
         for ((core=$start_core; core<num_cores; core++)); do
@@ -93,13 +104,18 @@ for ((i=1; i<=loops; i++)); do
             echo "$(tput setaf 3)--- Starting tests for thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
             sleep $rest_time
             runTests $core
+            HIGHEST_CLOCK=$(<"$current_dir/clock.log")
             echo "$(tput setaf 3)--- Finished testing thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
         done
     fi
     FINISHED_LOOPS=$i
 done
 
 # fin
+stopClockLogger
+HIGHEST_CLOCK=$(<"$current_dir/clock.log")
 ELAPSED=$((SECONDS - START_TIME))
 ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
 echo "$(tput setaf 3)--- Loops $FINISHED_LOOPS/$loops completed! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
