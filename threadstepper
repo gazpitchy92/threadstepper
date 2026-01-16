@@ -121,7 +121,6 @@ for ((i=1; i<=loops; i++)); do
 done
 
 # fin
-stopLogger
 HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
 ELAPSED=$((SECONDS - START_TIME))
 ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
