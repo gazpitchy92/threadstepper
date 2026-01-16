@@ -86,6 +86,7 @@ checkDeps(){
     appimages=(./tests/browser/*.AppImage)
     if [ ${#appimages[@]} -gt 0 ]; then
         echo "$(tput setaf 2)ungoogled-chromium AppImage found$(tput sgr0)"
+        echo "$(tput setaf 5)$chromium_appimage$(tput sgr0)"
     else
         echo "$(tput setaf 1)ungoogled-chromium AppImage not found!$(tput sgr0)"
         echo "$(tput setaf 3)Please run install.sh first$(tput sgr0)"

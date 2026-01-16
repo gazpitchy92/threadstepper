@@ -1,1 +1,40 @@
-
+[35m---- Running loop 1 of 3 (00:00:00)(B[m
+[34m-- Running 7z warmup on all cores (B[m
+[32m- Running 7z for 1 seconds (B[m
+[32m- Running 7z for 2 seconds (B[m
+[32m- Running 7z for 3 seconds (B[m
+[32m- Running 7z for 4 seconds (B[m
+[32m- Running 7z for 5 seconds (B[m
+[32m- Running 7z for 6 seconds (B[m
+[32m- Running 7z for 7 seconds (B[m
+[32m- Running 7z for 8 seconds (B[m
+[32m- Running 7z for 9 seconds (B[m
+[32m- Running 7z for 10 seconds (B[m
+[32m- Running 7z for 11 seconds (B[m
+[32m- Running 7z for 12 seconds (B[m
+[32m- Running 7z for 13 seconds (B[m
+[32m- Running 7z for 14 seconds (B[m
+[32m- Running 7z for 15 seconds (B[m
+[34m-- Testing all cores with rapid bitops for 5 loops (B[m
+[32m- Testing with method bitops on core 0 ( 0 + 8 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 1 ( 1 + 9 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 2 ( 2 + 10 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 3 ( 3 + 11 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 4 ( 4 + 12 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 5 ( 5 + 13 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 6 ( 6 + 14 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 7 ( 7 + 15 ) for 2s (rapid) (B[m
+[34m-- Testing all cores with rapid bitops for 5 loops (B[m
+[32m- Testing with method bitops on core 0 ( 0 + 8 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 1 ( 1 + 9 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 2 ( 2 + 10 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 3 ( 3 + 11 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 4 ( 4 + 12 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 5 ( 5 + 13 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 6 ( 6 + 14 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 7 ( 7 + 15 ) for 2s (rapid) (B[m
+[34m-- Testing all cores with rapid bitops for 5 loops (B[m
+[32m- Testing with method bitops on core 0 ( 0 + 8 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 1 ( 1 + 9 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 2 ( 2 + 10 ) for 2s (rapid) (B[m
+[32m- Testing with method bitops on core 3 ( 3 + 11 ) for 2s (rapid) (B[m
