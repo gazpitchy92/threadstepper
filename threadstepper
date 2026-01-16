@@ -127,3 +127,4 @@ ELAPSED=$((SECONDS - START_TIME))
 ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
 echo "$(tput setaf 3)--- Loops $FINISHED_LOOPS/$loops completed! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
 echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
+cleanup
