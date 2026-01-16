@@ -130,11 +130,20 @@ browserTest() {
         else
             # testing all cpu
             echo "$(tput setaf 4)-- Launching $browsers browsers on all cores$(tput sgr0)" | tee -a log.txt
-            ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
+            if (( browsers > 1 )); then
+                if (( (i + 1) % 2 == 0 )); then
+                    taskset -c 0-$((half_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
+                else
+                    taskset -c $half_cores-$((num_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
+                fi
+            else
+                taskset -c 0-$((num_cores - 1)) ./tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage --new-window --no-sandbox  --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=./tests/browser/tmp "$file_path" > /dev/null 2>&1 &
+            fi
             sleep $rest_time
         fi
     done
 }
+
 stopBrowserTest(){
     # kill running browser tests
     pgrep -f "ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage" | while read -r pid; do
