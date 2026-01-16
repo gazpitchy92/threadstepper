@@ -7,9 +7,19 @@ This tool was developed specifically for testing undervolting and Ryzen Curve Op
 ![threadstepper](https://iili.io/KVveDMl.png)
 ![terminal](https://iili.io/KVvUF5P.png)
 
+## Latest Updates - Version 1.3
+
+- Feature: Live error checking during all tests
+- Feature: Logging of highest CPU clocks
+- Feature: Better debug output during tests
+- Feature: Improved settings and install.sh script
+
+- Bug Fix: CPU topoloy for "cores" test is now correct
+- Bug Fix: all_core_time is now correctly followed correctly
+- Bug Fix: latest ungoogled-chromium setup for improved testing
+
 ## Requirements
 
-- Linux system
 - stress-ng
 - p7zip
 
