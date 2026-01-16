@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ts_version="1.2"
+ts_version="1.3"
 settings_dir=$(pwd)
 output_log_file="$settings_dir/logs/output.log"
 
