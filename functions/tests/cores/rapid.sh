@@ -9,5 +9,6 @@ rapidStressNgCore() {
         core_second=$((core + physical_cores))
         echo "$(tput setaf 2)- Testing with method $rapid on core $core ( $core + $core_second ) for $rapid_time (rapid) $(tput sgr0)" | tee -a log.txt
         stress-ng --cpu 2 --taskset $core,$core_second --timeout $rapid_time --cpu-method "$rapid"
+        check_errors
     done
 }

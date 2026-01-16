@@ -1,0 +1,14 @@
+#!/bin/bash
+
+check_errors() {
+  CURRENT_DIR=$(pwd)
+  ERROR_LOG="$CURRENT_DIR/logs/errors.log"
+  first_line=$(head -n 1 "$ERROR_LOG")
+  if [ "$first_line" != "false" ]; then
+    echo "$(tput setaf 1)--- ERROR FOUND - STOPPING TEST! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+    tail -n +2 "$ERROR_LOG" | while IFS= read -r line; do
+      echo "$(tput setaf 1)$line$(tput sgr0)" | tee -a log.txt
+    done
+    cleanup
+  fi
+}

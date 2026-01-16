@@ -10,6 +10,7 @@ runTests(){
         # threads
         stressNgThread $core
     fi
+    check_errors
     if (( browsers != 0 )); then
         # launch browsers
         browserTest
@@ -22,5 +23,6 @@ runTests(){
         fi
         # close browsers
         stopBrowserTest
+        check_errors
     fi 
 }

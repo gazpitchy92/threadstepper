@@ -11,6 +11,7 @@ stressNgCore() {
         # light tests
         echo "$(tput setaf 2)- Testing with method $method on core ( $core + $core_second ) for $light_time (light) $(tput sgr0)" | tee -a log.txt
         stress-ng --cpu 2 --taskset $core,$core_second --timeout $light_time --cpu-method "$method"
+        check_errors
         sleep $rest_time
     done
     for method in "${mixed[@]}"; do
@@ -23,6 +24,7 @@ stressNgCore() {
         # heavy tests
         echo "$(tput setaf 2)- Testing with method $method on core ( $core + $core_second ) for $heavy_time (heavy) $(tput sgr0)" | tee -a log.txt
         stress-ng --cpu 2 --taskset $core,$core_second --timeout $heavy_time --cpu-method "$method"
+        check_errors
         sleep $rest_time
     done
 }

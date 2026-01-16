@@ -134,7 +134,7 @@ cleanup() {
     if [[ -z "$CLEANED_UP" ]]; then
         CLEANED_UP=1
         echo "$(tput setaf 5)---- Stopping tests and cleaning up $(tput sgr0)" | tee -a log.txt
-        stopClockLogger
+        stopLogger
         pkill stress
         pkill 7z
         stopBrowserTest
@@ -143,14 +143,15 @@ cleanup() {
 }
 
 # keep a log of the highest CPU clock
-startClockLogger() {
+starLogger() {
     current_dir=$(pwd)
     bash "$current_dir/logs/logger.sh" &
     echo $! > "$current_dir/logs/logger.pid"
 }
-stopClockLogger() {
+stopLogger() {
     if [[ -f "$current_dir/logs/logger.pid" ]]; then
         kill "$(cat "$current_dir/logs/logger.pid")"
         rm -f "$current_dir/logs/logger.pid"
     fi
 }
+

@@ -9,6 +9,7 @@ allCoreTest() {
         7z b > /dev/null 2>&1 &
         sleep "$i"
         pkill 7z
+        check_errors
         sleep $rest_time
     done
 }
