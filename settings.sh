@@ -7,7 +7,7 @@ heavy=("ackermann" "factorial")
 rapid="bitops"
 
 # stress test times
-# Defaults: 336s (per core or thread) - (45m for 8 cores) - (90m for 16 threads)
+# Defaults (with browsers): 336s (per core or thread) - (45m for 8 cores) - (90m for 16 threads)
 light_time="5s" # 32s - (64s browsers)
 medium_time="15s" # 72s - (144s browsers)
 heavy_time="30s" # 63s - (126s browsers)
