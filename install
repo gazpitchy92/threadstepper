@@ -29,9 +29,14 @@ fi
 
 echo "Dependencies have been installed"
 
-APPIMAGE_URL="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/133.0.6943.126-1/ungoogled-chromium_133.0.6943.126-1.AppImage"
-APPIMAGE_PATH="tests/browser/ungoogled-chromium_133.0.6943.126-1.AppImage"
-mkdir -p tests/browser
+APPIMAGE_URL="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download/144.0.7559.59-1/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage"
+APPIMAGE_PATH="tests/browser/ungoogled-chromium-144.0.7559.59-1-x86_64.AppImage"
+
+shopt -s globstar
+rmdir tests/browser/tmp
+rm tests/browser/**/*.AppImage
+mkdir -p tests/browser/tmp
+
 if [ ! -f "$APPIMAGE_PATH" ]; then
     echo "Downloading ungoogled-chromium AppImage..."
     wget -O "$APPIMAGE_PATH" "$APPIMAGE_URL" || { echo "Download failed"; exit 1; }
