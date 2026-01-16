@@ -63,15 +63,16 @@ This tool was developed specifically for testing undervolting and Ryzen Curve Op
 
 Additional test settings can be modified in `settings.sh`. The defaults are suitable for most use cases.
 
-### Stress Test Methods
+### General
+Used for base configuration
 ```bash
-light=("bitops" "pi" "gcd" "sieve")
-mixed=("prime" "matrixprod" "fft" "loop")
-heavy=("ackermann" "factorial")
-rapid="bitops"
+ts_version="1.3"
+settings_dir=$(pwd)
+output_log_file="$settings_dir/logs/output.log"
 ```
 
 ### Test Durations
+These are the time settings for each stress type.
 ```bash
 light_time="1s"
 medium_time="5s" 
@@ -82,9 +83,29 @@ rapid_time="2s"
 rest_time=5
 ```
 
+### Stress Test Methods
+These are the test methods ran against each of the time settings, they are stress-ng methods.
+```bash
+light=("bitops" "pi" "gcd" "sieve")
+mixed=("prime" "matrixprod" "fft" "loop")
+heavy=("ackermann" "factorial")
+rapid="bitops"
+```
+
+### Browser config
+These are the browser test settings. Also used in install.sh
+```bash
+chromium_version="144.0.7559.59-1"
+chromium_appimage="ungoogled-chromium-$chromium_version-x86_64.AppImage"
+chromium_domain="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download"
+```
+
 ## Logging
 
-Test logs are generated in `./logs/` and replaced with each new run.
+Logging is processed in a background script - logs/logger.sh
+All test output is saved to loged/output.log
+Error logs are saved into logs/errors.log
+Highest recorded CPU is logged to logs/clock.log 
 
 ## Additional Notes
 
