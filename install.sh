@@ -1,6 +1,7 @@
 #!/bin/bash
 source ./settings.sh
 current_dir=$(pwd)
+clear
 
 echo "This will install 7zip, stress-ng and download ungoogled-chromium executable. Continue? [Y/n]"
 read -r response

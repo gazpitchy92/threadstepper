@@ -1,6 +1,8 @@
 #!/bin/bash
 
 ts_version="1.2"
+settings_dir=$(pwd)
+output_log_file="$settings_dir/logs/output.log"
 
 # stress test types from stress-ng
 light=("bitops" "pi" "gcd" "sieve")

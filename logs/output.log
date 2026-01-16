@@ -7,8 +7,3 @@
 [32m- Running 7z for 5 seconds (B[m
 [32m- Running 7z for 6 seconds (B[m
 [32m- Running 7z for 7 seconds (B[m
-[31m--- ERROR FOUND - STOPPING TEST! (00:00:00)(B[m
-[31m=== Errors detected at 2026-01-16T22:59:54+00:00 ===(B[m
-[31mJan 16 22:59:46 desktop gareth[912075]: Hardware Error: CPU test error(B[m
-[31m========================================(B[m
-[35m---- Stopping tests and cleaning up (B[m

@@ -2,9 +2,9 @@
 
 # setup clean log files
 setupLogs(){
-    rm -f log.txt
+    rm -f $output_log_file
     rm -f prime.txt
-    touch log.txt
+    touch $output_log_file
 }
 
 # output help
@@ -103,26 +103,26 @@ check_installed() {
 # output selected options and settings
 outputOptions(){
     # input options
-    echo "Options" | tee -a log.txt
-    echo "$(tput setaf 5)Loops: ${loops:-Not specified} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Type: ${type:-Not specified} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Browsers: ${browsers:-Not specified} $(tput sgr0)" | tee -a log.txt
+    echo "Options" | tee -a $output_log_file
+    echo "$(tput setaf 5)Loops: ${loops:-Not specified} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Type: ${type:-Not specified} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Browsers: ${browsers:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     if [ "$first_half" == true ]; then 
-        echo "$(tput setaf 5)First half: true $(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 5)First half: true $(tput sgr0)" | tee -a $output_log_file
     fi
     if [ "$second_half" == true ]; then
-        echo "$(tput setaf 5)Second half: true $(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 5)Second half: true $(tput sgr0)" | tee -a $output_log_file
     fi
     # settings
     echo ""
-    echo "Test Settings" | tee -a log.txt
-    echo "$(tput setaf 5)Light time: ${light_time} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Medium time: ${medium_time} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Heavy time: ${heavy_time} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)All core time: ${all_core_time}s $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Rapid tests: ${rapid_tests} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Rapid time: ${rapid_time} $(tput sgr0)" | tee -a log.txt
-    echo "$(tput setaf 5)Rest time: ${rest_time}s $(tput sgr0)" | tee -a log.txt
+    echo "Test Settings" | tee -a $output_log_file
+    echo "$(tput setaf 5)Light time: ${light_time} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Medium time: ${medium_time} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Heavy time: ${heavy_time} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)All core time: ${all_core_time}s $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Rapid tests: ${rapid_tests} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Rapid time: ${rapid_time} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Rest time: ${rest_time}s $(tput sgr0)" | tee -a $output_log_file
     echo ""
     echo "STARTING TESTS IN $rest_time SECONDS..."
     echo ""
@@ -133,7 +133,7 @@ outputOptions(){
 cleanup() {
     if [[ -z "$CLEANED_UP" ]]; then
         CLEANED_UP=1
-        echo "$(tput setaf 5)---- Stopping tests and cleaning up $(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 5)---- Stopping tests and cleaning up $(tput sgr0)" | tee -a $output_log_file
         stopLogger
         pkill stress
         pkill 7z

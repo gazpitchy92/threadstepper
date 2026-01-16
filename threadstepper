@@ -1,5 +1,6 @@
 #!/bin/bash
 
+clear
 trap cleanup SIGINT SIGTERM
 
 # includes
@@ -13,7 +14,6 @@ source ./functions/tests/cores/rapid.sh
 source ./functions/tests/cores/stressng.sh
 source ./functions/tests/allcore.sh
 source ./functions/tests/browser.sh
-
 
 # configure options
 loops=1
@@ -65,10 +65,10 @@ for ((i=1; i<=loops; i++)); do
     ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
     HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
     if [[ "$i" > 1 ]]; then
-        echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-        echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
+        echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+        echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
     else
-        echo "$(tput setaf 5)---- Starting loop $i of $loops $(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 5)---- Starting loop $i of $loops $(tput sgr0)" | tee -a $output_log_file
     fi
     if [[ "$second_half" == true ]]; then
         start_core=$((num_cores / 2))
@@ -92,24 +92,24 @@ for ((i=1; i<=loops; i++)); do
             ELAPSED=$((SECONDS - START_TIME))
             ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
             core_second=$((core + physical_cores))
-            echo "$(tput setaf 3)--- Starting tests for core ($core + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+            echo "$(tput setaf 3)--- Starting tests for core ($core + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
             sleep $rest_time
             runTests $core
             HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
-            echo "$(tput setaf 3)--- Finished testing core $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
+            echo "$(tput setaf 3)--- Finished testing core $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
             check_errors
         done
     else
         for ((core=$start_core; core<num_cores; core++)); do
             ELAPSED=$((SECONDS - START_TIME))
             ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-            echo "$(tput setaf 3)--- Starting tests for thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+            echo "$(tput setaf 3)--- Starting tests for thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
             sleep $rest_time
             runTests $core
             HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
-            echo "$(tput setaf 3)--- Finished testing thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
+            echo "$(tput setaf 3)--- Finished testing thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
             check_errors
         done
     fi
@@ -121,5 +121,5 @@ stopLogger
 HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
 ELAPSED=$((SECONDS - START_TIME))
 ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-echo "$(tput setaf 3)--- Loops $FINISHED_LOOPS/$loops completed! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
+echo "$(tput setaf 3)--- Loops $FINISHED_LOOPS/$loops completed! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file

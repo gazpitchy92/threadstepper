@@ -84,7 +84,7 @@ rest_time=5
 
 ## Logging
 
-Test logs are generated in `./log.txt` and replaced with each new run.
+Test logs are generated in `./logs/` and replaced with each new run.
 
 ## Additional Notes
 

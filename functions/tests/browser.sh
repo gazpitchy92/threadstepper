@@ -8,11 +8,11 @@ browserTest() {
     mkdir -p "${current_dir}/tests/browser/tmp"
 
     if [[ "$first_half" == true ]]; then
-        echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a $output_log_file
     elif [[ "$second_half" == true ]]; then
-        echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a $output_log_file
     else
-        echo "$(tput setaf 4)-- Launching $browsers browsers on all cores$(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 4)-- Launching $browsers browsers on all cores$(tput sgr0)" | tee -a $output_log_file
     fi
     echo "$(tput setaf 3)[DEBUG] Appimage $current_dir/tests/browser/$chromium_appimage"
     echo "$(tput setaf 3)[DEBUG] --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp"
@@ -26,14 +26,14 @@ browserTest() {
             half_cores=$((num_cores / 2))
             if [[ "$first_half" == true ]]; then
                 # first half of cpu
-                echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-                echo "$(tput setaf 3)[DEBUG] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a log.txt
+                echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( 0-$((half_cores - 1)) )$(tput sgr0)" | tee -a $output_log_file
+                echo "$(tput setaf 3)[DEBUG] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 taskset --cpu-list 0-$((half_cores - 1)) $current_dir/tests/browser/$chromium_appimage --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
             if [[ "$second_half" == true ]]; then
                 # second half of cpu
-                echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a log.txt
-                echo "$(tput setaf 3)[DEBUG] taskset --cpu-list $half_cores-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a log.txt
+                echo "$(tput setaf 4)-- Launching $browsers browsers on cores ( $half_cores-$((num_cores - 1)) )$(tput sgr0)" | tee -a $output_log_file
+                echo "$(tput setaf 3)[DEBUG] taskset --cpu-list $half_cores-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 taskset --cpu-list $half_cores-$((num_cores - 1)) $current_dir/tests/browser/$chromium_appimage --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
             sleep $rest_time
@@ -43,14 +43,14 @@ browserTest() {
             half_cores=$((num_cores / 2))
             if (( browsers > 1 )); then
                 if (( (i + 1) % 2 == 0 )); then
-                    echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a log.txt
+                    echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                     taskset --cpu-list 0-$((half_cores - 1)) $current_dir/tests/browser/$chromium_appimage --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
                 else
-                    echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list $half_cores-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a log.txt
+                    echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list $half_cores-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                     taskset --cpu-list $half_cores-$((num_cores - 1)) $current_dir/tests/browser/$chromium_appimage --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
                 fi
             else
-                echo "$(tput setaf 3)[DEBUG] taskset --cpu-list 0-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a log.txt
+                echo "$(tput setaf 3)[DEBUG] taskset --cpu-list 0-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 taskset --cpu-list 0-$((num_cores - 1)) $current_dir/tests/browser/$chromium_appimage --new-window --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
             fi
             sleep $rest_time
