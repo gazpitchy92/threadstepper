@@ -67,7 +67,7 @@ for ((i=1; i<=loops; i++)); do
         echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
         echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
     else
-        echo "$(tput setaf 5)---- Starting loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
+        echo "$(tput setaf 5)---- Starting loop $i of $loops $(tput sgr0)" | tee -a log.txt
     fi
     if [[ "$second_half" == true ]]; then
         start_core=$((num_cores / 2))
