@@ -65,7 +65,7 @@ for ((i=1; i<=loops; i++)); do
     HIGHEST_CLOCK=$(<"$current_dir/clock.log")
     if [[ "$i" > 1 ]]; then
         echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-        echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
+        echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
     else
         echo "$(tput setaf 5)---- Starting loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
     fi
@@ -95,7 +95,7 @@ for ((i=1; i<=loops; i++)); do
             runTests $core
             HIGHEST_CLOCK=$(<"$current_dir/clock.log")
             echo "$(tput setaf 3)--- Finished testing core $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
+            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
         done
     else
         for ((core=$start_core; core<num_cores; core++)); do
@@ -106,7 +106,7 @@ for ((i=1; i<=loops; i++)); do
             runTests $core
             HIGHEST_CLOCK=$(<"$current_dir/clock.log")
             echo "$(tput setaf 3)--- Finished testing thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
+            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
         done
     fi
     FINISHED_LOOPS=$i
@@ -118,4 +118,4 @@ HIGHEST_CLOCK=$(<"$current_dir/clock.log")
 ELAPSED=$((SECONDS - START_TIME))
 ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
 echo "$(tput setaf 3)--- Loops $FINISHED_LOOPS/$loops completed! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a log.txt
-echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK"
+echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a log.txt
