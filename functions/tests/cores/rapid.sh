@@ -16,7 +16,7 @@ rapidStressNgCore() {
                 echo "$(tput setaf 0)Skipping test for core $core + $core_second $(tput sgr0)" | tee -a "$output_log_file"
             else
                 echo "$(tput setaf 2)Testing with method $rapid on core $core + $core_second for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$rapid_time" --cpu-method "$rapid"
+                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$rapid_time" --cpu-method "$rapid" > /dev/null 2>&1
                 check_errors
             fi
         fi
@@ -28,7 +28,7 @@ rapidStressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $rapid on core $core + $core_next for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$rapid_time" --cpu-method "$rapid"
+                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$rapid_time" --cpu-method "$rapid" > /dev/null 2>&1
                     check_errors
                 fi
             fi
@@ -42,7 +42,7 @@ rapidStressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $rapid on core $core_second + $core_last for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$rapid_time" --cpu-method "$rapid"
+                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$rapid_time" --cpu-method "$rapid" > /dev/null 2>&1
                     check_errors
                 fi
             fi
