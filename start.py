@@ -11,7 +11,7 @@ import platform
 class StressTestGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Thread Stepper")
+        self.root.title("Thread Stepper v2.0")
         self.root.geometry("800x1000")
         
         self.process = None
@@ -54,7 +54,7 @@ class StressTestGUI:
         header_frame = tk.Frame(install_frame)
         header_frame.pack(fill=tk.X, pady=(5, 5))
 
-        tk.Label(header_frame, text="🔥 Thread Stepper", 
+        tk.Label(header_frame, text="🔥 Thread Stepper v2.0", 
                 font=('Arial', 16, 'bold'),
                 fg='red').pack(side=tk.LEFT)
 
