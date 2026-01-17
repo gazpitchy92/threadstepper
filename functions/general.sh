@@ -29,44 +29,6 @@ usageText(){
     echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]"
 }
 
-# startup logo
-startupAscii(){
-    echo -e "\033[0;31m"                                                       
-    echo "                                  ▒▒                                 "
-    echo "                                  ▓▓                                 "
-    echo "                                  ▓▓▓▓                               "
-    echo "                                  ████                               "
-    echo "                                ░░████                               "
-    echo "                                ██▓▓██                               "
-    echo "                          ░░  ████▓▓▓▓    ▒▒                         "
-    echo "                          ▓▓▒▒▓▓██▒▒▓▓  ██░░                         "
-    echo "                        ▓▓██████▒▒▓▓▒▒████  ▒▒                       "
-    echo "                        ██████▒▒▒▒▓▓▒▒██▒▒  ██                       "
-    echo "                        ██▓▓▓▓░░▒▒████▓▓░░▒▒██  ░░                   "
-    echo "                        ██▒▒▒▒░░▒▒▓▓██▓▓▓▓████▓▓░░                   "
-    echo "                        ██▒▒▒▒░░▒▒████▓▓██▓▓████░░                   "
-    echo "                        ██▒▒░░░░▒▒▓▓██▒▒██▒▒██▓▓░░                   "
-    echo "                    ░░  ▒▒▒▒░░░░░░▒▒██░░▒▒▒▒▓▓██                     "
-    echo "                      ██▓▓▓▓░░  ░░▒▒▒▒░░░░▒▒▓▓▓▓                     "
-    echo "                      ░░██▓▓▒▒░░  ░░░░░░░░░░▓▓░░                     "
-    echo "                        ░░▓▓░░░░        ░░▒▒░░                       "
-    echo "                            ░░▒▒░░      ░░                           "                                                               
-    echo "#  .................................................................."
-    echo "#  ▗▄▄▄▖▗▖.▗▖▗▄▄▖.▗▄▄▄▖.▗▄▖.▗▄▄▄...▗▄▄▖▗▄▄▄▖▗▄▄▄▖▗▄▄▖.▗▄▄▖.▗▄▄▄▖▗▄▄▖."
-    echo "#  ..█..▐▌.▐▌▐▌.▐▌▐▌...▐▌.▐▌▐▌..█.▐▌.....█..▐▌...▐▌.▐▌▐▌.▐▌▐▌...▐▌.▐▌"
-    echo "#  ..█..▐▛▀▜▌▐▛▀▚▖▐▛▀▀▘▐▛▀▜▌▐▌..█..▝▀▚▖..█..▐▛▀▀▘▐▛▀▘.▐▛▀▘.▐▛▀▀▘▐▛▀▚▖"
-    echo "#  ..█..▐▌.▐▌▐▌.▐▌▐▙▄▄▖▐▌.▐▌▐▙▄▄▀.▗▄▄▞▘..█..▐▙▄▄▖▐▌...▐▌...▐▙▄▄▖▐▌.▐▌"
-    echo "#  .................................................................."
-    echo ""
-    echo "Version $ts_version"
-    echo ""
-    echo "WARNING: SAVE ALL WORK AND CLOSE ALL OTHER PROGRAMS NOW!"
-    echo ""
-    echo "Press Ctrl+C to exit tests at any time"
-    echo "For more information use: ./thredstepper --help"
-    echo -e "\033[0m"
-}
-
 # check dependencies
 checkDeps(){
     # 7zip
@@ -103,7 +65,8 @@ check_installed() {
 # output selected options and settings
 outputOptions(){
     # input options
-    echo "Options" | tee -a $output_log_file
+    echo ""
+    echo "$(tput setaf 6)Options" | tee -a $output_log_file
     echo "$(tput setaf 5)Loops: ${loops:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Type: ${type:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Browsers: ${browsers:-Not specified} $(tput sgr0)" | tee -a $output_log_file
@@ -116,7 +79,7 @@ outputOptions(){
     fi
     # settings
     echo ""
-    echo "Test Settings" | tee -a $output_log_file
+    echo "$(tput setaf 6)Test Settings" | tee -a $output_log_file
     echo "$(tput setaf 5)Light time: ${light_time} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Medium time: ${medium_time} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Heavy time: ${heavy_time} $(tput sgr0)" | tee -a $output_log_file
@@ -134,7 +97,7 @@ outputOptions(){
 cleanup() {
     if [[ -z "$CLEANED_UP" ]]; then
         CLEANED_UP=1
-        echo "$(tput setaf 5)---- Stopping tests and cleaning up $(tput sgr0)" | tee -a $output_log_file
+        echo "$(tput setaf 5)Stopping tests and cleaning up $(tput sgr0)" | tee -a $output_log_file
         stopLogger
         pkill stress
         pkill 7z
