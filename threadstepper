@@ -16,11 +16,11 @@ source ./functions/tests/allcore.sh
 source ./functions/tests/browser.sh
 
 # configure options
-loops=1
+loops=2
 type="threads"
 second_half=false
 first_half=false
-browsers=1
+browsers=8
 while getopts ":l:t:b:-:" opt; do
     case $opt in
         l) loops=$OPTARG ;;
