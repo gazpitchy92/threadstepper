@@ -36,6 +36,7 @@ checkDeps(){
         echo "$(tput setaf 2)7zip dependancy is met$(tput sgr0)"
     else
         echo "$(tput setaf 1)7zip is not installed!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
         exit 1
     fi
     # stress-ng
@@ -43,6 +44,7 @@ checkDeps(){
         echo "$(tput setaf 2)stress-ng dependancy is met$(tput sgr0)"
     else
         echo "$(tput setaf 1)stress-ng is not installed!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
         exit 1
     fi
     # ungoogled-chromium AppImage
@@ -52,8 +54,8 @@ checkDeps(){
         echo "$(tput setaf 2)ungoogled-chromium AppImage found$(tput sgr0)"
         echo "$(tput setaf 8)$chromium_appimage$(tput sgr0)"
     else
-        echo "$(tput setaf 1)ungoogled-chromium AppImage not found!$(tput sgr0)"
-        echo "$(tput setaf 3)Please run install.sh first$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! ungoogled-chromium AppImage not found !!!!!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
         exit 1
     fi
     echo ""
