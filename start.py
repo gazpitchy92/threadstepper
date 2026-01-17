@@ -203,8 +203,19 @@ class StressTestGUI:
         button_height = 40
         style = ttk.Style()
         style.configure("Uniform.TButton", padding=(10,(button_height-24)//2))
-        self.timer_label = tk.Label(control_frame, text="00:00:00", font=("Segoe UI",14,"bold"), fg="#28a745", bg="#f0f0f0", relief="sunken", padx=5, pady=(button_height-20)//2)
-        self.timer_label.pack(side="left", padx=(0,10))
+        self.timer_label = tk.Label(
+            control_frame,
+            text="00:00:00",
+            font=("Consolas", 12, "bold"),
+            fg="#28a745",
+            bg="#f0f0f0",
+            relief="sunken",
+            width=8,
+            height=1,
+            padx=5,
+            pady=0
+        )
+        self.timer_label.pack(side="left", padx=(0,5), fill="y")
         self.start_button = ttk.Button(control_frame, text="🔥 Start", style="Uniform.TButton", command=self.start_stress_test)
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="🛑 Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
@@ -212,11 +223,31 @@ class StressTestGUI:
         ttk.Button(control_frame, text="❎ Clear", bootstyle="success-outline", command=self.clear_output).pack(side="left", padx=2)
         ttk.Button(control_frame, text="💾 Save", bootstyle="success-outline", command=self.export_log).pack(side="left", padx=2)
 
-        # Status bar & progress
-        self.status_bar = ttk.Label(main_container, text="Ready", relief="sunken")
-        self.status_bar.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(5,0))
-        self.progress = ttk.Progressbar(main_container, mode="indeterminate", length=200)
-        self.progress.grid(row=7, column=0, columnspan=2, sticky="ew", pady=(2,0))
+        # Status bar & progress on the same line
+        status_frame = ttk.Frame(main_container)
+        status_frame.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(5,0))
+        status_frame.columnconfigure(0, weight=1)
+        status_frame.columnconfigure(1, weight=0)
+        self.status_bar = ttk.Label(status_frame, text="Ready", relief="sunken")
+        self.status_bar.grid(row=0, column=0, sticky="ew", padx=(0,5))
+        style = ttk.Style()
+        style.configure(
+            "Green.Horizontal.TProgressbar",
+            troughcolor="#e0e0e0",
+            background="#28a745"
+        )
+        style.map(
+            "Green.Horizontal.TProgressbar",
+            background=[("active", "#28a745"), ("!active", "#28a745")]
+        )
+
+        self.progress = ttk.Progressbar(
+            status_frame,
+            style="Green.Horizontal.TProgressbar",
+            mode="determinate",
+            length=419
+        )
+        self.progress.grid(row=0, column=1, sticky="ew")
         self.progress.grid_remove()
 
         self.setup_styles()
@@ -440,7 +471,6 @@ class StressTestGUI:
                         f.write("\n")
                     f.write(preserved_content)
 
-            self.status_bar.config(text="Settings saved successfully")
             self.log_message("Settings saved", "success")
 
         except Exception as e:
