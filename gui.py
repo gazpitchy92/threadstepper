@@ -629,6 +629,7 @@ class StressTestGUI:
         import re
         
         timestamp = datetime.now().strftime("[%H:%M:%S] ")
+        message = re.sub(r'\x1b\(B|\033\(B', '', message)
         
         # ANSI color code mapping to tkinter tags
         ansi_color_map = {
