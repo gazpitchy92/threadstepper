@@ -12,7 +12,7 @@ class StressTestGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Thread Stepper")
-        self.root.geometry("800x800")
+        self.root.geometry("800x1000")
         
         self.process = None
         self.is_running = False
