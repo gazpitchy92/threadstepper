@@ -1,11 +1,8 @@
-# ThreadStepper
+# Thread Stepper
 
 A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
-
-![running](https://iili.io/fUTdO21.png)
-![errors](https://iili.io/fUT27wJ.png)
 
 ## Latest Updates - Version 2.0
 
@@ -15,6 +12,11 @@ Designed specifically for testing undervolting and boost stability, where conven
 - Improved CPU topology testing.
 - Improved settings and install.sh script.
 - Improved testing methods for faster error detection.
+
+## Screenshots
+
+![running](https://iili.io/fUTdO21.png)
+![errors](https://iili.io/fUT27wJ.png)
 
 ## Methodology
 
