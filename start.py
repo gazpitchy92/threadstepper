@@ -23,6 +23,11 @@ class StressTestGUI:
         self.error_status = False
         self.error_log_visible = False
         
+        # Timer tracking
+        self.timer_running = False
+        self.timer_seconds = 0
+        self.timer_thread = None
+        
         # Setup UI
         self.setup_ui()
         
@@ -45,14 +50,23 @@ class StressTestGUI:
         self.root.rowconfigure(0, weight=1)
         main_container.columnconfigure(0, weight=1)
         main_container.columnconfigure(1, weight=1)
-        main_container.rowconfigure(0, weight=1)
-        main_container.rowconfigure(1, weight=0)
-        main_container.rowconfigure(2, weight=0)  # Error log panel row
-        main_container.rowconfigure(3, weight=1)
+        main_container.rowconfigure(0, weight=0)  # Install Dependencies row
+        main_container.rowconfigure(1, weight=1)  # Settings row
+        main_container.rowconfigure(2, weight=0)  # Middle section row
+        main_container.rowconfigure(3, weight=0)  # Error log panel row
+        main_container.rowconfigure(4, weight=1)  # Output row
         
-        # Top Section: Settings File Editor
+        # Top Section: Install Dependencies Button
+        install_frame = ttk.Frame(main_container)
+        install_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
+        
+        ttk.Button(install_frame, text="📦 Install Dependencies", 
+                  command=self.install_dependencies,
+                  style="Install.TButton").pack(side=tk.LEFT, padx=2)
+        
+        # Settings File Editor
         settings_frame = ttk.LabelFrame(main_container, text="Settings File Editor (./settings)", padding="10")
-        settings_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
+        settings_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         settings_frame.columnconfigure(0, weight=1)
         settings_frame.rowconfigure(0, weight=1)
         
@@ -69,7 +83,7 @@ class StressTestGUI:
         
         # Middle Section: Status Indicators
         middle_frame = ttk.Frame(main_container)
-        middle_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
+        middle_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
         middle_frame.columnconfigure(0, weight=1)
         middle_frame.columnconfigure(1, weight=1)
         
@@ -132,7 +146,7 @@ class StressTestGUI:
         
         # Collapsible Error Log Section
         self.error_log_container = ttk.LabelFrame(main_container, text="Error Log Details", padding="5")
-        self.error_log_container.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=(0, 5))
+        self.error_log_container.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=(0, 5))
         self.error_log_container.grid_remove()  # Hidden by default
         
         # Error log text area
@@ -155,7 +169,7 @@ class StressTestGUI:
         
         # Bottom Section: Output and Controls
         output_frame = ttk.LabelFrame(main_container, text="Stress Test Output", padding="10")
-        output_frame.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=(0, 5))
+        output_frame.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=(0, 5))
         output_frame.columnconfigure(0, weight=1)
         output_frame.rowconfigure(0, weight=1)
         
@@ -165,12 +179,20 @@ class StressTestGUI:
         
         # Control buttons
         control_frame = ttk.Frame(main_container)
-        control_frame.grid(row=4, column=0, columnspan=2, sticky=tk.E, pady=(0, 10))
+        control_frame.grid(row=5, column=0, columnspan=2, sticky=tk.E, pady=(0, 10))
         
-        # Add Install Dependencies button first
-        ttk.Button(control_frame, text="📦 Install Dependencies", 
-                  command=self.install_dependencies,
-                  style="Install.TButton").pack(side=tk.LEFT, padx=2)
+        # Timer label
+        self.timer_label = tk.Label(
+            control_frame,
+            text="00:00:00",
+            font=('Courier', 14, 'bold'),
+            fg='#28a745',
+            bg='#f0f0f0',
+            relief=tk.SUNKEN,
+            padx=10,
+            pady=5
+        )
+        self.timer_label.pack(side=tk.LEFT, padx=(0, 10))
         
         self.start_button = ttk.Button(control_frame, text="▶ Start Thread Stepper", 
                                       command=self.start_stress_test, 
@@ -187,7 +209,7 @@ class StressTestGUI:
         
         # Status bar
         self.status_bar = ttk.Label(main_container, text="Ready", relief=tk.SUNKEN)
-        self.status_bar.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(5, 0))
+        self.status_bar.grid(row=6, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(5, 0))
         
         # Configure styles
         self.setup_styles()
@@ -202,6 +224,38 @@ class StressTestGUI:
         self.output_text.tag_config("success", foreground="green")
         self.output_text.tag_config("warning", foreground="orange")
         self.output_text.tag_config("info", foreground="blue")
+
+    def start_timer(self):
+        """Start the timer"""
+        self.timer_seconds = 0
+        self.timer_running = True
+        self.timer_label.config(fg='#28a745')  # Green
+        if self.timer_thread is None or not self.timer_thread.is_alive():
+            self.timer_thread = threading.Thread(target=self.update_timer, daemon=True)
+            self.timer_thread.start()
+
+    def stop_timer(self):
+        """Stop the timer and turn it red"""
+        self.timer_running = False
+        self.timer_label.config(fg='#dc3545')  # Red
+
+    def reset_timer(self):
+        """Reset the timer to 00:00:00"""
+        self.timer_running = False
+        self.timer_seconds = 0
+        self.root.after(0, lambda: self.timer_label.config(text="00:00:00", fg='#28a745'))
+
+    def update_timer(self):
+        """Update the timer display"""
+        while True:
+            if self.timer_running:
+                hours = self.timer_seconds // 3600
+                minutes = (self.timer_seconds % 3600) // 60
+                seconds = self.timer_seconds % 60
+                time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+                self.root.after(0, lambda t=time_str: self.timer_label.config(text=t))
+                self.timer_seconds += 1
+            time.sleep(1)
 
     def install_dependencies(self):
         """Open install.sh in a new terminal window"""
@@ -274,9 +328,6 @@ class StressTestGUI:
             self.log_message(error_msg, "error")
             messagebox.showerror("Error", error_msg)
 
-    # [ALL THE REST OF THE METHODS REMAIN EXACTLY THE SAME AS YOUR PROVIDED CODE]
-    # I'll keep them here for completeness, but they're identical to what you provided
-    
     def start_monitors(self):
         """Start background threads for monitoring files"""
         # Monitor error status
@@ -287,6 +338,17 @@ class StressTestGUI:
         
         # Process log queue
         threading.Thread(target=self.process_log_queue, daemon=True).start()
+        
+        # Monitor process status
+        threading.Thread(target=self.monitor_process_status, daemon=True).start()
+
+    def monitor_process_status(self):
+        """Monitor if the process is still running and stop timer if it's not"""
+        while True:
+            if self.is_running and self.process is not None:
+                if self.process.poll() is not None:  # Process has terminated
+                    self.root.after(0, self.stop_timer)
+            time.sleep(0.5)
 
     def update_settings_content(self):
         """Load settings content"""
@@ -551,9 +613,14 @@ class StressTestGUI:
         # Clear previous output
         self.clear_output()
         
+        # Reset and start timer
+        self.reset_timer()
+        self.start_timer()
+        
         # Check if script exists
         if not os.path.exists("./threadstepper"):
             self.log_message("Error: ./threadstepper not found!", "error")
+            self.stop_timer()
             return
         
         # Update UI state
@@ -607,6 +674,7 @@ class StressTestGUI:
         self.stop_button.config(state=tk.DISABLED)
         self.status_bar.config(text="Stress test stopped")
         self.log_message(f"Stress test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
+        self.stop_timer()
 
     def stop_stress_test(self):
         """Stop the running stress test"""
@@ -614,6 +682,7 @@ class StressTestGUI:
             self.process.terminate()
             self.log_message("Stopping stress test...", "warning")
             self.status_bar.config(text="Stopping stress test...")
+            self.stop_timer()
 
     def process_log_queue(self):
         """Process messages from the log queue"""
@@ -718,8 +787,9 @@ class StressTestGUI:
         self.output_text.update_idletasks()
 
     def clear_output(self):
-        """Clear the output text area"""
+        """Clear the output text area and reset timer"""
         self.output_text.delete(1.0, tk.END)
+        self.reset_timer()
 
     def export_log(self):
         """Export the output log to a file"""
