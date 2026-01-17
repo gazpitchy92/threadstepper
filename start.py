@@ -214,7 +214,7 @@ class StressTestGUI:
         ttk.Button(clock_btn_frame, text="🔁 Refresh", command=self.update_clock_speed).pack(side=tk.RIGHT, padx=2)
 
         
-        self.error_log_container = ttk.LabelFrame(main_container, text="✎ Error Logs Details", padding="5")
+        self.error_log_container = ttk.LabelFrame(main_container, text="✎ Error Logs", padding="5")
         self.error_log_container.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=(0, 5))
         self.error_log_container.grid_remove()
         
