@@ -496,7 +496,7 @@ class StressTestGUI:
 
             if self.error_status:
                 self.error_indicator.config(
-                    text="ERRORS DETECTED 😟",
+                    text="ERRORS DETECTED 😤", 
                     bg='#f8d7da',
                     fg='#721c24'
                 )
