@@ -14,49 +14,40 @@ class StressTestGUI:
         self.root.title("Thread Stepper")
         self.root.geometry("800x800")
         
-        # Process tracking
         self.process = None
         self.is_running = False
         self.log_queue = queue.Queue()
         
-        # Error tracking
         self.error_status = False
         self.error_log_visible = False
         
-        # Timer tracking
         self.timer_running = False
         self.timer_seconds = 0
         self.timer_thread = None
         
-        # Setup UI
         self.setup_ui()
         
-        # Start monitoring threads
         self.start_monitors()
         
-        # Check existing files
         self.update_settings_content()
         self.update_error_status()
         self.update_error_log()
         self.update_clock_speed()
 
     def setup_ui(self):
-        # Create main container with padding
         main_container = ttk.Frame(self.root, padding="10")
         main_container.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
-        # Configure grid weights
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         main_container.columnconfigure(0, weight=1)
         main_container.columnconfigure(1, weight=1)
-        main_container.rowconfigure(0, weight=0)  # Install Dependencies row
-        main_container.rowconfigure(1, weight=1)  # Settings row
-        main_container.rowconfigure(2, weight=0)  # Middle section row
-        main_container.rowconfigure(3, weight=0)  # Error log panel row
-        main_container.rowconfigure(4, weight=1)  # Output row
+        main_container.rowconfigure(0, weight=0)  
+        main_container.rowconfigure(1, weight=1) 
+        main_container.rowconfigure(2, weight=0)
+        main_container.rowconfigure(3, weight=0)  
+        main_container.rowconfigure(4, weight=1) 
         
-        # Top Section: Install Dependencies Button
         install_frame = ttk.Frame(main_container)
         install_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
         
@@ -64,34 +55,28 @@ class StressTestGUI:
                   command=self.install_dependencies,
                   style="Install.TButton").pack(side=tk.LEFT, padx=2)
         
-        # Settings File Editor
         settings_frame = ttk.LabelFrame(main_container, text="Settings File Editor (./settings)", padding="10")
         settings_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         settings_frame.columnconfigure(0, weight=1)
         settings_frame.rowconfigure(0, weight=1)
         
-        # Settings text area with scrollbar
         self.settings_text = scrolledtext.ScrolledText(settings_frame, width=60, height=15, wrap=tk.NONE, font=('Consolas', 10))
         self.settings_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         
-        # Settings buttons
         settings_btn_frame = ttk.Frame(settings_frame)
         settings_btn_frame.grid(row=1, column=0, sticky=tk.E, pady=(5, 0))
         
         ttk.Button(settings_btn_frame, text="Save Settings", command=self.save_settings).pack(side=tk.LEFT, padx=2)
         ttk.Button(settings_btn_frame, text="Reload", command=self.update_settings_content).pack(side=tk.LEFT, padx=2)
         
-        # Middle Section: Status Indicators
         middle_frame = ttk.Frame(main_container)
         middle_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
         middle_frame.columnconfigure(0, weight=1)
         middle_frame.columnconfigure(1, weight=1)
         
-        # Left: Error Status Indicator
         error_status_frame = ttk.LabelFrame(middle_frame, text="Error Status", padding="10")
         error_status_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
         
-        # Error status display with large indicator
         self.error_indicator_frame = ttk.Frame(error_status_frame)
         self.error_indicator_frame.pack(fill=tk.BOTH, expand=True)
         
@@ -107,7 +92,6 @@ class StressTestGUI:
         )
         self.error_indicator.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
-        # Error status buttons
         error_btn_frame = ttk.Frame(error_status_frame)
         error_btn_frame.pack(fill=tk.X, pady=(5, 0))
         
@@ -120,11 +104,9 @@ class StressTestGUI:
         
         ttk.Button(error_btn_frame, text="Refresh Status", command=self.update_error_status).pack(side=tk.LEFT, padx=2)
         
-        # Right: CPU Clock Speed
-        clock_frame = ttk.LabelFrame(middle_frame, text="Highest Recorded CPU Clock Speed", padding="10")
+        clock_frame = ttk.LabelFrame(middle_frame, text="Highest CPU Clock Speed (Ghz)", padding="10")
         clock_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
         
-        # Clock speed display
         clock_display_frame = ttk.Frame(clock_frame)
         clock_display_frame.pack(fill=tk.BOTH, expand=True)
         
@@ -143,13 +125,12 @@ class StressTestGUI:
         clock_btn_frame = ttk.Frame(clock_frame)
         clock_btn_frame.pack(fill=tk.X, pady=(5, 0))
         ttk.Button(clock_btn_frame, text="Refresh", command=self.update_clock_speed).pack(side=tk.LEFT, padx=2)
+        ttk.Button(clock_btn_frame, text="Reset", command=self.reset_clock_speed).pack(side=tk.LEFT, padx=2)
         
-        # Collapsible Error Log Section
         self.error_log_container = ttk.LabelFrame(main_container, text="Error Log Details", padding="5")
         self.error_log_container.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=(0, 5))
-        self.error_log_container.grid_remove()  # Hidden by default
+        self.error_log_container.grid_remove()
         
-        # Error log text area
         self.error_text = scrolledtext.ScrolledText(
             self.error_log_container, 
             width=80, 
@@ -161,27 +142,22 @@ class StressTestGUI:
         self.error_log_container.columnconfigure(0, weight=1)
         self.error_log_container.rowconfigure(0, weight=1)
         
-        # Error log buttons
         error_log_btn_frame = ttk.Frame(self.error_log_container)
         error_log_btn_frame.grid(row=1, column=0, sticky=tk.E, pady=(0, 5))
         ttk.Button(error_log_btn_frame, text="Clear Log", command=self.clear_error_log).pack(side=tk.LEFT, padx=2)
         ttk.Button(error_log_btn_frame, text="Refresh", command=self.update_error_log).pack(side=tk.LEFT, padx=2)
         
-        # Bottom Section: Output and Controls
         output_frame = ttk.LabelFrame(main_container, text="Stress Test Output", padding="10")
         output_frame.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=(0, 5))
         output_frame.columnconfigure(0, weight=1)
         output_frame.rowconfigure(0, weight=1)
         
-        # Output text area
         self.output_text = scrolledtext.ScrolledText(output_frame, width=80, height=15, wrap=tk.WORD, font=('Consolas', 10))
         self.output_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         
-        # Control buttons
         control_frame = ttk.Frame(main_container)
         control_frame.grid(row=5, column=0, columnspan=2, sticky=tk.E, pady=(0, 10))
         
-        # Timer label
         self.timer_label = tk.Label(
             control_frame,
             text="00:00:00",
@@ -193,33 +169,25 @@ class StressTestGUI:
             pady=5
         )
         self.timer_label.pack(side=tk.LEFT, padx=(0, 10))
-        
+
         self.start_button = ttk.Button(control_frame, text="▶ Start Thread Stepper", 
                                       command=self.start_stress_test, 
                                       style="Start.TButton")
         self.start_button.pack(side=tk.LEFT, padx=2)
-        
         self.stop_button = ttk.Button(control_frame, text="■ Stop", 
                                      command=self.stop_stress_test, 
                                      state=tk.DISABLED)
         self.stop_button.pack(side=tk.LEFT, padx=2)
-        
         ttk.Button(control_frame, text="Clear Output", command=self.clear_output).pack(side=tk.LEFT, padx=2)
         ttk.Button(control_frame, text="Export Log...", command=self.export_log).pack(side=tk.LEFT, padx=2)
-        
-        # Status bar
         self.status_bar = ttk.Label(main_container, text="Ready", relief=tk.SUNKEN)
         self.status_bar.grid(row=6, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(5, 0))
-        
-        # Configure styles
         self.setup_styles()
 
     def setup_styles(self):
         style = ttk.Style()
         style.configure("Start.TButton", foreground="green", font=('Arial', 10, 'bold'))
         style.configure("Install.TButton", foreground="blue", font=('Arial', 10, 'bold'))
-        
-        # Configure tags for text highlighting
         self.output_text.tag_config("error", foreground="red")
         self.output_text.tag_config("success", foreground="green")
         self.output_text.tag_config("warning", foreground="orange")
@@ -229,7 +197,7 @@ class StressTestGUI:
         """Start the timer"""
         self.timer_seconds = 0
         self.timer_running = True
-        self.timer_label.config(fg='#28a745')  # Green
+        self.timer_label.config(fg='#28a745')  
         if self.timer_thread is None or not self.timer_thread.is_alive():
             self.timer_thread = threading.Thread(target=self.update_timer, daemon=True)
             self.timer_thread.start()
@@ -237,7 +205,7 @@ class StressTestGUI:
     def stop_timer(self):
         """Stop the timer and turn it red"""
         self.timer_running = False
-        self.timer_label.config(fg='#dc3545')  # Red
+        self.timer_label.config(fg='#dc3545') 
 
     def reset_timer(self):
         """Reset the timer to 00:00:00"""
@@ -268,59 +236,34 @@ class StressTestGUI:
                 f"Expected at: {install_script}")
             return
         
-        # Make sure install.sh is executable
         try:
             os.chmod(install_script, 0o755)
         except:
-            pass  # Ignore permission errors
+            pass  
         
-        # Determine terminal command based on platform
         system = platform.system()
         
         try:
-            if system == "Linux":
-                # Try various Linux terminals
-                terminals = [
-                    ["x-terminal-emulator", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"],
-                    ["gnome-terminal", "--", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
-                    ["konsole", "-e", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
-                    ["xterm", "-e", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
-                    ["terminator", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"],
-                    ["xfce4-terminal", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"]
-                ]
-                
-                for terminal_cmd in terminals:
-                    try:
-                        subprocess.Popen(terminal_cmd, start_new_session=True)
-                        self.log_message(f"Opening terminal to run install.sh...", "info")
-                        self.log_message("Follow installation steps in the terminal window.", "info")
-                        return
-                    except:
-                        continue
-                
-                # If no terminal worked, try with bash directly
-                subprocess.Popen(["bash", install_script], start_new_session=True)
-                self.log_message("Running install.sh in background...", "info")
-                
-            elif system == "Darwin":  # macOS
-                apple_script = f'''
-                tell application "Terminal"
-                    do script "cd '{os.getcwd()}' && ./install.sh"
-                    activate
-                end tell
-                '''
-                subprocess.Popen(["osascript", "-e", apple_script])
-                self.log_message("Opening Terminal to run install.sh...", "info")
-                
-            elif system == "Windows":
-                # Windows - use PowerShell or CMD
-                try:
-                    subprocess.Popen(["powershell", "-Command", f"Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd \"{os.getcwd()}\"; .\\install.sh'"], 
-                                   shell=True)
-                except:
-                    subprocess.Popen(["cmd", "/k", install_script], shell=True)
-                self.log_message("Opening PowerShell to run install.sh...", "info")
+            terminals = [
+                ["x-terminal-emulator", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"],
+                ["gnome-terminal", "--", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
+                ["konsole", "-e", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
+                ["xterm", "-e", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
+                ["terminator", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"],
+                ["xfce4-terminal", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"]
+            ]
             
+            for terminal_cmd in terminals:
+                try:
+                    subprocess.Popen(terminal_cmd, start_new_session=True)
+                    self.log_message(f"Opening terminal to run install.sh...", "info")
+                    self.log_message("Follow installation steps in the terminal window.", "info")
+                    return
+                except:
+                    continue
+            
+            subprocess.Popen(["bash", install_script], start_new_session=True)
+            self.log_message("Running install.sh in background...", "info")
             self.status_bar.config(text="Running install.sh in new terminal...")
             
         except Exception as e:
@@ -330,23 +273,16 @@ class StressTestGUI:
 
     def start_monitors(self):
         """Start background threads for monitoring files"""
-        # Monitor error status
         threading.Thread(target=self.monitor_error_status, daemon=True).start()
-        
-        # Monitor clock speed
         threading.Thread(target=self.monitor_clock_speed, daemon=True).start()
-        
-        # Process log queue
         threading.Thread(target=self.process_log_queue, daemon=True).start()
-        
-        # Monitor process status
         threading.Thread(target=self.monitor_process_status, daemon=True).start()
 
     def monitor_process_status(self):
         """Monitor if the process is still running and stop timer if it's not"""
         while True:
             if self.is_running and self.process is not None:
-                if self.process.poll() is not None:  # Process has terminated
+                if self.process.poll() is not None: 
                     self.root.after(0, self.stop_timer)
             time.sleep(0.5)
 
@@ -386,7 +322,6 @@ class StressTestGUI:
                     
                 self.error_status = (first_line.upper() == "TRUE")
                 
-                # Update indicator
                 if self.error_status:
                     self.error_indicator.config(
                         text="ERRORS DETECTED!",
@@ -395,7 +330,6 @@ class StressTestGUI:
                     )
                     self.toggle_error_btn.config(text="Hide Error Log")
                     
-                    # Auto-show error log if errors detected
                     if not self.error_log_visible:
                         self.show_error_log()
                 else:
@@ -406,7 +340,6 @@ class StressTestGUI:
                     )
                     self.toggle_error_btn.config(text="Show Error Log")
                     
-                    # Auto-hide error log if no errors
                     if self.error_log_visible:
                         self.hide_error_log()
                         
@@ -451,7 +384,6 @@ class StressTestGUI:
                 with open("./logs/errors.log", 'r') as f:
                     lines = f.readlines()
                     
-                    # Skip first line (True/False status line)
                     if len(lines) > 1:
                         content = ''.join(lines[1:])
                     else:
@@ -460,10 +392,8 @@ class StressTestGUI:
                     self.error_text.delete(1.0, tk.END)
                     self.error_text.insert(1.0, content)
                     
-                    # Apply color coding
                     self.highlight_error_log()
                     
-                    # Scroll to end
                     self.error_text.see(tk.END)
             else:
                 self.error_text.delete(1.0, tk.END)
@@ -477,16 +407,13 @@ class StressTestGUI:
         """Apply syntax highlighting to error log"""
         content = self.error_text.get(1.0, tk.END)
         
-        # Clear existing tags
         for tag in ["error_highlight", "warning_highlight", "info_highlight"]:
             self.error_text.tag_remove(tag, 1.0, tk.END)
         
-        # Configure tags
         self.error_text.tag_config("error_highlight", background="#f8d7da", foreground="#721c24")
         self.error_text.tag_config("warning_highlight", background="#fff3cd", foreground="#856404")
         self.error_text.tag_config("info_highlight", background="#d1ecf1", foreground="#0c5460")
         
-        # Simple highlighting based on keywords
         lines = content.split('\n')
         line_num = 1
         for line in lines:
@@ -520,7 +447,6 @@ class StressTestGUI:
         self.error_log_visible = True
         self.toggle_error_btn.config(text="Hide Error Log")
         self.update_error_log()
-        # Adjust row weights to accommodate the new panel
         self.root.update()
 
     def hide_error_log(self):
@@ -528,7 +454,6 @@ class StressTestGUI:
         self.error_log_container.grid_remove()
         self.error_log_visible = False
         self.toggle_error_btn.config(text="Show Error Log")
-        # Reset row weights
         self.root.update()
 
     def update_clock_speed(self):
@@ -538,36 +463,27 @@ class StressTestGUI:
                 with open("./logs/clock.log", 'r') as f:
                     clock_speed = f.read().strip()
                     if clock_speed:
-                        # Format display text
                         display_text = clock_speed
                         self.clock_label.config(text=display_text)
-                        
-                        # Change color based on value
-                        try:
-                            # Extract numeric value
-                            import re
-                            numbers = re.findall(r"[-+]?\d*\.\d+|\d+", clock_speed)
-                            if numbers:
-                                value = float(numbers[0])
-                                if "GHz" in clock_speed.upper():
-                                    if value > 4.0:
-                                        self.clock_label.config(fg='#dc3545', bg='#f8d7da')  # Red
-                                    elif value > 3.0:
-                                        self.clock_label.config(fg='#fd7e14', bg='#fff3cd')  # Orange
-                                    else:
-                                        self.clock_label.config(fg='#28a745', bg='#d4edda')  # Green
-                                else:
-                                    # Assume MHz or other unit
-                                    self.clock_label.config(fg='#17a2b8', bg='#e8f4f8')  # Teal
-                        except:
-                            # If parsing fails, use default color
-                            self.clock_label.config(fg='#17a2b8', bg='#e8f4f8')
+                        self.clock_label.config(fg='#17a2b8', bg='#e8f4f8')
                     else:
                         self.clock_label.config(text="No data", fg='#6c757d', bg='#f8f9fa')
             else:
                 self.clock_label.config(text="No clock.log file", fg='#6c757d', bg='#f8f9fa')
         except Exception as e:
             self.clock_label.config(text="Error reading", fg='#721c24', bg='#f8d7da')
+
+    def reset_clock_speed(self):
+        """Reset the clock speed to 0"""
+        try:
+            with open("./logs/clock.log", 'w') as f:
+                f.write("0")
+            self.update_clock_speed()
+            self.log_message("Clock speed reset to 0", "info")
+            self.status_bar.config(text="Clock speed reset to 0")
+        except Exception as e:
+            self.log_message(f"Error resetting clock speed: {str(e)}", "error")
+            messagebox.showerror("Error", f"Failed to reset clock speed: {str(e)}")
 
     def monitor_clock_speed(self):
         """Monitor clock speed file for changes"""
@@ -590,12 +506,10 @@ class StressTestGUI:
                 with open("./logs/errors.log", 'r') as f:
                     lines = f.readlines()
                 
-                # Keep only the first line (True/False status)
                 if lines:
                     with open("./logs/errors.log", 'w') as f:
                         f.write(lines[0])
                 else:
-                    # If file is empty, write default False status
                     with open("./logs/errors.log", 'w') as f:
                         f.write("False\n")
                 
@@ -610,25 +524,19 @@ class StressTestGUI:
         if self.is_running:
             return
             
-        # Clear previous output
         self.clear_output()
-        
-        # Reset and start timer
         self.reset_timer()
         self.start_timer()
         
-        # Check if script exists
         if not os.path.exists("./threadstepper"):
             self.log_message("Error: ./threadstepper not found!", "error")
             self.stop_timer()
             return
         
-        # Update UI state
         self.is_running = True
         self.start_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
         
-        # Start the process in a separate thread
         self.log_message(f"Starting stress test at {datetime.now().strftime('%H:%M:%S')}", "info")
         self.status_bar.config(text="Stress test running...")
         
@@ -637,10 +545,8 @@ class StressTestGUI:
     def run_stress_test(self):
         """Run the stress test process"""
         try:
-            # Make script executable
             os.chmod("./threadstepper", 0o755)
             
-            # Run the process
             self.process = subprocess.Popen(
                 ["./threadstepper"],
                 stdout=subprocess.PIPE,
@@ -650,15 +556,12 @@ class StressTestGUI:
                 universal_newlines=True
             )
             
-            # Read output in real-time
             for line in self.process.stdout:
                 if line:
                     self.log_queue.put(line.strip())
             
-            # Get return code
             return_code = self.process.wait()
             
-            # Process completed
             self.log_queue.put(f"\nProcess completed with return code: {return_code}")
             
         except Exception as e:
@@ -700,7 +603,6 @@ class StressTestGUI:
         timestamp = datetime.now().strftime("[%H:%M:%S] ")
         message = re.sub(r'\x1b\(B|\033\(B', '', message)
         
-        # ANSI color code mapping to tkinter tags
         ansi_color_map = {
             '30': 'black', '31': 'red', '32': 'green', '33': 'yellow',
             '34': 'blue', '35': 'magenta', '36': 'cyan', '37': 'white',
@@ -709,11 +611,9 @@ class StressTestGUI:
             '96': 'bright_cyan', '97': 'bright_white'
         }
         
-        # Configure additional color tags if not already done
         for code, color_name in ansi_color_map.items():
             tag_name = f"ansi_{color_name}"
             if tag_name not in self.output_text.tag_names():
-                # Map to actual colors
                 color_hex = {
                     'black': '#000000', 'red': '#cd0000', 'green': '#00cd00', 'yellow': '#cdcd00',
                     'blue': '#0000ee', 'magenta': '#cd00cd', 'cyan': '#00cdcd', 'white': '#e5e5e5',
@@ -723,46 +623,31 @@ class StressTestGUI:
                 }.get(color_name, '#000000')
                 self.output_text.tag_config(tag_name, foreground=color_hex)
         
-        # Insert timestamp with default tag
         self.output_text.insert(tk.END, timestamp, tag)
         
-        # Parse ANSI codes and insert colored text
-        # Pattern matches: \x1b[CODEm or \033[CODEm or [CODEm
         ansi_pattern = r'\x1b\[([0-9;]+)m|\033\[([0-9;]+)m|\[([0-9;]+)m'
-        
-        # Also match reset sequences like (B[m
         reset_pattern = r'\(B\[m|\[m|\x1b\[m|\033\[m'
         
         current_tag = tag
         last_pos = 0
         
-        # Combine message parsing
         full_message = message
-        
-        # First, remove reset sequences and replace with a marker
         full_message = re.sub(reset_pattern, '\x00RESET\x00', full_message)
         
-        # Find all ANSI codes
         for match in re.finditer(ansi_pattern, full_message):
-            # Insert text before this code
             text_before = full_message[last_pos:match.start()]
             if text_before:
-                # Handle reset markers
                 parts = text_before.split('\x00RESET\x00')
                 for i, part in enumerate(parts):
                     if part:
                         self.output_text.insert(tk.END, part, current_tag)
-                    if i < len(parts) - 1:  # Reset occurred
+                    if i < len(parts) - 1:
                         current_tag = tag
             
-            # Get the color code
             code = match.group(1) or match.group(2) or match.group(3)
-            
-            # Handle color codes
             if code == '0' or code == '':
-                current_tag = tag  # Reset to default
+                current_tag = tag 
             else:
-                # Extract first code if semicolon-separated (e.g., "1;32" -> "32")
                 codes = code.split(';')
                 for c in codes:
                     if c in ansi_color_map:
@@ -771,7 +656,6 @@ class StressTestGUI:
             
             last_pos = match.end()
         
-        # Insert remaining text
         remaining = full_message[last_pos:]
         if remaining:
             parts = remaining.split('\x00RESET\x00')
@@ -781,7 +665,6 @@ class StressTestGUI:
                 if i < len(parts) - 1:
                     current_tag = tag
         
-        # Add newline
         self.output_text.insert(tk.END, "\n", tag)
         self.output_text.see(tk.END)
         self.output_text.update_idletasks()
@@ -807,10 +690,8 @@ class StressTestGUI:
             self.log_message(f"Error exporting log: {str(e)}", "error")
 
 def main():
-    # Create directories if they don't exist
     os.makedirs("./logs", exist_ok=True)
     
-    # Create sample files if they don't exist
     if not os.path.exists("./settings"):
         with open("./settings", 'w') as f:
             f.write("#!/bin/bash\n\n# Stress Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n")
@@ -822,22 +703,6 @@ def main():
     if not os.path.exists("./logs/errors.log"):
         with open("./logs/errors.log", 'w') as f:
             f.write("False\n")
-    
-    # Create a dummy threadstepper script if it doesn't exist
-    if not os.path.exists("./threadstepper"):
-        with open("./threadstepper", 'w') as f:
-            f.write("""#!/bin/bash
-echo "Starting stress test..."
-echo "Using configuration:"
-cat ./settings
-echo ""
-for i in {1..10}; do
-    echo "Stress test iteration $i/10"
-    echo "$((i * 10))% complete"
-    sleep 1
-done
-echo "Stress test complete!"
-""")
     
     # Start the GUI
     root = tk.Tk()
