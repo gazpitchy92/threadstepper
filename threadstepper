@@ -17,7 +17,7 @@ source ./functions/tests/browser.sh
 
 # configure options
 loops=2
-type="threads"
+type="cores"
 second_half=false
 first_half=false
 browsers=8
