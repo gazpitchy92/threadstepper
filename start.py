@@ -700,15 +700,9 @@ class StressTestGUI:
         """Clear the error log file (preserve status line)"""
         try:
             if os.path.exists("./logs/errors.log"):
-                with open("./logs/errors.log", 'r') as f:
-                    lines = f.readlines()
                 
-                if lines:
-                    with open("./logs/errors.log", 'w') as f:
-                        f.write(lines[0])
-                else:
-                    with open("./logs/errors.log", 'w') as f:
-                        f.write("False\n")
+                with open("./logs/errors.log", "w") as f:
+                    f.write("false")
                 
                 self.update_error_status()
                 self.update_error_log()
