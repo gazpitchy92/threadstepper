@@ -4,6 +4,13 @@ ts_version="1.3"
 settings_dir=$(pwd)
 output_log_file="$settings_dir/logs/output.log"
 
+# test settings
+loops=1
+type="cores"
+second_half=false
+first_half=false
+browsers=6
+
 # stress test types from stress-ng
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")
@@ -11,14 +18,13 @@ heavy=("ackermann" "factorial")
 rapid="bitops"
 
 # stress test times
-# Defaults (with browsers): 336s (per core or thread) - (45m for 8 cores) - (90m for 16 threads)
-light_time="5s" # 32s - (64s browsers)
-medium_time="15s" # 72s - (144s browsers)
-heavy_time="30s" # 63s - (126s browsers)
-all_core_time=15 # 120s
-rapid_tests=5 # 80s (8 cores) - 160s (16 cores)
-rapid_time="2s"
-rest_time=3
+light_time="5s" 
+medium_time="10s" 
+heavy_time="10s" 
+all_core_time=10
+rapid_tests=5
+rapid_time="1s"
+rest_time=2
 
 # browser config
 chromium_version="144.0.7559.59-1"
