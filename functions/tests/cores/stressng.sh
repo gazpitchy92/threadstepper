@@ -80,33 +80,33 @@ stressNgCore() {
 
     # Test C8+C9, C10+C1, etc. (adjacent core pairs + 1)
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
-        echo "$(tput setaf 4)Testing core $core_next + ($core_last) with stress-ng $(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)Testing core $core_second + ($core_last) with stress-ng $(tput sgr0)" | tee -a "$output_log_file"
         for method in "${light[@]}"; do
-            if [[ ",$core_blacklist," == *",$core_next,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
-                echo "$(tput setaf 0)Skipping test for core $core_next + ($core_last) $(tput sgr0)" | tee -a "$output_log_file"
+            if [[ ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
+                echo "$(tput setaf 0)Skipping test for core $core_second + ($core_last) $(tput sgr0)" | tee -a "$output_log_file"
             else
-                echo "$(tput setaf 2)Testing with method $method on core $core_next + ($core_last) for $light_time (light) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core_next,$core_last" --timeout "$light_time" --cpu-method "$method"
+                echo "$(tput setaf 2)Testing with method $method on core $core_second + ($core_last) for $light_time (light) $(tput sgr0)" | tee -a "$output_log_file"
+                stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$light_time" --cpu-method "$method"
                 check_errors
                 sleep "$rest_time"
             fi
         done
         for method in "${mixed[@]}"; do
-            if [[ ",$core_blacklist," == *",$core_next,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
-                echo "$(tput setaf 0)Skipping test for core $core_next + ($core_last) $(tput sgr0)" | tee -a "$output_log_file"
+            if [[ ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
+                echo "$(tput setaf 0)Skipping test for core $core_second + ($core_last) $(tput sgr0)" | tee -a "$output_log_file"
             else
-                echo "$(tput setaf 2)Testing with method $method on core $core_next + ($core_last) for $medium_time (medium) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core_next,$core_last" --timeout "$medium_time" --cpu-method "$method"
+                echo "$(tput setaf 2)Testing with method $method on core $core_second + ($core_last) for $medium_time (medium) $(tput sgr0)" | tee -a "$output_log_file"
+                stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$medium_time" --cpu-method "$method"
                 check_errors
                 sleep "$rest_time"
             fi
         done
         for method in "${heavy[@]}"; do
-            if [[ ",$core_blacklist," == *",$core_next,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
-                echo "$(tput setaf 0)Skipping test for core $core_next + ($core_last)  $(tput sgr0)" | tee -a "$output_log_file"
+            if [[ ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
+                echo "$(tput setaf 0)Skipping test for core $core_second + ($core_last)  $(tput sgr0)" | tee -a "$output_log_file"
             else
-                echo "$(tput setaf 2)Testing with method $method on core $core_next + ($core_last) for $heavy_time (heavy) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core_next,$core_last" --timeout "$heavy_time" --cpu-method "$method"
+                echo "$(tput setaf 2)Testing with method $method on core $core_second + ($core_last) for $heavy_time (heavy) $(tput sgr0)" | tee -a "$output_log_file"
+                stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$heavy_time" --cpu-method "$method"
                 check_errors
                 sleep "$rest_time"
             fi

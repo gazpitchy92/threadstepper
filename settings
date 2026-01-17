@@ -5,14 +5,14 @@ settings_dir=$(pwd)
 output_log_file="$settings_dir/logs/output.log"
 
 # How many times to loop all tests
-loops=1
+loops=5
 
 # cores = Test threads for each physical core
 # threads = Test each logical thread individualls
 type="cores" 
 
 # How many browsers to launch
-browsers=4 
+browsers=4
 
 # Which threads/cores to skip
 core_blacklist="" 
@@ -30,9 +30,9 @@ rapid="bitops"
 # stress test times
 light_time="5s" 
 medium_time="10s" 
-heavy_time="10s" 
-all_core_time=10
-rapid_tests=5
+heavy_time="15s" 
+all_core_time=15
+rapid_tests=10
 rapid_time="1s"
 rest_time=2
 
@@ -48,3 +48,4 @@ chromium_version="144.0.7559.59-1"
 chromium_appimage="ungoogled-chromium-$chromium_version-x86_64.AppImage"
 chromium_domain="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download"
 chromium_flags="--new-window --ozone-platform=x11 --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito"
+

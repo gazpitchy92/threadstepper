@@ -90,7 +90,8 @@ for ((i=1; i<=loops; i++)); do
             ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
             core_second=$((core + physical_cores))
             core_next=$((core + 1))
-            echo "$(tput setaf 3)Starting tests for core $core + ($core_next + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+            core_last=$((core_second + 1))
+            echo "$(tput setaf 3)Starting tests for core $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
             sleep $rest_time
             runTests $core
             ELAPSED=$((SECONDS - START_TIME))

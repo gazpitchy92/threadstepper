@@ -35,12 +35,14 @@ rapidStressNgCore() {
 
         # Test C8+C9, C10+C1, etc. (adjacent core pairs + 1)
         if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
-            if [[ ",$core_blacklist," == *",$core_last,"* || ",$core_blacklist," == *",$core_next,"* ]]; then
-                echo "$(tput setaf 0)Skipping test for core $core_last + ($core_next) $(tput sgr0)" | tee -a "$output_log_file"
-            else
-                echo "$(tput setaf 2)Testing with method $rapid on core $core_last + ($core_next) for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core_last,$core_next" --timeout "$rapid_time" --cpu-method "$rapid"
-                check_errors
+            if [[ $rapid_num_cores != $core_next && $rapid_num_cores != $core_second ]]; then
+                if [[ ",$core_blacklist," == *",$core_last,"* || ",$core_blacklist," == *",$core_second,"* ]]; then
+                    echo "$(tput setaf 0)Skipping test for core $core_second + ($core_last) $(tput sgr0)" | tee -a "$output_log_file"
+                else
+                    echo "$(tput setaf 2)Testing with method $rapid on core $core_next + ($core_last) for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$rapid_time" --cpu-method "$rapid"
+                    check_errors
+                fi
             fi
         fi
 
