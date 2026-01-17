@@ -102,12 +102,12 @@ class StressTestGUI:
         
         self.toggle_error_btn = ttk.Button(
             error_btn_frame, 
-            text="Show Error Log", 
+            text="👇 Show Logs", 
             command=self.toggle_error_log
         )
-        self.toggle_error_btn.pack(side=tk.LEFT, padx=2)
+        self.toggle_error_btn.pack(side=tk.RIGHT, padx=2)
         
-        ttk.Button(error_btn_frame, text="🔁 Refresh", command=self.update_error_status).pack(side=tk.LEFT, padx=2)
+        ttk.Button(error_btn_frame, text="🔁 Refresh", command=self.update_error_status).pack(side=tk.RIGHT, padx=2)
         
         clock_frame = ttk.LabelFrame(middle_frame, text="🚀 Highest CPU Clock (Ghz)", padding="10")
         clock_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
@@ -129,8 +129,8 @@ class StressTestGUI:
         
         clock_btn_frame = ttk.Frame(clock_frame)
         clock_btn_frame.pack(fill=tk.X, pady=(5, 0))
-        ttk.Button(clock_btn_frame, text="❎ Clear", command=self.reset_clock_speed).pack(side=tk.LEFT, padx=2)
-        ttk.Button(clock_btn_frame, text="🔁 Refresh", command=self.update_clock_speed).pack(side=tk.LEFT, padx=2)
+        ttk.Button(clock_btn_frame, text="❎ Clear", command=self.reset_clock_speed).pack(side=tk.RIGHT, padx=2)
+        ttk.Button(clock_btn_frame, text="🔁 Refresh", command=self.update_clock_speed).pack(side=tk.RIGHT, padx=2)
         
         self.error_log_container = ttk.LabelFrame(main_container, text="✎ Error Logs Details", padding="5")
         self.error_log_container.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=(0, 5))
