@@ -1,9 +1,18 @@
-[35m---- Starting loop 1 of 3 (B[m
-[34m-- Running 7z warmup on all cores (B[m
-[32m- Running 7z for 1 seconds (B[m
-[32m- Running 7z for 2 seconds (B[m
-[32m- Running 7z for 3 seconds (B[m
-[32m- Running 7z for 4 seconds (B[m
-[32m- Running 7z for 5 seconds (B[m
-[32m- Running 7z for 6 seconds (B[m
-[32m- Running 7z for 7 seconds (B[m
+[35mStarting loop 1 of 1 (B[m
+[34mRunning 7z warmup on all cores (B[m
+[32mRunning 7z for 1 seconds (B[m
+[35mStopping tests and cleaning up (B[m
+[36mOptions
+[35mLoops: 1 (B[m
+[35mType: cores (B[m
+[35mBrowsers: 4 (B[m
+[35mCore blacklist:  (B[m
+[36mTest Settings
+[35mLight time: 5s (B[m
+[35mMedium time: 10s (B[m
+[35mHeavy time: 10s (B[m
+[35mAll core time: 10s (B[m
+[35mRapid tests: 5 (B[m
+[35mRapid time: 1s (B[m
+[35mRest time: 2s (B[m
+[35mStopping tests and cleaning up (B[m
