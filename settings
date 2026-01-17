@@ -4,13 +4,22 @@ ts_version="2.0"
 settings_dir=$(pwd)
 output_log_file="$settings_dir/logs/output.log"
 
-# test settings
+# How many times to loop all tests
 loops=1
-type="cores"
-second_half=false
-first_half=false
-browsers=4
-core_blacklist=""
+
+# cores = Test threads for each physical core
+# threads = Test each logical thread individualls
+type="cores" 
+
+# How many browsers to launch
+browsers=4 
+
+# Which threads/cores to skip
+core_blacklist="" 
+
+# CPU topology for cores test type
+# both = 0, adjacent = 1, cross = 2
+cpu_topology=0 
 
 # stress test types from stress-ng
 light=("bitops" "pi" "gcd" "sieve")
@@ -27,11 +36,15 @@ rapid_tests=5
 rapid_time="1s"
 rest_time=2
 
+# Only one can be true, false tests full CPU
+# first_half = If true only test the first half of cores
+# second_half = If true only test the second half of cores
+second_half=false 
+first_half=false
+
 # chromium browser test config
 # re-install dependancies if changed
 chromium_version="144.0.7559.59-1"
 chromium_appimage="ungoogled-chromium-$chromium_version-x86_64.AppImage"
 chromium_domain="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download"
 chromium_flags="--new-window --ozone-platform=x11 --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito"
-
-
