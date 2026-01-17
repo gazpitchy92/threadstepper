@@ -1,13 +1,13 @@
 #!/bin/bash
-loops=5
+loops=100
 browsers=2
-light_time=2
-medium_time=2
-heavy_time=2
-all_core_time=2
-rapid_tests=1
+light_time=5
+medium_time=30
+heavy_time=60
+all_core_time=20
+rapid_tests=30
 rapid_time=1
-rest_time=1
+rest_time=5
 core_blacklist=""
 
 # DO NOT EDIT
