@@ -69,7 +69,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
         HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
 
-        echo "$(tput setaf 3)Finished testing core $core + ($core_next + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 3)Finished testing core $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
         check_errors
     done
