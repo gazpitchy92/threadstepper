@@ -40,8 +40,6 @@ loggerErrorCheck() {
       echo "$ERRORS"
       echo "========================================"
     } > "$ERROR_LOG"
-  else
-    echo "false" > "$ERROR_LOG"
   fi
 }
 
