@@ -1,19 +1,17 @@
 # ThreadStepper
 
-A stability and stress tester, with GUI, for testing AMD Curve Optimizer and PBO stability.
+A stability and stress tester, with an easy to use GUI, for AMD Curve Optimizer and PBO.
 
-This tool was developed specifically for testing undervolting, where conventional stress tests often fail to detect instabilities.
+This tool was developed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
 ## Latest Updates - Version 2.0
 
-- Feature: New GUI interface!
-- Feature: Better live error checking
-- Feature: Logging of highest CPU clocks
-- Feature: Improved CPU topology testing
-- Feature: Improved settings and install.sh script
-
-- Bug Fix: all_core_time is now correctly followed correctly
-- Bug Fix: latest ungoogled-chromium setup for improved testing
+- New GUI interface!
+- Better live error checking.
+- Logging of highest CPU clocks.
+- Improved CPU topology testing.
+- Improved settings and install.sh script.
+- Improved testing methods for faster error detection.
 
 ## Requirements
 
