@@ -20,7 +20,7 @@ helpText(){
     echo "--second-half     tests the second half of the cores/threads (skips 7z tests)"
     echo "--help            show this help menu"
     echo ""
-    echo "Additional test settings can be found in settings.sh"
+    echo "Additional test settings can be found in settings"
     echo ""
 }
 

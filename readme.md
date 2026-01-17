@@ -71,7 +71,7 @@ This tool was developed specifically for testing undervolting and Ryzen Curve Op
 
 ## Configuration
 
-Additional test settings can be modified in `settings.sh`. The defaults are suitable for most use cases.
+Additional test settings can be modified in `settings`. The defaults are suitable for most use cases.
 
 ### General
 Used for base configuration

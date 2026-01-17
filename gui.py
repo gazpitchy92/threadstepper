@@ -51,7 +51,7 @@ class StressTestGUI:
         main_container.rowconfigure(3, weight=1)
         
         # Top Section: Settings File Editor
-        settings_frame = ttk.LabelFrame(main_container, text="Settings File Editor (./settings.sh)", padding="10")
+        settings_frame = ttk.LabelFrame(main_container, text="Settings File Editor (./settings)", padding="10")
         settings_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         settings_frame.columnconfigure(0, weight=1)
         settings_frame.rowconfigure(0, weight=1)
@@ -289,26 +289,26 @@ class StressTestGUI:
         threading.Thread(target=self.process_log_queue, daemon=True).start()
 
     def update_settings_content(self):
-        """Load settings.sh content"""
+        """Load settings content"""
         try:
-            if os.path.exists("./settings.sh"):
-                with open("./settings.sh", 'r') as f:
+            if os.path.exists("./settings"):
+                with open("./settings", 'r') as f:
                     content = f.read()
                     self.settings_text.delete(1.0, tk.END)
                     self.settings_text.insert(1.0, content)
                 self.status_bar.config(text="Settings loaded successfully")
             else:
                 self.settings_text.delete(1.0, tk.END)
-                self.settings_text.insert(1.0, "# settings.sh not found\n# Create this file to configure your stress test")
-                self.status_bar.config(text="settings.sh not found - create it to configure your test")
+                self.settings_text.insert(1.0, "# settings not found\n# Create this file to configure your stress test")
+                self.status_bar.config(text="settings not found - create it to configure your test")
         except Exception as e:
             self.log_message(f"Error loading settings: {str(e)}", "error")
 
     def save_settings(self):
-        """Save settings.sh content"""
+        """Save settings content"""
         try:
             content = self.settings_text.get(1.0, tk.END)
-            with open("./settings.sh", 'w') as f:
+            with open("./settings", 'w') as f:
                 f.write(content)
             self.status_bar.config(text="Settings saved successfully")
             self.log_message("Settings saved", "success")
@@ -741,8 +741,8 @@ def main():
     os.makedirs("./logs", exist_ok=True)
     
     # Create sample files if they don't exist
-    if not os.path.exists("./settings.sh"):
-        with open("./settings.sh", 'w') as f:
+    if not os.path.exists("./settings"):
+        with open("./settings", 'w') as f:
             f.write("#!/bin/bash\n\n# Stress Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n")
     
     if not os.path.exists("./logs/clock.log"):
@@ -759,7 +759,7 @@ def main():
             f.write("""#!/bin/bash
 echo "Starting stress test..."
 echo "Using configuration:"
-cat ./settings.sh
+cat ./settings
 echo ""
 for i in {1..10}; do
     echo "Stress test iteration $i/10"

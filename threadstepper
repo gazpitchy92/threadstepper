@@ -4,7 +4,7 @@ clear
 trap cleanup SIGINT SIGTERM
 
 # includes
-source ./settings.sh
+source ./settings
 source ./functions/testing.sh
 source ./functions/general.sh
 source ./functions/errors.sh
