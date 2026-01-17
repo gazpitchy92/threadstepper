@@ -1,8 +1,8 @@
 # ThreadStepper
 
-A stability and stress tester, with an easy to use GUI, for AMD Curve Optimizer and PBO.
+A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
-This tool was developed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
+Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
 ![running](https://iili.io/fUTdO21.png)
 ![errors](https://iili.io/fUT27wJ.png)
@@ -16,39 +16,60 @@ This tool was developed specifically for testing undervolting and boost stabilit
 - Improved settings and install.sh script.
 - Improved testing methods for faster error detection.
 
+## Methodology
+
+### Problem with Traditional Stress Tests
+
+Most stress tests (Prime95, OCCT) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
+
+### How Thread Stepper Works
+
+**Variable Load Patterns**  
+Applies light, medium, and heavy loads in varying durations and rapid transitions. This forces voltage/frequency changes where instability typically occurs.
+
+**Sequential Core Testing**  
+Tests individual cores and thread groups in sequence rather than loading all cores uniformly. Isolates per-core curve optimizer issues.
+
+**Randomized Background Load**  
+Uses 3D WebGL browser tests to generate unpredictable background activity during testing. Mimics real usage patterns where undervolts typically fail.
+
+**Test Patterns**  
+Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
+
 ## Requirements
 
 - stress-ng
 - p7zip
 - python
+- Linux
 
 ## Installation
 
 1. **Clone the repository:**
-   ```bash
+```bash
    git clone https://github.com/gazpitchy92/threadstepper.git
    cd threadstepper
    python start.py
-   ```
+```
 
 2. **Install dependencies:**
-   This can be done through the GUI (top right), or through a terminal using:
-   ```bash
+   Via GUI (top right) or terminal:
+```bash
    chmod +x install.sh
    sudo ./install.sh
-   ```
-   The install script will automatically install stress-ng, p7zip, and download the required ungoogled-chromium AppImage for WebGL tests.
+```
+   Installs stress-ng, p7zip, and downloads ungoogled-chromium AppImage for WebGL tests.
 
-### Test Setup
-The GUI gives you the following settings. All times are in seconds. 
-If you are unsure, leave it as the default. 
+## Test Setup
 
-- Loops: The amount of times Thread Stepper will loop.
-- Light: How long a light test will run. 
-- Medium: How long a medium test will run.
-- Heavy: How long a heavy test will run.
-- Browsers: How many browsers to launch in the test. 
-- All Core: How long to run the all core test.
-- Rapid Time: How long to run each rapid test.
-- Rest: The time to rest between each test.
-- Core Blacklist: An array of cores to not test (1,5,10,14)
+All times in seconds. Default settings work for most users.
+
+- **Loops**: Number of full test cycles
+- **Light**: Duration of light load tests
+- **Medium**: Duration of medium load tests
+- **Heavy**: Duration of heavy load tests
+- **Browsers**: Number of browser instances for background load
+- **All Core**: Duration of all-core stress test
+- **Rapid Time**: Duration of each rapid transition test
+- **Rest**: Pause between tests
+- **Core Blacklist**: Cores to skip (format: 1,5,10,14)
