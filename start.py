@@ -126,8 +126,6 @@ class StressTestGUI:
 
         self.os_label = ttk.Label(system_frame, text=f"OS: {platform.system()} {platform.release()}")
         self.os_label.pack(anchor=tk.W, pady=(0,2))
-        self.python_label = ttk.Label(system_frame, text=f"Python: {platform.python_version()}")
-        self.python_label.pack(anchor=tk.W, pady=(0,2))
 
         try:
             import psutil
