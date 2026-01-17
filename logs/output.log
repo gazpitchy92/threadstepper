@@ -1,5 +1,74 @@
-[35mStarting loop 1 of 1 (B[m
+[35mStarting loop 1 of 5 (B[m
 [34mRunning 7z warmup on all cores (B[m
 [32mRunning 7z for 1 seconds (B[m
-[32mRunning 7z for 2 seconds (B[m
-[32mRunning 7z for 3 seconds (B[m
+[34mTesting all cores with rapid bitops for 1 loops (B[m
+[32mTesting with method bitops on core 0 + 8 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 0 + 1 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 8 + 9 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 1 + 9 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 1 + 2 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 9 + 10 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 2 + 10 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 2 + 3 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 10 + 11 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 3 + 11 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 3 + 4 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 11 + 12 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 4 + 12 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 4 + 5 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 12 + 13 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 5 + 13 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 5 + 6 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 13 + 14 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 6 + 14 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 6 + 7 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 14 + 15 for 1s (rapid) (B[m
+[32mTesting with method bitops on core 7 + 15 for 1s (rapid) (B[m
+[33mStarting tests for core 0 + (1 + 8 + 9) (00:00:25)(B[m
+[34mTesting core 0 + 8 with stress-ng (B[m
+[32mTesting with method bitops on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method pi on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method gcd on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method sieve on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method prime on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method matrixprod on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method fft on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method loop on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method ackermann on core 0 + 8 for 2s (heavy) (B[m
+[32mTesting with method factorial on core 0 + 8 for 2s (heavy) (B[m
+[34mTesting core 0 + 1 with stress-ng (B[m
+[32mTesting with method bitops on core 0 + 1 for 2s (light) (B[m
+[32mTesting with method pi on core 0 + 1 for 2s (light) (B[m
+[32mTesting with method gcd on core 0 + 1 for 2s (light) (B[m
+[32mTesting with method sieve on core 0 + 1 for 2s (light) (B[m
+[32mTesting with method prime on core 0 + 1 for 2s (medium) (B[m
+[32mTesting with method matrixprod on core 0 + 1 for 2s (medium) (B[m
+[32mTesting with method fft on core 0 + 1 for 2s (medium) (B[m
+[32mTesting with method loop on core 0 + 1 for 2s (medium) (B[m
+[32mTesting with method ackermann on core 0 + 1 for 2s (heavy) (B[m
+[32mTesting with method factorial on core 0 + 1 for 2s (heavy) (B[m
+[34mTesting core 8 + 9 with stress-ng (B[m
+[32mTesting with method bitops on core 8 + 9 for 2s (light) (B[m
+[32mTesting with method pi on core 8 + 9 for 2s (light) (B[m
+[32mTesting with method gcd on core 8 + 9 for 2s (light) (B[m
+[32mTesting with method sieve on core 8 + 9 for 2s (light) (B[m
+[32mTesting with method prime on core 8 + 9 for 2s (medium) (B[m
+[32mTesting with method matrixprod on core 8 + 9 for 2s (medium) (B[m
+[32mTesting with method fft on core 8 + 9 for 2s (medium) (B[m
+[32mTesting with method loop on core 8 + 9 for 2s (medium) (B[m
+[32mTesting with method ackermann on core 8 + 9 for 2s (heavy) (B[m
+[32mTesting with method factorial on core 8 + 9 for 2s (heavy) (B[m
+[34mLaunching 4 browsers on all cores(B[m
+[33m[DEBUG Browser 1] taskset --cpu-list 8-15 file:///mnt/projects/stress_tests/threadstepper/tests/browser/pages/5.html(B[m
+[33m[DEBUG Browser 2] taskset --cpu-list 0-7 file:///mnt/projects/stress_tests/threadstepper/tests/browser/pages/4.html(B[m
+[33m[DEBUG Browser 3] taskset --cpu-list 8-15 file:///mnt/projects/stress_tests/threadstepper/tests/browser/pages/5.html(B[m
+[33m[DEBUG Browser 4] taskset --cpu-list 0-7 file:///mnt/projects/stress_tests/threadstepper/tests/browser/pages/2.html(B[m
+[34mTesting core 0 + 8 with stress-ng (B[m
+[32mTesting with method bitops on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method pi on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method gcd on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method sieve on core 0 + 8 for 2s (light) (B[m
+[32mTesting with method prime on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method matrixprod on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method fft on core 0 + 8 for 2s (medium) (B[m
+[32mTesting with method loop on core 0 + 8 for 2s (medium) (B[m

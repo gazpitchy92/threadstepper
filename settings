@@ -12,7 +12,7 @@ loops=5
 type="cores" 
 
 # How many browsers to launch
-browsers=4
+browsers=8
 
 # Which threads/cores to skip
 core_blacklist="" 
@@ -29,12 +29,12 @@ rapid="bitops"
 
 # stress test times
 light_time="5s" 
-medium_time="10s" 
-heavy_time="15s" 
+medium_time="15s" 
+heavy_time="30s" 
 all_core_time=15
 rapid_tests=10
 rapid_time="1s"
-rest_time=2
+rest_time=5
 
 # Only one can be true, false tests full CPU
 # first_half = If true only test the first half of cores
