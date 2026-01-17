@@ -4,6 +4,9 @@ A stability and stress tester, with an easy to use GUI, for AMD Curve Optimizer 
 
 This tool was developed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
+![running](https://iili.io/fUTdO21.png)
+![errors](https://iili.io/fUT27wJ.png)
+
 ## Latest Updates - Version 2.0
 
 - New GUI interface!
@@ -29,7 +32,7 @@ This tool was developed specifically for testing undervolting and boost stabilit
    ```
 
 2. **Install dependencies:**
-   This can be done through the GUI, or through a terminal using:
+   This can be done through the GUI (top right), or through a terminal using:
    ```bash
    chmod +x install.sh
    sudo ./install.sh
@@ -39,6 +42,7 @@ This tool was developed specifically for testing undervolting and boost stabilit
 ### Test Setup
 The GUI gives you the following settings. All times are in seconds. 
 If you are unsure, leave it as the default. 
+
 - Loops: The amount of times Thread Stepper will loop.
 - Light: How long a light test will run. 
 - Medium: How long a medium test will run.
