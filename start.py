@@ -549,6 +549,8 @@ class StressTestGUI:
             f.write("false")
         with open("./logs/clock.log", "w") as f:
             f.write("0")
+        with open("./logs/output.log", "w") as f:
+            f.write("-- STARTUP --")
 
         self.clear_error_log()
         self.clear_output()
