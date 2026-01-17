@@ -196,6 +196,14 @@ class StressTestGUI:
 
         self.status_bar = ttk.Label(main_container, text="Ready", relief=tk.SUNKEN)
         self.status_bar.grid(row=6, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(5, 0))
+
+        self.progress = ttk.Progressbar(
+            main_container,
+            mode="indeterminate",
+            length=200
+        )
+        self.progress.grid(row=7, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 0))
+        self.progress.grid_remove()
         self.setup_styles()
 
     def setup_styles(self):
@@ -539,6 +547,8 @@ class StressTestGUI:
         self.clear_output()
         self.reset_timer()
         self.start_timer()
+        self.progress.grid()
+        self.progress.start(10)
         
         if not os.path.exists("./threadstepper"):
             self.log_message("Error: ./threadstepper not found!", "error")
@@ -590,6 +600,8 @@ class StressTestGUI:
         self.status_bar.config(text="Stress test stopped")
         self.log_message(f"Stress test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
         self.stop_timer()
+        self.progress.stop()
+        self.progress.grid_remove() 
 
     def stop_stress_test(self):
         """Stop the running stress test"""
