@@ -316,6 +316,8 @@ class StressTestGUI:
 
     def install_dependencies(self):
         """Open install.sh in a new terminal window"""
+        self.clear_output()
+
         install_script = "./install.sh"
         
         if not os.path.exists(install_script):
@@ -345,8 +347,8 @@ class StressTestGUI:
             for terminal_cmd in terminals:
                 try:
                     subprocess.Popen(terminal_cmd, start_new_session=True)
-                    self.log_message(f"Opening terminal to run install.sh...", "info")
-                    self.log_message("Follow installation steps in the terminal window.", "info")
+                    self.log_message(f"Opening terminal to run installer...", "info")
+                    self.log_message("Follow installations in the terminal window.", "info")
                     return
                 except:
                     continue
