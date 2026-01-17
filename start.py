@@ -120,7 +120,7 @@ class StressTestGUI:
         )
 
         # System Information (right)
-        system_frame = ttk.LabelFrame(top_frame, text="💻 System Information", padding="10")
+        system_frame = ttk.LabelFrame(top_frame, text="🔎 System Information", padding="10")
         system_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5,0), pady=0)
         system_frame.columnconfigure(0, weight=1)
 
@@ -157,6 +157,8 @@ class StressTestGUI:
         self.threads_label.pack(anchor=tk.W, pady=(0,2))
         self.cpu_freq.pack(anchor=tk.W, pady=(0,2))
         self.ram_label.pack(anchor=tk.W, pady=(0,2))
+
+        ttk.Button(system_frame, text="🔁 Refresh", command=self.refresh_system_info).pack(side=tk.RIGHT, padx=2)
 
         # ---------------------- Middle Row: Error Status + Highest CPU ----------------------
         middle_frame = ttk.Frame(main_container)
@@ -287,6 +289,34 @@ class StressTestGUI:
         self.progress.grid(row=7, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 0))
         self.progress.grid_remove()
         self.setup_styles()
+
+    def refresh_system_info(self):
+        import platform
+        self.os_label.config(text=f"OS: {platform.system()} {platform.release()}")
+
+        try:
+            import psutil
+            freq = psutil.cpu_freq()
+            min_ghz = freq.min / 1000
+            max_ghz = freq.max / 1000
+            ram_gb = psutil.virtual_memory().total / 1024**3
+            self.cores_label.config(text=f"CPU Cores: {psutil.cpu_count(logical=False)}")
+            self.threads_label.config(text=f"CPU Threads: {psutil.cpu_count(logical=True)}")
+            self.cpu_freq.config(text=f"CPU Freq.: {min_ghz:.3f}-{max_ghz:.3f} GHz")
+            self.ram_label.config(text=f"Total RAM: {ram_gb:.1f} GB")
+        except ImportError:
+            self.cores_label.config(text="CPU Cores: N/A (install psutil)")
+            self.threads_label.config(text="CPU Threads: N/A")
+            self.cpu_freq.config(text="CPU Freq.: N/A")
+            self.ram_label.config(text="Total RAM: N/A (install psutil)")
+
+        try:
+            with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
+                governor = f.read().strip()
+        except FileNotFoundError:
+            governor = "N/A"
+
+        self.governor_label.config(text=f"CPU Governor: {governor}")
 
     def parse_settings_options(self, content):
         for line in content.splitlines():

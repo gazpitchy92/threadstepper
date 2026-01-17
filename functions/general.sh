@@ -64,21 +64,12 @@ check_installed() {
 
 # output selected options and settings
 outputOptions(){
-    # input options
     echo ""
     echo "$(tput setaf 6)Options" | tee -a $output_log_file
     echo "$(tput setaf 5)Loops: ${loops:-Not specified} $(tput sgr0)" | tee -a $output_log_file
-    echo "$(tput setaf 5)Type: ${type:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Browsers: ${browsers:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Core blacklist: ${core_blacklist} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)CPU topology: ${cpu_topology} $(tput sgr0)" | tee -a $output_log_file
-    if [ "$first_half" == true ]; then 
-        echo "$(tput setaf 5)First half: true $(tput sgr0)" | tee -a $output_log_file
-    fi
-    if [ "$second_half" == true ]; then
-        echo "$(tput setaf 5)Second half: true $(tput sgr0)" | tee -a $output_log_file
-    fi
-    # settings
     echo ""
     echo "$(tput setaf 6)Test Settings" | tee -a $output_log_file
     echo "$(tput setaf 5)Light time: ${light_time}s $(tput sgr0)" | tee -a $output_log_file

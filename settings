@@ -1,21 +1,18 @@
 #!/bin/bash
 loops=5
-browsers=8
-light_time=5
-medium_time=15
-heavy_time=30
-all_core_time=15
-rapid_tests=10
+browsers=2
+light_time=2
+medium_time=2
+heavy_time=2
+all_core_time=2
+rapid_tests=1
 rapid_time=1
-rest_time=5
+rest_time=1
 core_blacklist=""
 
 # DO NOT EDIT
 output_log_file="$(pwd)/logs/output.log"
-type="cores" 
 cpu_topology=0 
-second_half=false 
-first_half=false
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")
 heavy=("ackermann" "factorial")

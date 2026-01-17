@@ -3,25 +3,12 @@
 # main test runner
 runTests(){
     local core=$1
-    if [[ "$type" == "cores" ]]; then
-        # cores
-        stressNgCore $core
-    else
-        # threads
-        stressNgThread $core
-    fi
+    stressNgCore $core
     check_errors
     if (( browsers != 0 )); then
-        # launch browsers
+        # browsers
         browserTest
-        if [[ "$type" == "cores" ]]; then
-            # cores
-            stressNgCore $core
-        else
-            # threads
-            stressNgThread $core
-        fi
-        # close browsers
+        stressNgCore $core
         stopBrowserTest
         check_errors
     fi 
