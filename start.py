@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, scrolledtext, filedialog, messagebox
+from tkinter import ttk, scrolledtext, filedialog, messagebox, PhotoImage
 import subprocess
 import threading
 import time
@@ -10,13 +10,14 @@ import platform
 import re
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
+from PIL import Image, ImageTk
 
 class StressTestGUI:
     def __init__(self, root):
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.root.title("Thread Stepper v2.0")
+        self.root.title("Thread Stepper (2.0)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -70,7 +71,13 @@ class StressTestGUI:
         install_frame.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0,5))
         header_frame = ttk.Frame(install_frame)
         header_frame.pack(fill="x", pady=(5,5))
-        tk.Label(header_frame, text="🔥 Thread Stepper v2.0", font=("Segoe UI",16,"bold"), fg="#d9534f").pack(side="left")
+        img = Image.open("favicon.png").resize((45, 45))
+        icon_img = ImageTk.PhotoImage(img)  
+        header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI",20,"bold"), image=icon_img, compound="left")
+        header_label.pack(side="left")
+
+        # Keep a reference to prevent garbage collection
+        header_label.image = icon_img
         ttk.Button(header_frame, text="📦 Install Dependencies", bootstyle="primary", command=self.install_dependencies).pack(side="right")
 
         # Top Row: Settings + System Info
@@ -206,7 +213,7 @@ class StressTestGUI:
         self.timer_label = tk.Label(
             control_frame,
             text="00:00:00",
-            font=("Consolas", 12, "bold"),
+            font=("Segoe UI", 12, "bold"),
             fg="#28a745",
             bg="#f0f0f0",
             relief="sunken",
@@ -900,6 +907,8 @@ def main():
     
     # Start the GUI
     root = tb.Window(themename="flatly") 
+    icon = PhotoImage(file="favicon.png")
+    root.iconphoto(True, icon)
     app = StressTestGUI(root)
     root.mainloop()
 
