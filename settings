@@ -1,6 +1,6 @@
 #!/bin/bash
 loops=100
-browsers=8
+browsers=1
 light_time=10
 medium_time=30
 heavy_time=60

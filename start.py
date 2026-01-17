@@ -901,6 +901,7 @@ def main():
     
     # Start the GUI
     root = tb.Window(themename="flatly") 
+    root.resizable(False, False)
     icon = PhotoImage(file="favicon.png")
     root.iconphoto(True, icon)
     app = StressTestGUI(root)
