@@ -61,7 +61,7 @@ for ((i=1; i<=loops; i++)); do
     HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
     if [[ "$i" > 1 ]]; then
         echo "$(tput setaf 5)---- Running loop $i of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
-        echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
+        echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
     else
         echo "$(tput setaf 5)---- Starting loop $i of $loops $(tput sgr0)" | tee -a $output_log_file
     fi
@@ -71,15 +71,19 @@ for ((i=1; i<=loops; i++)); do
         start_core=0
     fi
     if [[ "$first_half" == false && "$second_half" == false ]]; then
-        allCoreTest
-        for ((i=1; i<=rapid_tests; i++)); do
-            if [[ "$type" == "cores" ]]; then
-                rapidStressNgCore
-            else
-                rapidStressNgThread
-            fi
-            check_errors
-        done
+        if [[ -z "$core_blacklist" ]]; then
+            allCoreTest
+            for ((i=1; i<=rapid_tests; i++)); do
+                if [[ "$type" == "cores" ]]; then
+                    rapidStressNgCore
+                else
+                    rapidStressNgThread
+                fi
+                check_errors
+            done
+        else 
+            echo "$(tput setaf 0)--- Skipping all-core tests due to core_blacklist $(tput sgr0)" | tee -a $output_log_file
+        fi
     fi
     if [[ "$type" == "cores" ]]; then
         physical_cores=$((num_cores / 2))
@@ -87,29 +91,38 @@ for ((i=1; i<=loops; i++)); do
             ELAPSED=$((SECONDS - START_TIME))
             ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
             core_second=$((core + physical_cores))
-            echo "$(tput setaf 3)--- Starting tests for core ($core + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
-            sleep $rest_time
-            runTests $core
-            ELAPSED=$((SECONDS - START_TIME))
-            ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-            HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
-            echo "$(tput setaf 3)--- Finished testing core $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
-            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
-            check_errors
+            core_next=$((core + 1))
+            if [[ ",$core_blacklist," == *",$core,"* || ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_next,"* ]]; then
+                echo "$(tput setaf 0)--- Skipping tests for core $core + ($core_next + $core_second) $(tput sgr0)" | tee -a $output_log_file
+            else
+                echo "$(tput setaf 3)--- Starting tests for core $core + ($core_next + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+                sleep $rest_time
+                runTests $core
+                ELAPSED=$((SECONDS - START_TIME))
+                ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
+                HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
+                echo "$(tput setaf 3)--- Finished testing core $core + ($core_next + $core_second) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+                echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
+                check_errors
+            fi
         done
     else
         for ((core=$start_core; core<num_cores; core++)); do
             ELAPSED=$((SECONDS - START_TIME))
             ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-            echo "$(tput setaf 3)--- Starting tests for thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
-            sleep $rest_time
-            runTests $core
-            ELAPSED=$((SECONDS - START_TIME))
-            ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-            HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
-            echo "$(tput setaf 3)--- Finished testing thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
-            echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
-            check_errors
+            if [[ ",$core_blacklist," == *",$core,"* ]]; then
+                echo "$(tput setaf 0)--- Skipping tests for thread $core $(tput sgr0)" | tee -a $output_log_file
+            else
+                echo "$(tput setaf 3)--- Starting tests for thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+                sleep $rest_time
+                runTests $core
+                ELAPSED=$((SECONDS - START_TIME))
+                ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
+                HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
+                echo "$(tput setaf 3)--- Finished testing thread $core ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
+                echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
+                check_errors
+            fi
         done
     fi
     FINISHED_LOOPS=$i
@@ -120,5 +133,5 @@ HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
 ELAPSED=$((SECONDS - START_TIME))
 ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
 echo "$(tput setaf 3)--- Loops $FINISHED_LOOPS/$loops completed! ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a $output_log_file
-echo "$(tput setaf 3)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
+echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a $output_log_file
 cleanup

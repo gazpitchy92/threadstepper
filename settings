@@ -10,6 +10,7 @@ type="cores"
 second_half=false
 first_half=false
 browsers=4
+core_blacklist="0,2"
 
 # stress test types from stress-ng
 light=("bitops" "pi" "gcd" "sieve")

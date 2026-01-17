@@ -88,7 +88,7 @@ checkDeps(){
     appimages=(./tests/browser/*.AppImage)
     if [ ${#appimages[@]} -gt 0 ]; then
         echo "$(tput setaf 2)ungoogled-chromium AppImage found$(tput sgr0)"
-        echo "$(tput setaf 5)$chromium_appimage$(tput sgr0)"
+        echo "$(tput setaf 8)$chromium_appimage$(tput sgr0)"
     else
         echo "$(tput setaf 1)ungoogled-chromium AppImage not found!$(tput sgr0)"
         echo "$(tput setaf 3)Please run install.sh first$(tput sgr0)"
@@ -107,6 +107,7 @@ outputOptions(){
     echo "$(tput setaf 5)Loops: ${loops:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Type: ${type:-Not specified} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Browsers: ${browsers:-Not specified} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Core blacklist: ${core_blacklist} $(tput sgr0)" | tee -a $output_log_file
     if [ "$first_half" == true ]; then 
         echo "$(tput setaf 5)First half: true $(tput sgr0)" | tee -a $output_log_file
     fi
