@@ -7,6 +7,7 @@ import os
 import queue
 from datetime import datetime
 import platform
+import re
 
 class StressTestGUI:
     def __init__(self, root):
@@ -42,11 +43,11 @@ class StressTestGUI:
         self.root.rowconfigure(0, weight=1)
         main_container.columnconfigure(0, weight=1)
         main_container.columnconfigure(1, weight=1)
-        main_container.rowconfigure(0, weight=0)  
-        main_container.rowconfigure(1, weight=1) 
+        main_container.rowconfigure(0, weight=0)
+        main_container.rowconfigure(1, weight=1)
         main_container.rowconfigure(2, weight=0)
-        main_container.rowconfigure(3, weight=0)  
-        main_container.rowconfigure(4, weight=1) 
+        main_container.rowconfigure(3, weight=0)
+        main_container.rowconfigure(4, weight=1)
         
         install_frame = ttk.Frame(main_container)
         install_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
@@ -54,40 +55,127 @@ class StressTestGUI:
         header_frame = tk.Frame(install_frame)
         header_frame.pack(fill=tk.X, pady=(5, 5))
 
-        tk.Label(header_frame, text="🔥 Thread Stepper v2.0", 
-                font=('Arial', 16, 'bold'),
-                fg='red').pack(side=tk.LEFT)
-
+        tk.Label(header_frame, text="🔥 Thread Stepper v2.0", font=('Arial', 16, 'bold'), fg='red').pack(side=tk.LEFT)
         ttk.Button(header_frame, text="📦 Install Dependencies", command=self.install_dependencies).pack(side=tk.RIGHT)
-        
-        settings_frame = ttk.LabelFrame(main_container, text="🖥 Settings Editor", padding="10")
-        settings_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
+
+        # ---------------------- Top Row: Settings + System Info ----------------------
+        top_frame = ttk.Frame(main_container)
+        top_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=5)
+        top_frame.columnconfigure(0, weight=1, uniform="info_settings")
+        top_frame.columnconfigure(1, weight=1, uniform="info_settings")
+
+        # Settings Editor (left)
+        settings_frame = ttk.LabelFrame(top_frame, text="🖥 Settings Editor", padding="10")
+        settings_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0,5), pady=0)
         settings_frame.columnconfigure(0, weight=1)
-        settings_frame.rowconfigure(0, weight=1)
-        
-        self.settings_text = scrolledtext.ScrolledText(settings_frame, width=60, height=15, wrap=tk.NONE, font=('Arial', 14),)
-        self.settings_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
-        
-        settings_btn_frame = ttk.Frame(settings_frame)
-        settings_btn_frame.grid(row=1, column=0, sticky=tk.E, pady=(5, 0))
-        
-        ttk.Button(settings_btn_frame, text="💾 Save", command=self.save_settings).pack(side=tk.LEFT, padx=2)
-        ttk.Button(settings_btn_frame, text="🔁 Refresh", command=self.update_settings_content).pack(side=tk.LEFT, padx=2)
-        
+
+        options_frame = ttk.Frame(settings_frame)
+        options_frame.grid(row=0, column=0, sticky=tk.W, pady=(0, 0))
+
+        save_frame = ttk.Frame(settings_frame)
+        save_frame.grid(row=1, column=0, sticky=tk.E, pady=(10, 0))
+        ttk.Button(save_frame, text="💾 Save", command=self.save_settings).pack()
+
+        # Settings fields
+        ttk.Label(options_frame, text="Loops").grid(row=0, column=0, padx=(0,5))
+        self.loops_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.loops_var).grid(row=0, column=1, padx=(0,20))
+
+        ttk.Label(options_frame, text="Browsers").grid(row=0, column=2, padx=(0,5))
+        self.browsers_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.browsers_var).grid(row=0, column=3)
+
+        ttk.Label(options_frame, text="Light").grid(row=1, column=0, padx=(0,5), pady=(5,0))
+        self.light_time_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.light_time_var).grid(row=1, column=1, pady=(5,0))
+
+        ttk.Label(options_frame, text="Medium").grid(row=1, column=2, padx=(0,5), pady=(5,0))
+        self.medium_time_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.medium_time_var).grid(row=1, column=3, pady=(5,0))
+
+        ttk.Label(options_frame, text="Heavy").grid(row=2, column=0, padx=(0,5), pady=(5,0))
+        self.heavy_time_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.heavy_time_var).grid(row=2, column=1, pady=(5,0))
+
+        ttk.Label(options_frame, text="All Core").grid(row=2, column=2, padx=(0,5), pady=(5,0))
+        self.all_core_time_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.all_core_time_var).grid(row=2, column=3, pady=(5,0))
+
+        ttk.Label(options_frame, text="Rapid Tests").grid(row=3, column=0, padx=(0,5), pady=(5,0))
+        self.rapid_tests_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.rapid_tests_var).grid(row=3, column=1, pady=(5,0))
+
+        ttk.Label(options_frame, text="Rapid Time").grid(row=3, column=2, padx=(0,5), pady=(5,0))
+        self.rapid_time_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.rapid_time_var).grid(row=3, column=3, pady=(5,0))
+
+        ttk.Label(options_frame, text="Rest").grid(row=4, column=0, padx=(0,5), pady=(5,0))
+        self.rest_time_var = tk.IntVar(value=1)
+        ttk.Entry(options_frame, width=6, textvariable=self.rest_time_var).grid(row=4, column=1, pady=(5,0))
+
+        ttk.Label(options_frame, text="Core Blacklist").grid(row=5, column=0, padx=(0,5), pady=(5,0))
+        self.core_blacklist_var = tk.StringVar()
+        ttk.Entry(options_frame, width=18, textvariable=self.core_blacklist_var).grid(
+            row=5, column=1, columnspan=3, sticky=tk.W, pady=(5,0)
+        )
+
+        # System Information (right)
+        system_frame = ttk.LabelFrame(top_frame, text="💻 System Information", padding="10")
+        system_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5,0), pady=0)
+        system_frame.columnconfigure(0, weight=1)
+
+        self.os_label = ttk.Label(system_frame, text=f"OS: {platform.system()} {platform.release()}")
+        self.os_label.pack(anchor=tk.W, pady=(0,2))
+        self.python_label = ttk.Label(system_frame, text=f"Python: {platform.python_version()}")
+        self.python_label.pack(anchor=tk.W, pady=(0,2))
+
+        try:
+            import psutil
+            freq = psutil.cpu_freq()
+            min_ghz = freq.min / 1000
+            max_ghz = freq.max / 1000
+            ram_gb = psutil.virtual_memory().total / 1024**3
+            self.cores_label = ttk.Label(system_frame, text=f"CPU Cores: {psutil.cpu_count(logical=False)}")
+            self.threads_label = ttk.Label(system_frame, text=f"CPU Threads: {psutil.cpu_count(logical=True)}")
+            self.cpu_freq = ttk.Label(system_frame, text=f"CPU Freq.: {min_ghz:.3f}-{max_ghz:.3f} GHz")
+            self.ram_label = ttk.Label(system_frame, text=f"Total RAM: {ram_gb:.1f} GB")
+            self.ram_label.pack(anchor=tk.W, pady=(0,2))
+        except ImportError:
+            self.cores_label = ttk.Label(system_frame, text="CPU Cores: N/A (install psutil)")
+            self.threads_label = ttk.Label(system_frame, text="CPU Threads: N/A")
+            self.cpu_freq = ttk.Label(system_frame, text="CPU Freq.: N/A")
+            self.ram_label = ttk.Label(system_frame, text="Total RAM: N/A (install psutil)")
+
+        try:
+            with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
+                governor = f.read().strip()
+        except FileNotFoundError:
+            governor = "N/A"
+
+        self.governor_label = ttk.Label(system_frame, text=f"CPU Governor: {governor}")
+        self.governor_label.pack(anchor=tk.W, pady=(0,2))
+
+        self.cores_label.pack(anchor=tk.W, pady=(0,2))
+        self.threads_label.pack(anchor=tk.W, pady=(0,2))
+        self.cpu_freq.pack(anchor=tk.W, pady=(0,2))
+        self.ram_label.pack(anchor=tk.W, pady=(0,2))
+
+        # ---------------------- Middle Row: Error Status + Highest CPU ----------------------
         middle_frame = ttk.Frame(main_container)
         middle_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=10)
         middle_frame.columnconfigure(0, weight=1)
         middle_frame.columnconfigure(1, weight=1)
-        
-        error_status_frame = ttk.LabelFrame(middle_frame, text="⁉ Error Status ", padding="10")
-        error_status_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 5))
-        
+
+        # Error Status
+        error_status_frame = ttk.LabelFrame(middle_frame, text="⁉ Error Status", padding="10")
+        error_status_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0,5))
+
         self.error_indicator_frame = ttk.Frame(error_status_frame)
         self.error_indicator_frame.pack(fill=tk.BOTH, expand=True)
-        
+
         self.error_indicator = tk.Label(
-            self.error_indicator_frame, 
-            text="NO ERRORS 🙂", 
+            self.error_indicator_frame,
+            text="NO ERRORS 🙂",
             font=('Arial', 16, 'bold'),
             bg='#d4edda',
             fg='#155724',
@@ -96,28 +184,23 @@ class StressTestGUI:
             pady=10
         )
         self.error_indicator.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
         error_btn_frame = ttk.Frame(error_status_frame)
-        error_btn_frame.pack(fill=tk.X, pady=(5, 0))
-        
-        self.toggle_error_btn = ttk.Button(
-            error_btn_frame, 
-            text="👇 Show Logs", 
-            command=self.toggle_error_log
-        )
+        error_btn_frame.pack(fill=tk.X, pady=(5,0))
+        self.toggle_error_btn = ttk.Button(error_btn_frame, text="👇 Show Logs", command=self.toggle_error_log)
         self.toggle_error_btn.pack(side=tk.RIGHT, padx=2)
-        
         ttk.Button(error_btn_frame, text="🔁 Refresh", command=self.update_error_status).pack(side=tk.RIGHT, padx=2)
-        
+
+        # Highest CPU Clock
         clock_frame = ttk.LabelFrame(middle_frame, text="🚀 Highest CPU Clock (Ghz)", padding="10")
-        clock_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5, 0))
-        
+        clock_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(5,0))
+
         clock_display_frame = ttk.Frame(clock_frame)
         clock_display_frame.pack(fill=tk.BOTH, expand=True)
-        
+
         self.clock_label = tk.Label(
-            clock_display_frame, 
-            text="N/A", 
+            clock_display_frame,
+            text="N/A",
             font=('Arial', 16, 'bold'),
             fg='#17a2b8',
             bg='#e8f4f8',
@@ -126,11 +209,12 @@ class StressTestGUI:
             pady=15
         )
         self.clock_label.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
+
         clock_btn_frame = ttk.Frame(clock_frame)
-        clock_btn_frame.pack(fill=tk.X, pady=(5, 0))
+        clock_btn_frame.pack(fill=tk.X, pady=(5,0))
         ttk.Button(clock_btn_frame, text="❎ Clear", command=self.reset_clock_speed).pack(side=tk.RIGHT, padx=2)
         ttk.Button(clock_btn_frame, text="🔁 Refresh", command=self.update_clock_speed).pack(side=tk.RIGHT, padx=2)
+
         
         self.error_log_container = ttk.LabelFrame(main_container, text="✎ Error Logs Details", padding="5")
         self.error_log_container.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=(0, 5))
@@ -205,6 +289,35 @@ class StressTestGUI:
         self.progress.grid(row=7, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(2, 0))
         self.progress.grid_remove()
         self.setup_styles()
+
+    def parse_settings_options(self, content):
+        for line in content.splitlines():
+            if line.startswith("loops="):
+                self.loops_var.set(int(line.split("=")[1]))
+            elif line.startswith("browsers="):
+                self.browsers_var.set(int(line.split("=")[1]))
+            elif line.startswith("light_time="):
+                self.light_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("medium_time="):
+                self.medium_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("heavy_time="):
+                self.heavy_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("all_core_time="):
+                self.all_core_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("rapid_tests="):
+                self.rapid_tests_var.set(int(line.split("=")[1]))
+            elif line.startswith("rapid_time="):
+                self.rapid_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("rest_time="):
+                self.rest_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("core_blacklist="):
+                val = line.split("=", 1)[1].strip().strip('"')
+                self.core_blacklist_var.set(val)
+
+    def validate_core_blacklist(self, value):
+        if value == "":
+            return True
+        return bool(re.fullmatch(r"\d+(,\d+)*", value))
 
     def setup_styles(self):
         style = ttk.Style()
@@ -313,24 +426,61 @@ class StressTestGUI:
             if os.path.exists("./settings"):
                 with open("./settings", 'r') as f:
                     content = f.read()
-                    self.settings_text.delete(1.0, tk.END)
-                    self.settings_text.insert(1.0, content)
+                    self.parse_settings_options(content)
                 self.status_bar.config(text="Settings loaded successfully")
             else:
-                self.settings_text.delete(1.0, tk.END)
-                self.settings_text.insert(1.0, "# settings not found\n# Create this file to configure your stress test")
                 self.status_bar.config(text="settings not found - create it to configure your test")
         except Exception as e:
             self.log_message(f"Error loading settings: {str(e)}", "error")
 
     def save_settings(self):
-        """Save settings content"""
         try:
-            content = self.settings_text.get(1.0, tk.END)
-            with open("./settings", 'w') as f:
-                f.write(content)
+            cb = self.core_blacklist_var.get()
+            if cb and not re.fullmatch(r"\d+(,\d+)*", cb):
+                self.status_bar.config(text="Invalid core_blacklist format")
+                self.log_message("Invalid core_blacklist format (use e.g. 1,4,7)", "error")
+                return
+
+            # Prepare new settings
+            out = [
+                "#!/bin/bash",
+                f"loops={self.loops_var.get()}",
+                f"browsers={self.browsers_var.get()}",
+                f"light_time={self.light_time_var.get()}",
+                f"medium_time={self.medium_time_var.get()}",
+                f"heavy_time={self.heavy_time_var.get()}",
+                f"all_core_time={self.all_core_time_var.get()}",
+                f"rapid_tests={self.rapid_tests_var.get()}",
+                f"rapid_time={self.rapid_time_var.get()}",
+                f"rest_time={self.rest_time_var.get()}",
+                f'core_blacklist="{cb}"'
+            ]
+
+            # Read existing file and preserve content after "# DO NOT EDIT"
+            preserved_content = ""
+            if os.path.exists("./settings"):
+                with open("./settings", "r") as f:
+                    lines = f.readlines()
+                    found_marker = False
+                    for i, line in enumerate(lines):
+                        if line.strip() == "# DO NOT EDIT":
+                            # Preserve from this line onwards
+                            preserved_content = "".join(lines[i:])
+                            found_marker = True
+                            break
+
+            # Write new settings
+            with open("./settings", "w") as f:
+                f.write("\n".join(out) + "\n")
+                # Add preserved content if it exists
+                if preserved_content:
+                    if not preserved_content.startswith("\n"):
+                        f.write("\n")
+                    f.write(preserved_content)
+
             self.status_bar.config(text="Settings saved successfully")
             self.log_message("Settings saved", "success")
+
         except Exception as e:
             self.log_message(f"Error saving settings: {str(e)}", "error")
 

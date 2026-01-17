@@ -7,21 +7,21 @@ stressNgThread() {
     for method in "${light[@]}"; do
         # light tests
         echo "$(tput setaf 2)Testing with method $method on thread $core for $light_time (light) $(tput sgr0)" | tee -a $output_log_file
-        stress-ng --cpu 1 --taskset $core --timeout $light_time  --cpu-method "$method"
+        stress-ng --cpu 1 --taskset $core --timeout "$light_times"s  --cpu-method "$method"
         check_errors
         sleep $light_time
     done
     for method in "${mixed[@]}"; do
         # medium tests
         echo "$(tput setaf 2)Testing with method $method on thread $core for $medium_time (medium) $(tput sgr0)" | tee -a $output_log_file
-        stress-ng --cpu 1 --taskset $core --timeout $medium_time --cpu-method "$method"
+        stress-ng --cpu 1 --taskset $core --timeout "$medium_times"s --cpu-method "$method"
         check_errors
         sleep $medium_time
     done
     for method in "${heavy[@]}"; do
         # heavy tests
         echo "$(tput setaf 2)Testing with method $method on thread $core for $heavy_time (heavy) $(tput sgr0)" | tee -a $output_log_file
-        stress-ng --cpu 1 --taskset $core --timeout $heavy_time --cpu-method "$method"
+        stress-ng --cpu 1 --taskset $core --timeout "$heavy_time"s --cpu-method "$method"
         check_errors
         sleep $rest_time
     done

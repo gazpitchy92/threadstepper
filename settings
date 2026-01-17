@@ -1,51 +1,26 @@
 #!/bin/bash
-
-ts_version="2.0"
-settings_dir=$(pwd)
-output_log_file="$settings_dir/logs/output.log"
-
-# How many times to loop all tests
 loops=5
-
-# cores = Test threads for each physical core
-# threads = Test each logical thread individualls
-type="cores" 
-
-# How many browsers to launch
 browsers=8
+light_time=5
+medium_time=15
+heavy_time=30
+all_core_time=15
+rapid_tests=10
+rapid_time=1
+rest_time=5
+core_blacklist=""
 
-# Which threads/cores to skip
-core_blacklist="" 
-
-# CPU topology for cores test type
-# both = 0, adjacent = 1, cross = 2
+# DO NOT EDIT
+output_log_file="$(pwd)/logs/output.log"
+type="cores" 
 cpu_topology=0 
-
-# stress test types from stress-ng
+second_half=false 
+first_half=false
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")
 heavy=("ackermann" "factorial")
 rapid="bitops"
-
-# stress test times
-light_time="5s" 
-medium_time="15s" 
-heavy_time="30s" 
-all_core_time=15
-rapid_tests=10
-rapid_time="1s"
-rest_time=5
-
-# Only one can be true, false tests full CPU
-# first_half = If true only test the first half of cores
-# second_half = If true only test the second half of cores
-second_half=false 
-first_half=false
-
-# chromium browser test config
-# re-install dependancies if changed
 chromium_version="144.0.7559.59-1"
 chromium_appimage="ungoogled-chromium-$chromium_version-x86_64.AppImage"
 chromium_domain="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download"
 chromium_flags="--new-window --ozone-platform=x11 --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito"
-

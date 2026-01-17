@@ -76,7 +76,6 @@ Additional test settings can be modified in `settings`. The defaults are suitabl
 ### General
 Used for base configuration
 ```bash
-ts_version="1.3"
 settings_dir=$(pwd)
 output_log_file="$settings_dir/logs/output.log"
 ```
