@@ -625,9 +625,94 @@ class StressTestGUI:
                 time.sleep(0.1)
 
     def log_message(self, message, tag="info"):
-        """Add a message to the output text area"""
+        """Add a message to the output text area with ANSI color code support"""
+        import re
+        
         timestamp = datetime.now().strftime("[%H:%M:%S] ")
-        self.output_text.insert(tk.END, timestamp + message + "\n", tag)
+        
+        # ANSI color code mapping to tkinter tags
+        ansi_color_map = {
+            '30': 'black', '31': 'red', '32': 'green', '33': 'yellow',
+            '34': 'blue', '35': 'magenta', '36': 'cyan', '37': 'white',
+            '90': 'bright_black', '91': 'bright_red', '92': 'bright_green',
+            '93': 'bright_yellow', '94': 'bright_blue', '95': 'bright_magenta',
+            '96': 'bright_cyan', '97': 'bright_white'
+        }
+        
+        # Configure additional color tags if not already done
+        for code, color_name in ansi_color_map.items():
+            tag_name = f"ansi_{color_name}"
+            if tag_name not in self.output_text.tag_names():
+                # Map to actual colors
+                color_hex = {
+                    'black': '#000000', 'red': '#cd0000', 'green': '#00cd00', 'yellow': '#cdcd00',
+                    'blue': '#0000ee', 'magenta': '#cd00cd', 'cyan': '#00cdcd', 'white': '#e5e5e5',
+                    'bright_black': '#7f7f7f', 'bright_red': '#ff0000', 'bright_green': '#00ff00',
+                    'bright_yellow': '#ffff00', 'bright_blue': '#5c5cff', 'bright_magenta': '#ff00ff',
+                    'bright_cyan': '#00ffff', 'bright_white': '#ffffff'
+                }.get(color_name, '#000000')
+                self.output_text.tag_config(tag_name, foreground=color_hex)
+        
+        # Insert timestamp with default tag
+        self.output_text.insert(tk.END, timestamp, tag)
+        
+        # Parse ANSI codes and insert colored text
+        # Pattern matches: \x1b[CODEm or \033[CODEm or [CODEm
+        ansi_pattern = r'\x1b\[([0-9;]+)m|\033\[([0-9;]+)m|\[([0-9;]+)m'
+        
+        # Also match reset sequences like (B[m
+        reset_pattern = r'\(B\[m|\[m|\x1b\[m|\033\[m'
+        
+        current_tag = tag
+        last_pos = 0
+        
+        # Combine message parsing
+        full_message = message
+        
+        # First, remove reset sequences and replace with a marker
+        full_message = re.sub(reset_pattern, '\x00RESET\x00', full_message)
+        
+        # Find all ANSI codes
+        for match in re.finditer(ansi_pattern, full_message):
+            # Insert text before this code
+            text_before = full_message[last_pos:match.start()]
+            if text_before:
+                # Handle reset markers
+                parts = text_before.split('\x00RESET\x00')
+                for i, part in enumerate(parts):
+                    if part:
+                        self.output_text.insert(tk.END, part, current_tag)
+                    if i < len(parts) - 1:  # Reset occurred
+                        current_tag = tag
+            
+            # Get the color code
+            code = match.group(1) or match.group(2) or match.group(3)
+            
+            # Handle color codes
+            if code == '0' or code == '':
+                current_tag = tag  # Reset to default
+            else:
+                # Extract first code if semicolon-separated (e.g., "1;32" -> "32")
+                codes = code.split(';')
+                for c in codes:
+                    if c in ansi_color_map:
+                        current_tag = f"ansi_{ansi_color_map[c]}"
+                        break
+            
+            last_pos = match.end()
+        
+        # Insert remaining text
+        remaining = full_message[last_pos:]
+        if remaining:
+            parts = remaining.split('\x00RESET\x00')
+            for i, part in enumerate(parts):
+                if part:
+                    self.output_text.insert(tk.END, part, current_tag)
+                if i < len(parts) - 1:
+                    current_tag = tag
+        
+        # Add newline
+        self.output_text.insert(tk.END, "\n", tag)
         self.output_text.see(tk.END)
         self.output_text.update_idletasks()
 
