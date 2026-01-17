@@ -192,7 +192,7 @@ class StressTestGUI:
         self.stop_button.pack(side=tk.LEFT, padx=2)
 
         ttk.Button(control_frame, text="❎ Clear", command=self.clear_output, style="Uniform.TButton").pack(side=tk.LEFT, padx=2)
-        ttk.Button(control_frame, text="💾 Save Logs", command=self.export_log, style="Uniform.TButton").pack(side=tk.LEFT, padx=2)
+        ttk.Button(control_frame, text="💾 Save", command=self.export_log, style="Uniform.TButton").pack(side=tk.LEFT, padx=2)
 
         self.status_bar = ttk.Label(main_container, text="Ready", relief=tk.SUNKEN)
         self.status_bar.grid(row=6, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(5, 0))
