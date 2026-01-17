@@ -1,123 +1,77 @@
-# ThreadStepper
+# Thread Stepper
 
-A stability and stress tester for linux which applies varying levels of stress to individual CPU cores or threads to emulate real-world usage patterns. Utilizes 7z benchmarking, stress-ng, and WebGL browser tests built with three.js.
+A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
-This tool was developed specifically for testing undervolting and Ryzen Curve Optimizer (CO) configurations, where conventional stress tests often fail to detect instabilities.
+Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-![threadstepper](https://iili.io/KVveDMl.png)
-![terminal](https://iili.io/KVvUF5P.png)
+## Latest Updates - Version 2.0
 
-## Latest Updates - Version 1.3
+- New GUI interface!
+- Better live error checking.
+- Logging of highest CPU clocks.
+- Improved CPU topology testing.
+- Improved settings and install.sh script.
+- Improved testing methods for faster error detection.
 
-- Feature: Live error checking during all tests
-- Feature: Logging of highest CPU clocks
-- Feature: Better debug output during tests
-- Feature: Improved settings and install.sh script
+## Screenshots
 
-- Bug Fix: CPU topoloy for "cores" test is now correct
-- Bug Fix: all_core_time is now correctly followed correctly
-- Bug Fix: latest ungoogled-chromium setup for improved testing
+![running](https://iili.io/fUTdO21.png)
+![errors](https://iili.io/fUT27wJ.png)
+
+## Methodology
+
+### Problem with Traditional Stress Tests
+
+Most stress tests (Prime95, OCCT) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
+
+### How Thread Stepper Works
+
+**Variable Load Patterns**  
+Applies light, medium, and heavy loads in varying durations and rapid transitions. This forces voltage/frequency changes where instability typically occurs.
+
+**Sequential Core Testing**  
+Tests individual cores and thread groups in sequence rather than loading all cores uniformly. Isolates per-core curve optimizer issues.
+
+**Randomized Background Load**  
+Uses 3D WebGL browser tests to generate unpredictable background activity during testing. Mimics real usage patterns where undervolts typically fail.
+
+**Test Patterns**  
+Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
 
 ## Requirements
 
 - stress-ng
 - p7zip
+- python
+- Linux
 
 ## Installation
 
 1. **Clone the repository:**
-   ```bash
+```bash
    git clone https://github.com/gazpitchy92/threadstepper.git
    cd threadstepper
-   ```
+   python start.py
+```
 
 2. **Install dependencies:**
-   ```bash
+   Via GUI (top right) or terminal:
+```bash
    chmod +x install.sh
    sudo ./install.sh
-   ```
-   
-   The install script will automatically install stress-ng, p7zip, and download the required ungoogled-chromium AppImage for WebGL tests.
-
-## Usage
-
-### Basic Syntax
-```bash
-./threadstepper [-l loops] [-t type] [-b browsers] [--first-half] [--second-half]
 ```
+   Installs stress-ng, p7zip, and downloads ungoogled-chromium AppImage for WebGL tests.
 
-### Examples
+## Test Setup
 
-**Basic test with default settings:**
-```bash
-./threadstepper
-```
+All times in seconds. Default settings work for most users.
 
-**Custom test with 2 loops, testing all threads, using 2 browsers:**
-```bash
-./threadstepper -l 2 -t threads -b 2
-```
-
-### Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-l` | Number of test loops to perform | 1 |
-| `-t` | Test type: `cores` or `threads` | cores |
-| `-b` | Number of browsers to launch (0 to skip WebGL tests) | 2 |
-| `--first-half` | Tests only the first half of cores/threads (skips 7z tests) | - |
-| `--second-half` | Tests only the second half of cores/threads (skips 7z tests) | - |
-| `--help` | Show help menu | - |
-
-## Configuration
-
-Additional test settings can be modified in `settings.sh`. The defaults are suitable for most use cases.
-
-### General
-Used for base configuration
-```bash
-ts_version="1.3"
-settings_dir=$(pwd)
-output_log_file="$settings_dir/logs/output.log"
-```
-
-### Test Durations
-These are the time settings for each stress type.
-```bash
-light_time="1s"
-medium_time="5s" 
-heavy_time="15s"
-all_core_time=15
-rapid_tests=2
-rapid_time="2s"
-rest_time=5
-```
-
-### Stress Test Methods
-These are the test methods ran against each of the time settings, they are stress-ng methods.
-```bash
-light=("bitops" "pi" "gcd" "sieve")
-mixed=("prime" "matrixprod" "fft" "loop")
-heavy=("ackermann" "factorial")
-rapid="bitops"
-```
-
-### Browser config
-These are the browser test settings. Also used in install.sh
-```bash
-chromium_version="144.0.7559.59-1"
-chromium_appimage="ungoogled-chromium-$chromium_version-x86_64.AppImage"
-chromium_domain="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download"
-chromium_flags="--new-window --ozone-platform=x11 --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito"
-```
-
-## Logging
-
-Logging is processed in a background script - logs/logger.sh
-All test output is saved to loged/output.log
-Error logs are saved into logs/errors.log
-Highest recorded CPU is logged to logs/clock.log 
-
-## Additional Notes
-
-While stress-ng includes built-in test validation (used by ThreadStepper), running OCCT in Monitor mode alongside the tests can improve error detection capabilities.
+- **Loops**: Number of full test cycles
+- **Light**: Duration of light load tests
+- **Medium**: Duration of medium load tests
+- **Heavy**: Duration of heavy load tests
+- **Browsers**: Number of browser instances for background load
+- **All Core**: Duration of all-core stress test
+- **Rapid Time**: Duration of each rapid transition test
+- **Rest**: Pause between tests
+- **Core Blacklist**: Cores to skip (format: 1,5,10,14)

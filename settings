@@ -1,0 +1,23 @@
+#!/bin/bash
+loops=100
+browsers=1
+light_time=10
+medium_time=30
+heavy_time=60
+all_core_time=20
+rapid_tests=30
+rapid_time=1
+rest_time=5
+core_blacklist=""
+
+# DO NOT EDIT
+output_log_file="$(pwd)/logs/output.log"
+cpu_topology=0 
+light=("bitops" "pi" "gcd" "sieve")
+mixed=("prime" "matrixprod" "fft" "loop")
+heavy=("ackermann" "factorial")
+rapid="bitops"
+chromium_version="144.0.7559.59-1"
+chromium_appimage="ungoogled-chromium-$chromium_version-x86_64.AppImage"
+chromium_domain="https://github.com/ungoogled-software/ungoogled-chromium-portablelinux/releases/download"
+chromium_flags="--new-window --ozone-platform=x11 --no-sandbox --disable-gpu-sandbox --disable-dev-shm-usage --disable-gpu-compositing --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-accelerated-video-encode --disable-webgl2 --num-raster-threads=1 --incognito"
