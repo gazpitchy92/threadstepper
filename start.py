@@ -351,10 +351,9 @@ class StressTestGUI:
                         bg='#d4edda',
                         fg='#155724'
                     )
-                    self.toggle_error_btn.config(text="👇 Show Logs")
-                    
-                    if self.error_log_visible:
-                        self.hide_error_log()
+                    self.toggle_error_btn.config(
+                        text="👆 Hide Logs" if self.error_log_visible else "👇 Show Logs"
+                    )
                         
                 return self.error_status
             else:
