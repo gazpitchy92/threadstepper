@@ -51,16 +51,21 @@ class StressTestGUI:
         install_frame = ttk.Frame(main_container)
         install_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
         
-        ttk.Button(install_frame, text="📦 Install Dependencies", 
-                  command=self.install_dependencies,
-                  style="Install.TButton").pack(side=tk.LEFT, padx=2)
+        header_frame = tk.Frame(install_frame)
+        header_frame.pack(fill=tk.X, pady=(5, 5))
+
+        tk.Label(header_frame, text="🔥 Thread Stepper", 
+                font=('Arial', 16, 'bold'),
+                fg='red').pack(side=tk.LEFT)
+
+        ttk.Button(header_frame, text="📦 Install Dependencies", command=self.install_dependencies).pack(side=tk.RIGHT)
         
         settings_frame = ttk.LabelFrame(main_container, text="🖥 Settings Editor", padding="10")
         settings_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         settings_frame.columnconfigure(0, weight=1)
         settings_frame.rowconfigure(0, weight=1)
         
-        self.settings_text = scrolledtext.ScrolledText(settings_frame, width=60, height=15, wrap=tk.NONE, font=('Consolas', 10))
+        self.settings_text = scrolledtext.ScrolledText(settings_frame, width=60, height=15, wrap=tk.NONE, font=('Arial', 14),)
         self.settings_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         
         settings_btn_frame = ttk.Frame(settings_frame)
@@ -113,7 +118,7 @@ class StressTestGUI:
         self.clock_label = tk.Label(
             clock_display_frame, 
             text="N/A", 
-            font=('Arial', 24, 'bold'), 
+            font=('Arial', 16, 'bold'),
             fg='#17a2b8',
             bg='#e8f4f8',
             relief=tk.RAISED,
@@ -136,7 +141,7 @@ class StressTestGUI:
             width=80, 
             height=8, 
             wrap=tk.WORD, 
-            font=('Consolas', 9)
+            font=('Arial', 14),
         )
         self.error_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         self.error_log_container.columnconfigure(0, weight=1)
@@ -152,7 +157,7 @@ class StressTestGUI:
         output_frame.columnconfigure(0, weight=1)
         output_frame.rowconfigure(0, weight=1)
         
-        self.output_text = scrolledtext.ScrolledText(output_frame, width=80, height=15, wrap=tk.WORD, font=('Consolas', 10))
+        self.output_text = scrolledtext.ScrolledText(output_frame, width=80, height=15, wrap=tk.WORD, font=('Arial', 14),)
         self.output_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
         
         control_frame = ttk.Frame(main_container)
@@ -166,7 +171,7 @@ class StressTestGUI:
         self.timer_label = tk.Label(
             control_frame,
             text="00:00:00",
-            font=('Courier', 14, 'bold'),
+            font=('Arial', 16, 'bold'),
             fg='#28a745',
             bg='#f0f0f0',
             relief=tk.SUNKEN,
@@ -195,8 +200,7 @@ class StressTestGUI:
 
     def setup_styles(self):
         style = ttk.Style()
-        style.configure("Start.TButton", foreground="green", font=('Arial', 10, 'bold'))
-        style.configure("Install.TButton", foreground="blue", font=('Arial', 10, 'bold'))
+        style.configure("Install.TButton", foreground="blue", font=('Arial', 12),)
         self.output_text.tag_config("error", foreground="red")
         self.output_text.tag_config("success", foreground="green")
         self.output_text.tag_config("warning", foreground="orange")
