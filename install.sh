@@ -51,4 +51,6 @@ fi
 
 chmod +x ./threadstepper
 
-echo "You can now launch ./threadstepper to start testing."
+clear
+echo "You can now use Thread Stepper!"
+echo "Please close this window..."
