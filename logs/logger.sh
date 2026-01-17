@@ -37,7 +37,7 @@ loggerErrorCheck() {
       [ -n "$ERRORS_DUMPED" ] && echo "$ERRORS_DUMPED"
       [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
       echo "========================================"
-    } >> "$ERROR_LOG"
+    } > "$ERROR_LOG"
     exit 1
   fi
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 loops=100
-browsers=2
-light_time=5
+browsers=8
+light_time=10
 medium_time=30
 heavy_time=60
 all_core_time=20

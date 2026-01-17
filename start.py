@@ -13,7 +13,9 @@ from ttkbootstrap.constants import *
 
 class StressTestGUI:
     def __init__(self, root):
+        
         self.root = root
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
         self.root.title("Thread Stepper v2.0")
         self.root.geometry("800x1060")
         
@@ -29,13 +31,16 @@ class StressTestGUI:
         self.timer_thread = None
         
         self.setup_ui()
-
         self.start_monitors()
+        self.full_reset()
         self.update_settings_content()
-        self.update_error_status()
-        self.update_error_log()
-        self.update_clock_speed()
-        self.refresh_system_info()
+    
+    def on_close(self):
+        """Handle GUI exit and clean up"""
+        self.full_reset()
+        self.stop_stress_test()
+        self.root.destroy()
+        
 
     def setup_ui(self):
 
@@ -444,43 +449,48 @@ class StressTestGUI:
     def update_error_status(self):
         """Update error status from the first line of error log"""
         try:
+            status = False
             if os.path.exists("./logs/errors.log"):
                 with open("./logs/errors.log", 'r') as f:
                     first_line = f.readline().strip()
-                    
-                self.error_status = (first_line.upper() == "TRUE")
-                
-                if self.error_status:
-                    self.error_indicator.config(
-                        text="ERRORS DETECTED 😟",
-                        bg='#f8d7da',
-                        fg='#721c24'
-                    )
-                    self.toggle_error_btn.config(text="Hide Error Log")
-                    
-                    if not self.error_log_visible:
-                        self.show_error_log()
-                else:
-                    self.error_indicator.config(
-                        text="NO ERRORS 🙂",
-                        bg='#d4edda',
-                        fg='#155724'
-                    )
-                    self.toggle_error_btn.config(
-                        text="👆 Hide Logs" if self.error_log_visible else "👇 Show Logs",
-                        bootstyle="secondary" if self.error_log_visible else "success-outline"
-                    )
-                        
-                return self.error_status
-            else:
-                self.error_status = False
+                    status = first_line.lower() == "true"
+
+            self.error_status = status
+
+            if self.error_status:
                 self.error_indicator.config(
-                    text="NO ERROR LOG FILE",
-                    bg='#fff3cd',
-                    fg='#856404'
+                    text="ERRORS DETECTED 😟",
+                    bg='#f8d7da',
+                    fg='#721c24'
                 )
-                return False
-                
+
+                # Stop the stress test if running
+                if self.is_running:
+                    self.stop_stress_test()
+                    try:
+                        subprocess.run(["pkill", "-f", "threadstepper"])
+                        subprocess.run(["pkill", "-f", "logger.sh"])
+                    except Exception as e:
+                        self.log_message(f"Error killing logger.sh: {str(e)}", "error")
+
+                # Auto-show the error log
+                if not self.error_log_visible:
+                    self.show_error_log()
+
+            else:
+                self.error_indicator.config(
+                    text="NO ERRORS 🙂",
+                    bg='#d4edda',
+                    fg='#155724'
+                )
+
+            # Update toggle button text
+            self.toggle_error_btn.config(
+                text="👆 Hide Logs" if self.error_log_visible else "👇 Show Logs"
+            )
+
+            return self.error_status
+
         except Exception as e:
             self.error_status = False
             self.error_indicator.config(
@@ -490,8 +500,29 @@ class StressTestGUI:
             )
             return False
 
+    def full_reset(self):
+        """Fully reset status"""
+        try:
+            subprocess.run(["pkill", "-f", "threadstepper"])
+            subprocess.run(["pkill", "-f", "logger.sh"])
+        except Exception as e:
+            self.log_message(f"Error killing logger.sh: {str(e)}", "error")
+            
+        with open("./logs/errors.log", "w") as f:
+            f.write("false")
+        with open("./logs/clock.log", "w") as f:
+            f.write("0")
+
+        self.clear_error_log()
+        self.clear_output()
+        self.refresh_system_info()
+        self.update_clock_speed()
+        self.update_error_log()
+        self.update_error_status()
+
+
     def monitor_error_status(self):
-        """Monitor error status for changes"""
+        """Monitor error status for changes every 5 seconds"""
         last_mtime = 0
         while True:
             try:
@@ -503,7 +534,7 @@ class StressTestGUI:
                         self.root.after(0, self.update_error_log)
             except:
                 pass
-            time.sleep(1)
+            time.sleep(5)
 
     def update_error_log(self):
         """Update error log display (skip first line)"""
@@ -574,7 +605,6 @@ class StressTestGUI:
         self.error_log_container.grid()
         self.error_log_visible = True
         self.toggle_error_btn.config(text="👆 Hide Logs")
-        self.bootstyle="secondary"
         self.update_error_log()
         self.root.update()
 
@@ -654,7 +684,7 @@ class StressTestGUI:
         if self.is_running:
             return
             
-        self.clear_output()
+        self.full_reset()
         self.reset_timer()
         self.start_timer()
         self.progress.grid()
