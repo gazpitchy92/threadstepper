@@ -6,7 +6,7 @@ stressNgCore() {
     local physical_cores=$(($(nproc) / 2))
     local core_second=$((core + physical_cores))
     local core_next=$((core + 1))
-    local core_last=$((core_next + 1))
+    local core_last=$((core_second + 1))
     
     # Test C0+C8, C1+C9, etc. (cross-die pairs)
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"1"* ]]; then
