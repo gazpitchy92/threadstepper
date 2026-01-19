@@ -1,10 +1,10 @@
 #!/bin/bash
-loops=1
+loops=2
 browsers=2
 light_time=5
 medium_time=10
 heavy_time=15
-all_core_time=15
+all_core_time=5
 rapid_tests=5
 rapid_time=1
 rest_time=2
