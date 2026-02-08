@@ -25,21 +25,33 @@ loggerCpuClock() {
 
 loggerErrorCheck() {
   LOG_PRIORITY="err"
+  EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard")
 
-  ERRORS=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)
-  [ "$ERRORS" = "-- No entries --" ] && ERRORS=""
-
+  ERRORS_HARDWARE=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
+  ERRORS_FLAG=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)
   ERRORS_DUMPED=$(journalctl --since="@${START_TIME}" --no-pager | grep -i "dumped core")
   ERRORS_SEGFAULT=$(journalctl --since="@${START_TIME}" --no-pager | grep -i "segfault")
 
-  COREDUMPS=$(coredumpctl --since "@${START_TIME}" list --no-pager 2>/dev/null)
+  for word in "${EXCLUDE[@]}"; do
+    ERRORS_HARDWARE=$(echo "$ERRORS_HARDWARE" | grep -vi "$word")
+    ERRORS_FLAG=$(echo "$ERRORS_DUMPED" | grep -vi "$word")
+    ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | grep -vi "$word")
+    ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | grep -vi "$word")
+  done
+
+  ERRORS_HARDWARE=$(echo "$ERRORS_HARDWARE" | awk 'gsub(/ /,"")>=5')
+  ERRORS_FLAG=$(echo "$ERRORS_FLAG" | awk 'gsub(/ /,"")>=5')
+  ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | awk 'gsub(/ /,"")>=5')
+  ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | awk 'gsub(/ /,"")>=5')
+
+  COREDUMPS=$(coredumpctl --since "@${START_TIME}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
   [ -z "$COREDUMPS" ] && COREDUMPS=""
 
-  if [ -n "$ERRORS" ] || [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$COREDUMPS" ]; then
+  if [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$COREDUMPS" ] || [ -n "$ERRORS_FLAG" ] || [ -n "$ERRORS_HARDWARE" ]; then
     {
-      echo "true"
       echo "=== Errors detected at $(date -Iseconds) ==="
-      [ -n "$ERRORS" ] && echo "$ERRORS"
+      [ -n "$ERRORS_HARDWARE" ] && echo "$ERRORS_HARDWARE"
+      [ -n "$ERRORS_FLAG" ] && echo "$ERRORS_FLAG"
       [ -n "$ERRORS_DUMPED" ] && echo "$ERRORS_DUMPED"
       [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
       [ -n "$COREDUMPS" ] && echo "=== Coredumps ===" && echo "$COREDUMPS"

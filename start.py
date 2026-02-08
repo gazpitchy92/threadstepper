@@ -37,7 +37,6 @@ class StressTestGUI:
         self.update_settings_content()
     
     def on_close(self):
-        """Handle GUI exit and clean up"""
         self.full_reset()
         self.stop_stress_test()
         self.root.destroy()
@@ -45,7 +44,6 @@ class StressTestGUI:
 
     def setup_ui(self):
 
-        # Initialize variables
         self.loops_var = tk.IntVar(value=1)
         self.browsers_var = tk.IntVar(value=1)
         self.light_time_var = tk.IntVar(value=1)
@@ -76,11 +74,10 @@ class StressTestGUI:
         header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI",20,"bold"), image=icon_img, compound="left")
         header_label.pack(side="left")
 
-        # Keep a reference to prevent garbage collection
         header_label.image = icon_img
         ttk.Button(header_frame, text="📦 Install Dependencies", bootstyle="primary", command=self.install_dependencies).pack(side="right")
 
-        # Top Row: Settings + System Info
+        # System Info
         top_frame = ttk.Frame(main_container)
         top_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
         top_frame.columnconfigure(0, weight=1)
@@ -101,10 +98,14 @@ class StressTestGUI:
         ttk.Button(save_frame, text="💾 Save", bootstyle="success-outline", command=self.save_settings).pack(side="right")
 
         fields = [
-            ("Loops", self.loops_var), ("Browsers", self.browsers_var),
-            ("Light", self.light_time_var), ("Medium", self.medium_time_var),
-            ("Heavy", self.heavy_time_var), ("All Core", self.all_core_time_var),
-            ("Rapid Tests", self.rapid_tests_var), ("Rapid Time", self.rapid_time_var),
+            ("Loops", self.loops_var), 
+            ("Browsers", self.browsers_var),
+            ("Light", self.light_time_var), 
+            ("Medium", self.medium_time_var),
+            ("Heavy", self.heavy_time_var), 
+            ("All Core", self.all_core_time_var),
+            ("Rapid Tests", self.rapid_tests_var), 
+            ("Rapid Time", self.rapid_time_var),
             ("Rest", self.rest_time_var)
         ]
 
@@ -142,7 +143,7 @@ class StressTestGUI:
         bottom_frame.grid(row=1, column=0, sticky="sew", pady=(10,0))
         ttk.Button(bottom_frame, text="🔁 Refresh", bootstyle="success-outline", command=self.refresh_system_info).pack(side="right")
 
-        # Middle Row: Error Status + CPU Clock
+        # Middle Row
         middle_frame = ttk.Frame(main_container)
         middle_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=10)
         middle_frame.columnconfigure(0, weight=1)
@@ -163,18 +164,22 @@ class StressTestGUI:
         self.toggle_error_btn = ttk.Button(error_btn_frame, text="👇 Show Logs", bootstyle="success-outline", command=self.toggle_error_log)
         self.toggle_error_btn.pack(side="right", padx=2)
 
-        # CPU Clock (match height)
+        # CPU Clock
         clock_frame = ttk.LabelFrame(middle_frame, text="🚀 Highest CPU Clock (GHz)", padding=10)
         clock_frame.grid(row=0, column=1, sticky="nsew", padx=(5,0))
         clock_frame.columnconfigure(0, weight=1)
         clock_frame.rowconfigure(0, weight=1)
         clock_frame.rowconfigure(1, weight=0)
 
-        # Match error_indicator height by explicitly setting height and padding
         self.clock_label = tk.Label(
-            clock_frame, text="N/A", font=("Segoe UI",14,"bold"),
-            fg="#17a2b8", bg="#e8f4f8", relief="raised",
-            padx=20, pady=10  # match error_indicator's pady
+            clock_frame, 
+            text="N/A", 
+            font=("Segoe UI",14,"bold"),
+            fg="#17a2b8", 
+            bg="#e8f4f8", 
+            relief="raised",
+            padx=20, 
+            pady=10
         )
         self.clock_label.grid(row=0, column=0, sticky="nsew")
 
@@ -406,14 +411,12 @@ class StressTestGUI:
             messagebox.showerror("Error", error_msg)
 
     def start_monitors(self):
-        """Start background threads for monitoring files"""
         threading.Thread(target=self.monitor_error_status, daemon=True).start()
         threading.Thread(target=self.monitor_clock_speed, daemon=True).start()
         threading.Thread(target=self.process_log_queue, daemon=True).start()
         threading.Thread(target=self.monitor_process_status, daemon=True).start()
 
     def monitor_process_status(self):
-        """Monitor if the process is still running and stop timer if it's not"""
         while True:
             if self.is_running and self.process is not None:
                 if self.process.poll() is not None: 
@@ -421,7 +424,6 @@ class StressTestGUI:
             time.sleep(0.5)
 
     def update_settings_content(self):
-        """Load settings content"""
         try:
             if os.path.exists("./settings"):
                 with open("./settings", 'r') as f:
@@ -441,7 +443,6 @@ class StressTestGUI:
                 self.log_message("Invalid core_blacklist format (use e.g. 1,4,7)", "error")
                 return
 
-            # Prepare new settings
             out = [
                 "#!/bin/bash",
                 f"loops={self.loops_var.get()}",
@@ -456,7 +457,6 @@ class StressTestGUI:
                 f'core_blacklist="{cb}"'
             ]
 
-            # Read existing file and preserve content after "# DO NOT EDIT"
             preserved_content = ""
             if os.path.exists("./settings"):
                 with open("./settings", "r") as f:
@@ -464,15 +464,12 @@ class StressTestGUI:
                     found_marker = False
                     for i, line in enumerate(lines):
                         if line.strip() == "# DO NOT EDIT":
-                            # Preserve from this line onwards
                             preserved_content = "".join(lines[i:])
                             found_marker = True
                             break
 
-            # Write new settings
             with open("./settings", "w") as f:
                 f.write("\n".join(out) + "\n")
-                # Add preserved content if it exists
                 if preserved_content:
                     if not preserved_content.startswith("\n"):
                         f.write("\n")
@@ -484,7 +481,6 @@ class StressTestGUI:
             self.log_message(f"Error saving settings: {str(e)}", "error")
 
     def update_error_status(self):
-        """Update error status from the first line of error log"""
         try:
             status = False
             if os.path.exists("./logs/errors.log"):
@@ -501,7 +497,6 @@ class StressTestGUI:
                     fg='#721c24'
                 )
 
-                # Stop the stress test if running
                 if self.is_running:
                     self.stop_stress_test()
                     try:
@@ -510,7 +505,6 @@ class StressTestGUI:
                     except Exception as e:
                         self.log_message(f"Error killing logger.sh: {str(e)}", "error")
 
-                # Auto-show the error log
                 if not self.error_log_visible:
                     self.show_error_log()
 
@@ -521,7 +515,6 @@ class StressTestGUI:
                     fg='#155724'
                 )
 
-            # Update toggle button text
             self.toggle_error_btn.config(
                 text="👆 Hide Logs" if self.error_log_visible else "👇 Show Logs"
             )
@@ -538,7 +531,6 @@ class StressTestGUI:
             return False
 
     def full_reset(self):
-        """Fully reset status"""
         try:
             subprocess.run(["pkill", "-f", "threadstepper"])
             subprocess.run(["pkill", "-f", "logger.sh"])
@@ -561,7 +553,6 @@ class StressTestGUI:
 
 
     def monitor_error_status(self):
-        """Monitor error status for changes every 5 seconds"""
         last_mtime = 0
         while True:
             try:
@@ -576,7 +567,6 @@ class StressTestGUI:
             time.sleep(5)
 
     def update_error_log(self):
-        """Update error log display (skip first line)"""
         try:
             if os.path.exists("./logs/errors.log"):
                 with open("./logs/errors.log", 'r') as f:
@@ -602,7 +592,6 @@ class StressTestGUI:
             self.error_text.insert(1.0, f"Error reading error log: {str(e)}")
 
     def highlight_error_log(self):
-        """Apply syntax highlighting to error log"""
         content = self.error_text.get(1.0, tk.END)
         
         for tag in ["error_highlight", "warning_highlight", "info_highlight"]:
@@ -633,14 +622,12 @@ class StressTestGUI:
             line_num += 1
 
     def toggle_error_log(self):
-        """Toggle error log visibility"""
         if self.error_log_visible:
             self.hide_error_log()
         else:
             self.show_error_log()
 
     def show_error_log(self):
-        """Show the error log panel"""
         self.error_log_container.grid()
         self.error_log_visible = True
         self.toggle_error_btn.config(text="👆 Hide Logs")
@@ -648,7 +635,6 @@ class StressTestGUI:
         self.root.update()
 
     def hide_error_log(self):
-        """Hide the error log panel"""
         self.error_log_container.grid_remove()
         self.error_log_visible = False
         self.toggle_error_btn.config(text="👇 Show Logs")
@@ -656,7 +642,6 @@ class StressTestGUI:
         self.root.update()
 
     def update_clock_speed(self):
-        """Update CPU clock speed display"""
         try:
             if os.path.exists("./logs/clock.log"):
                 with open("./logs/clock.log", 'r') as f:
@@ -673,7 +658,6 @@ class StressTestGUI:
             self.clock_label.config(text="Error reading", fg='#721c24', bg='#f8d7da')
 
     def reset_clock_speed(self):
-        """Reset the clock speed to 0"""
         try:
             with open("./logs/clock.log", 'w') as f:
                 f.write("0")
@@ -685,7 +669,6 @@ class StressTestGUI:
             messagebox.showerror("Error", f"Failed to reset clock speed: {str(e)}")
 
     def monitor_clock_speed(self):
-        """Monitor clock speed file for changes"""
         last_mtime = 0
         while True:
             try:
@@ -699,7 +682,6 @@ class StressTestGUI:
             time.sleep(0.5)
 
     def clear_error_log(self):
-        """Clear the error log file (preserve status line)"""
         try:
             if os.path.exists("./logs/errors.log"):
                 
@@ -713,7 +695,6 @@ class StressTestGUI:
             self.log_message(f"Error clearing log: {str(e)}", "error")
 
     def start_stress_test(self):
-        """Start the stress test process"""
         if self.is_running:
             return
             
@@ -738,7 +719,6 @@ class StressTestGUI:
         threading.Thread(target=self.run_stress_test, daemon=True).start()
 
     def run_stress_test(self):
-        """Run the stress test process"""
         try:
             os.chmod("./threadstepper", 0o755)
             
@@ -767,7 +747,6 @@ class StressTestGUI:
             self.root.after(0, self.on_process_stop)
 
     def on_process_stop(self):
-        """Update UI when process stops"""
         self.start_button.config(state=tk.NORMAL)
         self.stop_button.config(state=tk.DISABLED)
         self.status_bar.config(text="Stress test stopped")
@@ -777,7 +756,6 @@ class StressTestGUI:
         self.progress.grid_remove() 
 
     def stop_stress_test(self):
-        """Stop the running stress test"""
         if self.process and self.is_running:
             self.process.terminate()
             self.log_message("Stopping stress test...", "warning")
@@ -785,7 +763,6 @@ class StressTestGUI:
             self.stop_timer()
 
     def process_log_queue(self):
-        """Process messages from the log queue"""
         while True:
             try:
                 message = self.log_queue.get_nowait()
@@ -794,7 +771,6 @@ class StressTestGUI:
                 time.sleep(0.1)
 
     def log_message(self, message, tag="info"):
-        """Add a message to the output text area with ANSI color code support"""
         import re
         
         timestamp = datetime.now().strftime("[%H:%M:%S] ")
@@ -867,12 +843,10 @@ class StressTestGUI:
         self.output_text.update_idletasks()
 
     def clear_output(self):
-        """Clear the output text area and reset timer"""
         self.output_text.delete(1.0, tk.END)
         self.reset_timer()
 
     def export_log(self):
-        """Export the output log to a file"""
         try:
             filename = filedialog.asksaveasfilename(
                 defaultextension=".log",
@@ -901,7 +875,6 @@ def main():
         with open("./logs/errors.log", 'w') as f:
             f.write("False\n")
     
-    # Start the GUI
     root = tb.Window(themename="flatly") 
     root.resizable(False, False)
     icon = PhotoImage(file="favicon.png")

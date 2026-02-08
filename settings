@@ -1,5 +1,5 @@
 #!/bin/bash
-loops=2
+loops=1
 browsers=2
 light_time=5
 medium_time=10
