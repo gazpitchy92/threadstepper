@@ -33,10 +33,13 @@ browserTest() {
 }
 
 stopBrowserTest(){
+    # Terminate chrome first, avoiding coredump cause by Appimage FUSE teardown race condition
+    pkill chrome &>/dev/null
+    sleep 1
+    
     # kill running browser tests
     pgrep -f "$chromium_appimage" | while read -r pid; do
         kill -9 "$pid" &>/dev/null
     done
     pkill $chromium_appimage &>/dev/null
-    pkill chrome &>/dev/null
 }
