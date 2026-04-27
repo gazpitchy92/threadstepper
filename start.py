@@ -17,7 +17,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.root.title("Thread Stepper (2.0)")
+        self.root.title("Thread Stepper (2.1)")
         self.root.geometry("800x1060")
         
         self.process = None
