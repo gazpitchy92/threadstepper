@@ -25,7 +25,7 @@ loggerCpuClock() {
 
 loggerErrorCheck() {
   LOG_PRIORITY="err"
-  EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard")
+  EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave")
 
   ERRORS_HARDWARE=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
   ERRORS_FLAG=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)
@@ -44,13 +44,17 @@ loggerErrorCheck() {
   ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | awk 'gsub(/ /,"")>=5')
   ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | awk 'gsub(/ /,"")>=5')
 
-  if [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$ERRORS_FLAG" ] || [ -n "$ERRORS_HARDWARE" ]; then
+  COREDUMPS=$(coredumpctl --since "@${START_TIME}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
+  [ -z "$COREDUMPS" ] && COREDUMPS=""
+
+  if [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$COREDUMPS" ] || [ -n "$ERRORS_FLAG" ] || [ -n "$ERRORS_HARDWARE" ]; then
     {
       echo "=== Errors detected at $(date -Iseconds) ==="
       [ -n "$ERRORS_HARDWARE" ] && echo "$ERRORS_HARDWARE"
       [ -n "$ERRORS_FLAG" ] && echo "$ERRORS_FLAG"
       [ -n "$ERRORS_DUMPED" ] && echo "$ERRORS_DUMPED"
       [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
+      [ -n "$COREDUMPS" ] && echo "=== Coredumps ===" && echo "$COREDUMPS"
       echo "========================================"
     } > "$ERROR_LOG"
     exit 1
