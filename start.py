@@ -12,9 +12,12 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
-from ui.system import refresh_system_info, update_clock_speed
+from ui.system import refresh_system_info, full_reset
 from ui.options import parse_settings_options, update_settings_content, save_settings
 from ui.errors import clear_error_log, monitor_error_status, update_error_log, toggle_error_log, show_error_log, update_error_status
+from ui.clocks import reset_clock_speed, monitor_clock_speed, update_clock_speed
+from ui.logs import export_log, log_message, clear_output
+from ui.dependencies import install_dependencies
 
 class StressTestGUI:
     def __init__(self, root):
@@ -37,14 +40,13 @@ class StressTestGUI:
         
         self.setup_ui()
         self.start_monitors()
-        self.full_reset()
+        full_reset(self)
         update_settings_content(self)
     
     def on_close(self):
-        self.full_reset()
+        full_reset(self)
         self.stop_stress_test()
         self.root.destroy()
-        
 
     def setup_ui(self):
 
@@ -82,7 +84,7 @@ class StressTestGUI:
         header_label.pack(side="left")
 
         header_label.image = icon_img
-        ttk.Button(header_frame, text="📦 Install Dependencies", bootstyle="primary", command=self.install_dependencies).pack(side="right")
+        ttk.Button(header_frame, text="📦 Install Dependencies", bootstyle="primary", command=lambda: install_dependencies(self)).pack(side="right")
 
         # System Info
         top_frame = ttk.Frame(main_container)
@@ -196,7 +198,7 @@ class StressTestGUI:
         clock_btn_frame = ttk.Frame(clock_frame)
         clock_btn_frame.grid(row=1, column=0, sticky="e", pady=(5,0))
         ttk.Button(clock_btn_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: update_clock_speed(self)).pack(side="right", padx=2)
-        ttk.Button(clock_btn_frame, text="❎ Clear", bootstyle="success-outline", command=self.reset_clock_speed).pack(side="right", padx=2)
+        ttk.Button(clock_btn_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: reset_clock_speed(self)).pack(side="right", padx=2)
 
         # Error Logs
         self.error_log_container = ttk.LabelFrame(main_container, text="✎ Error Logs", padding=5)
@@ -242,8 +244,8 @@ class StressTestGUI:
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="🛑 Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
         self.stop_button.pack(side="left", padx=2)
-        ttk.Button(control_frame, text="❎ Clear", bootstyle="success-outline", command=self.clear_output).pack(side="left", padx=2)
-        ttk.Button(control_frame, text="💾 Save", bootstyle="success-outline", command=self.export_log).pack(side="left", padx=2)
+        ttk.Button(control_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
+        ttk.Button(control_frame, text="💾 Save", bootstyle="success-outline", command=lambda: export_log(self)).pack(side="left", padx=2)
 
         # Status bar & progress on the same line
         status_frame = ttk.Frame(main_container)
@@ -310,57 +312,18 @@ class StressTestGUI:
                 self.timer_seconds += 1
             time.sleep(1)
 
-    def install_dependencies(self):
-        self.clear_output()
-
-        install_script = "./install.sh"
-        
-        if not os.path.exists(install_script):
-            messagebox.showerror("File Not Found", 
-                f"install.sh not found in current directory.\n\n"
-                f"Current directory: {os.getcwd()}\n"
-                f"Expected at: {install_script}")
-            return
-        
-        try:
-            os.chmod(install_script, 0o755)
-        except:
-            pass  
-        
-        system = platform.system()
-        
-        try:
-            terminals = [
-                ["x-terminal-emulator", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"],
-                ["gnome-terminal", "--", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
-                ["konsole", "-e", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
-                ["xterm", "-e", "bash", "-c", f"{install_script}; echo 'Press Enter to close...'; read"],
-                ["terminator", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"],
-                ["xfce4-terminal", "-e", f"bash -c '{install_script}; echo \"Press Enter to close...\"; read'"]
-            ]
-            
-            for terminal_cmd in terminals:
-                try:
-                    subprocess.Popen(terminal_cmd, start_new_session=True)
-                    self.log_message(f"Opening terminal to run installer...", "info")
-                    self.log_message("Follow installations in the terminal window.", "info")
-                    return
-                except:
-                    continue
-            
-            subprocess.Popen(["bash", install_script], start_new_session=True)
-            self.log_message("Running install.sh in background...", "info")
-            self.status_bar.config(text="Running install.sh in new terminal...")
-            
-        except Exception as e:
-            error_msg = f"Failed to open terminal: {str(e)}"
-            self.log_message(error_msg, "error")
-            messagebox.showerror("Error", error_msg)
+    def process_log_queue(self):
+        while True:
+            try:
+                message = self.log_queue.get_nowait()
+                self.root.after(0, lambda msg=message: log_message(self, msg))
+            except queue.Empty:
+                time.sleep(0.1)
 
     def start_monitors(self):
         threading.Thread(target=monitor_error_status, args=(self,), daemon=True).start()
-        threading.Thread(target=self.monitor_clock_speed, daemon=True).start()
-        threading.Thread(target=self.process_log_queue, daemon=True).start()
+        threading.Thread(target=monitor_clock_speed, args=(self,), daemon=True).start()
+        threading.Thread(target=self.process_log_queue,daemon=True).start()
         threading.Thread(target=self.monitor_process_status, daemon=True).start()
 
     def monitor_process_status(self):
@@ -370,64 +333,18 @@ class StressTestGUI:
                     self.root.after(0, self.stop_timer)
             time.sleep(0.5)
 
-    def full_reset(self):
-        try:
-            subprocess.run(["pkill", "-f", "threadstepper"])
-            subprocess.run(["pkill", "-f", "logger.sh"])
-        except Exception as e:
-            self.log_message(f"Error killing logger.sh: {str(e)}", "error")
-            
-        with open("./logs/errors.log", "w") as f:
-            f.write("false")
-        with open("./logs/clock.log", "w") as f:
-            f.write("0")
-        with open("./logs/output.log", "w") as f:
-            f.write("-- STARTUP --")
-
-        clear_error_log(self)
-        self.clear_output()
-        refresh_system_info(self)
-        update_clock_speed(self)
-        update_error_log(self)
-        update_error_status(self)
-
-    def reset_clock_speed(self):
-        try:
-            with open("./logs/clock.log", 'w') as f:
-                f.write("0")
-            update_clock_speed(self)
-            self.log_message("Clock speed reset to 0", "info")
-            self.status_bar.config(text="Clock speed reset to 0")
-        except Exception as e:
-            self.log_message(f"Error resetting clock speed: {str(e)}", "error")
-            messagebox.showerror("Error", f"Failed to reset clock speed: {str(e)}")
-
-    def monitor_clock_speed(self):
-        last_mtime = 0
-        while True:
-            try:
-                if os.path.exists("./logs/clock.log"):
-                    current_mtime = os.path.getmtime("./logs/clock.log")
-                    if current_mtime > last_mtime:
-                        last_mtime = current_mtime
-                        self.root.after(0, lambda: update_clock_speed(self))
-            except:
-                pass
-            time.sleep(0.5)
-
-
     def start_stress_test(self):
         if self.is_running:
             return
             
-        self.full_reset()
+        full_reset(self)
         self.reset_timer()
         self.start_timer()
         self.progress.grid()
         self.progress.start(10)
         
         if not os.path.exists("./threadstepper"):
-            self.log_message("Error: ./threadstepper not found!", "error")
+            log_message(self, "Error: ./threadstepper not found!", "error")
             self.stop_timer()
             return
         
@@ -435,7 +352,7 @@ class StressTestGUI:
         self.start_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
         
-        self.log_message(f"Starting stress test at {datetime.now().strftime('%H:%M:%S')}", "info")
+        log_message(self, f"Starting stress test at {datetime.now().strftime('%H:%M:%S')}", "info")
         self.status_bar.config(text="Stress test running...")
         
         threading.Thread(target=self.run_stress_test, daemon=True).start()
@@ -472,7 +389,7 @@ class StressTestGUI:
         self.start_button.config(state=tk.NORMAL)
         self.stop_button.config(state=tk.DISABLED)
         self.status_bar.config(text="Stress test stopped")
-        self.log_message(f"Stress test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
+        log_message(self, f"Stress test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
         self.stop_timer()
         self.progress.stop()
         self.progress.grid_remove() 
@@ -480,107 +397,9 @@ class StressTestGUI:
     def stop_stress_test(self):
         if self.process and self.is_running:
             self.process.terminate()
-            self.log_message("Stopping stress test...", "warning")
+            log_message(self, "Stopping stress test...", "warning")
             self.status_bar.config(text="Stopping stress test...")
             self.stop_timer()
-
-    def process_log_queue(self):
-        while True:
-            try:
-                message = self.log_queue.get_nowait()
-                self.root.after(0, lambda msg=message: self.log_message(msg))
-            except queue.Empty:
-                time.sleep(0.1)
-
-    def log_message(self, message, tag="info"):
-        import re
-        
-        timestamp = datetime.now().strftime("[%H:%M:%S] ")
-        message = re.sub(r'\x1b\(B|\033\(B', '', message)
-        
-        ansi_color_map = {
-            '30': 'black', '31': 'red', '32': 'green', '33': 'yellow',
-            '34': 'blue', '35': 'magenta', '36': 'cyan', '37': 'white',
-            '90': 'bright_black', '91': 'bright_red', '92': 'bright_green',
-            '93': 'bright_yellow', '94': 'bright_blue', '95': 'bright_magenta',
-            '96': 'bright_cyan', '97': 'bright_white'
-        }
-        
-        for code, color_name in ansi_color_map.items():
-            tag_name = f"ansi_{color_name}"
-            if tag_name not in self.output_text.tag_names():
-                color_hex = {
-                    'black': '#000000', 'red': '#cd0000', 'green': '#00cd00', 'yellow': '#cdcd00',
-                    'blue': '#0000ee', 'magenta': '#cd00cd', 'cyan': '#00cdcd', 'white': '#e5e5e5',
-                    'bright_black': '#7f7f7f', 'bright_red': '#ff0000', 'bright_green': '#00ff00',
-                    'bright_yellow': '#ffff00', 'bright_blue': '#5c5cff', 'bright_magenta': '#ff00ff',
-                    'bright_cyan': '#00ffff', 'bright_white': '#ffffff'
-                }.get(color_name, '#000000')
-                self.output_text.tag_config(tag_name, foreground=color_hex)
-        
-        self.output_text.insert(tk.END, timestamp, tag)
-        
-        ansi_pattern = r'\x1b\[([0-9;]+)m|\033\[([0-9;]+)m|\[([0-9;]+)m'
-        reset_pattern = r'\(B\[m|\[m|\x1b\[m|\033\[m'
-        
-        current_tag = tag
-        last_pos = 0
-        
-        full_message = message
-        full_message = re.sub(reset_pattern, '\x00RESET\x00', full_message)
-        
-        for match in re.finditer(ansi_pattern, full_message):
-            text_before = full_message[last_pos:match.start()]
-            if text_before:
-                parts = text_before.split('\x00RESET\x00')
-                for i, part in enumerate(parts):
-                    if part:
-                        self.output_text.insert(tk.END, part, current_tag)
-                    if i < len(parts) - 1:
-                        current_tag = tag
-            
-            code = match.group(1) or match.group(2) or match.group(3)
-            if code == '0' or code == '':
-                current_tag = tag 
-            else:
-                codes = code.split(';')
-                for c in codes:
-                    if c in ansi_color_map:
-                        current_tag = f"ansi_{ansi_color_map[c]}"
-                        break
-            
-            last_pos = match.end()
-        
-        remaining = full_message[last_pos:]
-        if remaining:
-            parts = remaining.split('\x00RESET\x00')
-            for i, part in enumerate(parts):
-                if part:
-                    self.output_text.insert(tk.END, part, current_tag)
-                if i < len(parts) - 1:
-                    current_tag = tag
-        
-        self.output_text.insert(tk.END, "\n", tag)
-        self.output_text.see(tk.END)
-        self.output_text.update_idletasks()
-
-    def clear_output(self):
-        self.output_text.delete(1.0, tk.END)
-        self.reset_timer()
-
-    def export_log(self):
-        try:
-            filename = filedialog.asksaveasfilename(
-                defaultextension=".log",
-                filetypes=[("Log files", "*.log"), ("Text files", "*.txt"), ("All files", "*.*")]
-            )
-            if filename:
-                content = self.output_text.get(1.0, tk.END)
-                with open(filename, 'w') as f:
-                    f.write(content)
-                self.log_message(f"Log exported to {filename}", "success")
-        except Exception as e:
-            self.log_message(f"Error exporting log: {str(e)}", "error")
 
 def main():
     os.makedirs("./logs", exist_ok=True)

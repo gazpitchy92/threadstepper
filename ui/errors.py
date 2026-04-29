@@ -12,6 +12,8 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
+from ui.logs import log_message
+
 def clear_error_log(self):
     try:
         if os.path.exists("./logs/errors.log"):
@@ -21,10 +23,10 @@ def clear_error_log(self):
 
             update_error_status(self)
             update_error_log(self)
-            self.log_message("Error log cleared", "info")
+            log_message(self, "Error log cleared", "info")
 
     except Exception as e:
-        self.log_message(f"Error clearing log: {str(e)}", "error")
+        log_message(self, f"Error clearing log: {str(e)}", "error")
 
 def monitor_error_status(self):
     last_mtime = 0
@@ -138,7 +140,7 @@ def update_error_status(self):
                     subprocess.run(["pkill", "-f", "threadstepper"])
                     subprocess.run(["pkill", "-f", "logger.sh"])
                 except Exception as e:
-                    self.log_message(f"Error killing logger.sh: {str(e)}", "error")
+                    log_message(self, f"Error killing logger.sh: {str(e)}", "error")
 
             if not self.error_log_visible:
                 self.show_error_log()

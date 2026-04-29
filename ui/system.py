@@ -1,6 +1,10 @@
 import os
 import platform
 
+from ui.logs import log_message, clear_output
+from ui.errors import clear_error_log, update_error_log, update_error_status
+from ui.clocks import update_clock_speed
+
 def refresh_system_info(self):
     import psutil
 
@@ -31,35 +35,23 @@ def refresh_system_info(self):
 
     self.governor_label.config(text=f"CPU Governor: {governor}")
 
-
-def update_clock_speed(self):
+def full_reset(self):
     try:
-        if os.path.exists("./logs/clock.log"):
-            with open("./logs/clock.log", "r") as f:
-                clock_speed = f.read().strip()
+        subprocess.run(["pkill", "-f", "threadstepper"])
+        subprocess.run(["pkill", "-f", "logger.sh"])
+    except Exception as e:
+        log_message(self, f"Error killing logger.sh: {str(e)}", "error")
+        
+    with open("./logs/errors.log", "w") as f:
+        f.write("false")
+    with open("./logs/clock.log", "w") as f:
+        f.write("0")
+    with open("./logs/output.log", "w") as f:
+        f.write("-- STARTUP --")
 
-            if clock_speed:
-                self.clock_label.config(
-                    text=clock_speed,
-                    fg="#17a2b8",
-                    bg="#e8f4f8"
-                )
-            else:
-                self.clock_label.config(
-                    text="No data",
-                    fg="#6c757d",
-                    bg="#f8f9fa"
-                )
-        else:
-            self.clock_label.config(
-                text="No clock.log file",
-                fg="#6c757d",
-                bg="#f8f9fa"
-            )
-
-    except:
-        self.clock_label.config(
-            text="Error reading",
-            fg="#721c24",
-            bg="#f8d7da"
-        )
+    clear_error_log(self)
+    clear_output(self)
+    refresh_system_info(self)
+    update_clock_speed(self)
+    update_error_log(self)
+    update_error_status(self)
