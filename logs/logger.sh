@@ -32,20 +32,21 @@ loggerErrorCheck() {
   ERRORS_DUMPED=$(journalctl --since="@${START_TIME}" --no-pager | grep -i "dumped core")
   ERRORS_SEGFAULT=$(journalctl --since="@${START_TIME}" --no-pager | grep -i "segfault")
 
+  COREDUMPS=$(coredumpctl --since "@${START_TIME}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
+  [ -z "$COREDUMPS" ] && COREDUMPS=""
+
   for word in "${EXCLUDE[@]}"; do
     ERRORS_HARDWARE=$(echo "$ERRORS_HARDWARE" | grep -vi "$word")
-    ERRORS_FLAG=$(echo "$ERRORS_DUMPED" | grep -vi "$word")
+    ERRORS_FLAG=$(echo "$ERRORS_FLAG" | grep -vi "$word")
     ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | grep -vi "$word")
     ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | grep -vi "$word")
+    COREDUMPS=$(echo "$COREDUMPS" | grep -vi "$word")
   done
 
   ERRORS_HARDWARE=$(echo "$ERRORS_HARDWARE" | awk 'gsub(/ /,"")>=5')
   ERRORS_FLAG=$(echo "$ERRORS_FLAG" | awk 'gsub(/ /,"")>=5')
   ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | awk 'gsub(/ /,"")>=5')
   ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | awk 'gsub(/ /,"")>=5')
-
-  COREDUMPS=$(coredumpctl --since "@${START_TIME}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
-  [ -z "$COREDUMPS" ] && COREDUMPS=""
 
   if [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$COREDUMPS" ] || [ -n "$ERRORS_FLAG" ] || [ -n "$ERRORS_HARDWARE" ]; then
     {
