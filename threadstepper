@@ -47,6 +47,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
 
     # All core tests
     allCoreTest
+    check_errors
 
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
@@ -56,7 +57,11 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     done
 
     # Random core tests
-    randomStressNgCore
+    for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
+        echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        randomStressNgCore
+        check_errors
+    done
 
     # individual core tests
     for ((core=start_core; core<=END_CORE; core++)); do
