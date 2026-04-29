@@ -12,7 +12,8 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
-from ui.system import refresh_system_info, update
+from ui.system import refresh_system_info, update_clock_speed
+from ui.options import parse_settings_options, update_settings_content, save_settings
 
 class StressTestGUI:
     def __init__(self, root):
@@ -36,7 +37,7 @@ class StressTestGUI:
         self.setup_ui()
         self.start_monitors()
         self.full_reset()
-        self.update_settings_content()
+        update_settings_content(self)
     
     def on_close(self):
         self.full_reset()
@@ -100,8 +101,7 @@ class StressTestGUI:
         options_frame.grid(row=0, column=0, sticky="nw", pady=(0,5))
         save_frame = ttk.Frame(settings_frame)
         save_frame.grid(row=1, column=0, sticky="e", pady=(5,0))
-        ttk.Button(save_frame, text="💾 Save", bootstyle="success-outline", command=self.save_settings).pack(side="right")
-
+        ttk.Button(save_frame, text="💾 Save", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
 
         fields = [
             ("Loops", self.loops_var), 
@@ -274,40 +274,7 @@ class StressTestGUI:
         self.setup_styles()
 
 
-    def parse_settings_options(self, content):
-        for line in content.splitlines():
-            if line.startswith("loops="):
-                self.loops_var.set(int(line.split("=")[1]))
-            elif line.startswith("browsers="):
-                self.browsers_var.set(int(line.split("=")[1]))
-            elif line.startswith("light_time="):
-                self.light_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("medium_time="):
-                self.medium_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("heavy_time="):
-                self.heavy_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("all_core_time="):
-                self.all_core_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("rapid_tests="):
-                self.rapid_tests_var.set(int(line.split("=")[1]))
-            elif line.startswith("rapid_time="):
-                self.rapid_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("random_tests="):
-                self.random_tests_var.set(int(line.split("=")[1]))
-            elif line.startswith("random_time="):
-                self.random_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("rest_time="):
-                self.rest_time_var.set(int(line.split("=")[1]))
-            elif line.startswith("core_blacklist="):
-                val = line.split("=", 1)[1].strip().strip('"')
-                self.core_blacklist_var.set(val)
-            elif line.startswith("max_ram="):
-                self.max_ram_var.set(int(line.split("=")[1]))
 
-    def validate_core_blacklist(self, value):
-        if value == "":
-            return True
-        return bool(re.fullmatch(r"\d+(,\d+)*", value))
 
     def setup_styles(self):
         style = ttk.Style()
@@ -409,66 +376,6 @@ class StressTestGUI:
                 if self.process.poll() is not None: 
                     self.root.after(0, self.stop_timer)
             time.sleep(0.5)
-
-    def update_settings_content(self):
-        try:
-            if os.path.exists("./settings"):
-                with open("./settings", 'r') as f:
-                    content = f.read()
-                    self.parse_settings_options(content)
-                self.status_bar.config(text="Settings loaded successfully")
-            else:
-                self.status_bar.config(text="settings not found - create it to configure your test")
-        except Exception as e:
-            self.log_message(f"Error loading settings: {str(e)}", "error")
-
-    def save_settings(self):
-        try:
-            cb = self.core_blacklist_var.get()
-            if cb and not re.fullmatch(r"\d+(,\d+)*", cb):
-                self.status_bar.config(text="Invalid core_blacklist format")
-                self.log_message("Invalid core_blacklist format (use e.g. 1,4,7)", "error")
-                return
-
-            out = [
-                "#!/bin/bash",
-                f"loops={self.loops_var.get()}",
-                f"browsers={self.browsers_var.get()}",
-                f"light_time={self.light_time_var.get()}",
-                f"medium_time={self.medium_time_var.get()}",
-                f"heavy_time={self.heavy_time_var.get()}",
-                f"all_core_time={self.all_core_time_var.get()}",
-                f"rapid_tests={self.rapid_tests_var.get()}",
-                f"rapid_time={self.rapid_time_var.get()}",
-                f"random_tests={self.random_tests_var.get()}",
-                f"random_time={self.random_time_var.get()}",
-                f"rest_time={self.rest_time_var.get()}",
-                f'core_blacklist="{cb}"',
-                f"max_ram={self.max_ram_var.get()}",
-            ]
-
-            preserved_content = ""
-            if os.path.exists("./settings"):
-                with open("./settings", "r") as f:
-                    lines = f.readlines()
-                    found_marker = False
-                    for i, line in enumerate(lines):
-                        if line.strip() == "# DO NOT EDIT":
-                            preserved_content = "".join(lines[i:])
-                            found_marker = True
-                            break
-
-            with open("./settings", "w") as f:
-                f.write("\n".join(out) + "\n")
-                if preserved_content:
-                    if not preserved_content.startswith("\n"):
-                        f.write("\n")
-                    f.write(preserved_content)
-
-            self.log_message("Settings saved", "success")
-
-        except Exception as e:
-            self.log_message(f"Error saving settings: {str(e)}", "error")
 
     def update_error_status(self):
         try:
