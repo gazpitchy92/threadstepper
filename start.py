@@ -17,8 +17,8 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.root.title("Thread Stepper (2.1)")
-        self.root.geometry("800x1060")
+        self.root.title("Thread Stepper (2.2)")
+        self.root.geometry("800x1040")
         
         self.process = None
         self.is_running = False
@@ -52,6 +52,8 @@ class StressTestGUI:
         self.all_core_time_var = tk.IntVar(value=1)
         self.rapid_tests_var = tk.IntVar(value=1)
         self.rapid_time_var = tk.IntVar(value=1)
+        self.random_tests_var = tk.IntVar(value=1)
+        self.random_time_var = tk.IntVar(value=1)
         self.rest_time_var = tk.IntVar(value=1)
         self.core_blacklist_var = tk.StringVar()
 
@@ -106,6 +108,8 @@ class StressTestGUI:
             ("All Core", self.all_core_time_var),
             ("Rapid Tests", self.rapid_tests_var), 
             ("Rapid Time", self.rapid_time_var),
+            ("Random Tests", self.random_tests_var), 
+            ("Random Time", self.random_time_var),
             ("Rest", self.rest_time_var)
         ]
 
@@ -311,6 +315,10 @@ class StressTestGUI:
                 self.rapid_tests_var.set(int(line.split("=")[1]))
             elif line.startswith("rapid_time="):
                 self.rapid_time_var.set(int(line.split("=")[1]))
+            elif line.startswith("random_tests="):
+                self.random_tests_var.set(int(line.split("=")[1]))
+            elif line.startswith("random_time="):
+                self.random_time_var.set(int(line.split("=")[1]))
             elif line.startswith("rest_time="):
                 self.rest_time_var.set(int(line.split("=")[1]))
             elif line.startswith("core_blacklist="):
@@ -453,6 +461,8 @@ class StressTestGUI:
                 f"all_core_time={self.all_core_time_var.get()}",
                 f"rapid_tests={self.rapid_tests_var.get()}",
                 f"rapid_time={self.rapid_time_var.get()}",
+                f"random_tests={self.random_tests_var.get()}",
+                f"random_time={self.random_time_var.get()}",
                 f"rest_time={self.rest_time_var.get()}",
                 f'core_blacklist="{cb}"'
             ]

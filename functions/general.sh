@@ -80,6 +80,8 @@ outputOptions(){
     echo "$(tput setaf 5)All core time: ${all_core_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Rapid tests: ${rapid_tests} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Rapid time: ${rapid_time}s $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Random tests: ${random_tests} $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)Random time: ${random_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Rest time: ${rest_time}s $(tput sgr0)" | tee -a $output_log_file
     echo ""
     echo "STARTING TESTS IN $rest_time SECONDS..."

@@ -25,7 +25,7 @@ loggerCpuClock() {
 
 loggerErrorCheck() {
   LOG_PRIORITY="err"
-  EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave" "electron")
+  EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave" "electron" "udev")
 
   ERRORS_HARDWARE=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
   ERRORS_FLAG=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)

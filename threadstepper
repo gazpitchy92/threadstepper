@@ -9,6 +9,7 @@ source ./functions/general.sh
 source ./functions/errors.sh
 source ./functions/tests/cores/rapid.sh
 source ./functions/tests/cores/stressng.sh
+source ./functions/tests/cores/random.sh
 source ./functions/tests/allcore.sh
 source ./functions/tests/browser.sh
 
@@ -44,6 +45,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     fi
 
     if [[ -z "$core_blacklist" ]]; then
+        randomStressNgCore
         allCoreTest
         for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
             echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
