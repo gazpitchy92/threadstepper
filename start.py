@@ -17,7 +17,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.root.title("Thread Stepper (2.3)")
+        self.root.title("Thread Stepper (2.4)")
         self.root.geometry("800x1040")
         
         self.process = None
@@ -56,6 +56,7 @@ class StressTestGUI:
         self.random_time_var = tk.IntVar(value=1)
         self.rest_time_var = tk.IntVar(value=1)
         self.core_blacklist_var = tk.StringVar()
+        self.max_ram_var = tk.IntVar(value=1)
 
         main_container = ttk.Frame(self.root, padding=10)
         main_container.grid(row=0, column=0, sticky="nsew")
@@ -99,6 +100,7 @@ class StressTestGUI:
         save_frame.grid(row=1, column=0, sticky="e", pady=(5,0))
         ttk.Button(save_frame, text="💾 Save", bootstyle="success-outline", command=self.save_settings).pack(side="right")
 
+
         fields = [
             ("Loops", self.loops_var), 
             ("Browsers", self.browsers_var),
@@ -110,18 +112,19 @@ class StressTestGUI:
             ("Rapid Time", self.rapid_time_var),
             ("Random Tests", self.random_tests_var), 
             ("Random Time", self.random_time_var),
-            ("Rest", self.rest_time_var)
+            ("Rest", self.rest_time_var),
+            ("Max RAM (GB)", self.max_ram_var)
         ]
 
         for idx, (label, var) in enumerate(fields):
-            row = idx // 2
+            row = idx // 2  # This gives rows 0-5 for 12 items
             col = (idx % 2) * 2
             ttk.Label(options_frame, text=label).grid(row=row, column=col, padx=(0,5), pady=(5,0), sticky="w")
             ttk.Entry(options_frame, width=6, textvariable=var).grid(row=row, column=col+1, padx=(0,15), pady=(5,0), sticky="w")
 
-        ttk.Label(options_frame, text="Core Blacklist").grid(row=5, column=0, padx=(0,5), pady=(5,0), sticky="w")
+        ttk.Label(options_frame, text="Core Blacklist").grid(row=6, column=0, padx=(0,5), pady=(5,0), sticky="w")
         self.core_blacklist_var = tk.StringVar()
-        ttk.Entry(options_frame, width=18, textvariable=self.core_blacklist_var).grid(row=5, column=1, columnspan=3, sticky="w", pady=(5,0))
+        ttk.Entry(options_frame, width=18, textvariable=self.core_blacklist_var).grid(row=6, column=1, columnspan=3, sticky="w", pady=(5,0))
 
         # System Info
         system_frame = ttk.LabelFrame(top_frame, text="🔎 System Information", padding=10)
@@ -324,6 +327,8 @@ class StressTestGUI:
             elif line.startswith("core_blacklist="):
                 val = line.split("=", 1)[1].strip().strip('"')
                 self.core_blacklist_var.set(val)
+            elif line.startswith("max_ram="):
+                self.max_ram_var.set(int(line.split("=")[1]))
 
     def validate_core_blacklist(self, value):
         if value == "":
@@ -464,7 +469,8 @@ class StressTestGUI:
                 f"random_tests={self.random_tests_var.get()}",
                 f"random_time={self.random_time_var.get()}",
                 f"rest_time={self.rest_time_var.get()}",
-                f'core_blacklist="{cb}"'
+                f'core_blacklist="{cb}"',
+                f"max_ram={self.max_ram_var.get()}",
             ]
 
             preserved_content = ""

@@ -34,8 +34,9 @@ randomStressNgCore() {
                 continue
             fi
             taskset_cores=$(IFS=,; echo "${filtered[*]}")
+            vm_count=${#filtered[@]}
             echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for ${random_time}s [${parallel} at a time]$(tput sgr0)" | tee -a "$output_log_file"
-            stress-ng --cpu "${#filtered[@]}" --taskset "$taskset_cores" --timeout "${random_time}s" --cpu-method "$rapid" > /dev/null 2>&1
+            stress-ng --cpu "${#filtered[@]}" --taskset "$taskset_cores" --timeout "${random_time}s" --cpu-method "$rapid" --vm "$vm_count" --vm-bytes "$max_ram"G  > /dev/null 2>&1
             check_errors
         done
     done

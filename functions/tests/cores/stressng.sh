@@ -17,7 +17,7 @@ stressNgCore() {
                 echo "$(tput setaf 0)Skipping test for core $core + $core_second $(tput sgr0)" | tee -a "$output_log_file"
             else
                 echo "$(tput setaf 2)Testing with method $method on core $core + $core_second for $light_time (light) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$light_time"s --cpu-method "$method" > /dev/null 2>&1
+                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$light_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                 check_errors
                 sleep "$rest_time"
             fi
@@ -27,7 +27,7 @@ stressNgCore() {
                 echo "$(tput setaf 0)Skipping test for core $core + $core_second $(tput sgr0)" | tee -a "$output_log_file"
             else
                 echo "$(tput setaf 2)Testing with method $method on core $core + $core_second for $medium_time (medium) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$medium_time"s --cpu-method "$method" > /dev/null 2>&1
+                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$medium_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                 check_errors
                 sleep "$rest_time"
             fi
@@ -37,7 +37,7 @@ stressNgCore() {
                 echo "$(tput setaf 0)Skipping test for core $core + $core_second $(tput sgr0)" | tee -a "$output_log_file"
             else
                 echo "$(tput setaf 2)Testing with method $method on core $core + $core_second for $heavy_time (heavy) $(tput sgr0)" | tee -a "$output_log_file"
-                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$heavy_time"s --cpu-method "$method" > /dev/null 2>&1
+                stress-ng --cpu 2 --taskset "$core,$core_second" --timeout "$heavy_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                 check_errors
                 sleep "$rest_time"
             fi
@@ -53,7 +53,7 @@ stressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $method on core $core + $core_next for $light_time (light) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$light_time"s --cpu-method "$method" > /dev/null 2>&1
+                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$light_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                     sleep "$rest_time"
                 fi
@@ -63,7 +63,7 @@ stressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $method on core $core + $core_next for $medium_time (medium) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$medium_time"s --cpu-method "$method" > /dev/null 2>&1
+                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$medium_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                     sleep "$rest_time"
                 fi
@@ -73,7 +73,7 @@ stressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $method on core $core + $core_next for $heavy_time (heavy) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$heavy_time"s --cpu-method "$method" > /dev/null 2>&1
+                    stress-ng --cpu 2 --taskset "$core,$core_next" --timeout "$heavy_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                     sleep "$rest_time"
                 fi
@@ -90,7 +90,7 @@ stressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $method on core $core_second + $core_last for $light_time (light) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$light_time"s --cpu-method "$method" > /dev/null 2>&1
+                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$light_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                     sleep "$rest_time"
                 fi
@@ -100,7 +100,7 @@ stressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $method on core $core_second + $core_last for $medium_time (medium) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$medium_time"s --cpu-method "$method" > /dev/null 2>&1
+                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$medium_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                     sleep "$rest_time"
                 fi
@@ -110,7 +110,7 @@ stressNgCore() {
                     echo "$(tput setaf 0)Skipping test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
                 else
                     echo "$(tput setaf 2)Testing with method $method on core $core_second + $core_last for $heavy_time (heavy) $(tput sgr0)" | tee -a "$output_log_file"
-                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$heavy_time"s --cpu-method "$method" > /dev/null 2>&1
+                    stress-ng --cpu 2 --taskset "$core_second,$core_last" --timeout "$heavy_time"s --cpu-method "$method" --vm 2 --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                     sleep "$rest_time"
                 fi

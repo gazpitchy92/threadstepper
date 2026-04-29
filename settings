@@ -1,16 +1,17 @@
 #!/bin/bash
 loops=1
 browsers=2
-light_time=5
-medium_time=10
-heavy_time=15
+light_time=2
+medium_time=5
+heavy_time=10
 all_core_time=5
-rapid_tests=5
-rapid_time=2
-random_tests=5
+rapid_tests=10
+rapid_time=1
+random_tests=10
 random_time=2
 rest_time=2
 core_blacklist=""
+max_ram=16
 
 # DO NOT EDIT
 output_log_file="$(pwd)/logs/output.log"

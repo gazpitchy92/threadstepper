@@ -4,7 +4,7 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.3
+## Latest Updates - Version 2.4
 
 - New GUI interface!
 - Better live error checking.
@@ -78,3 +78,4 @@ All times in seconds. Default settings work for most users.
 - **Random Time**: Duration of each random cpu load test
 - **Rest**: Pause between tests
 - **Core Blacklist**: Cores to skip (format: 1,5,10,14)
+- **Max RAM**: The maximum memory which will be used in tests
