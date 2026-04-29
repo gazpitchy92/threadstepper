@@ -12,6 +12,8 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
+from ui.logs import log_message
+
 def parse_settings_options(self, content):
     for line in content.splitlines():
         if line.startswith("loops="):
@@ -58,14 +60,14 @@ def update_settings_content(self):
         else:
             self.status_bar.config(text="settings not found - create it to configure your test")
     except Exception as e:
-        self.log_message(f"Error loading settings: {str(e)}", "error")
+        log_message(self, f"Error loading settings: {str(e)}", "error")
 
 def save_settings(self):
     try:
         cb = self.core_blacklist_var.get()
         if cb and not re.fullmatch(r"\d+(,\d+)*", cb):
             self.status_bar.config(text="Invalid core_blacklist format")
-            self.log_message("Invalid core_blacklist format (use e.g. 1,4,7)", "error")
+            log_message(self, "Invalid core_blacklist format (use e.g. 1,4,7)", "error")
             return
 
         out = [
@@ -103,7 +105,7 @@ def save_settings(self):
                     f.write("\n")
                 f.write(preserved_content)
 
-        self.log_message("Settings saved", "success")
+        log_message(self, "Settings saved", "success")
 
     except Exception as e:
-        self.log_message(f"Error saving settings: {str(e)}", "error")
+        log_message(self, f"Error saving settings: {str(e)}", "error")
