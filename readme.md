@@ -89,9 +89,10 @@ Cycles through different load combinations on each core and thread group, with c
 ```
    Installs stress-ng, p7zip, and downloads ungoogled-chromium AppImage for WebGL tests.
 
-## Test Setup
+## Settings
 
 All times in seconds. Default settings work for most users.
+
 
 **Full Test Loops**: How many times to run the entire test suite.
 
@@ -119,7 +120,7 @@ All times in seconds. Default settings work for most users.
 
 **Enabled Threads**: Opens a window allowing you to enable or disable testing specific threads/cores.
 
-** Advanced Options**
+**Advanced Options**
 
 - **Rest Time**: How much time to rest for between test types.
 
