@@ -2,9 +2,21 @@
 
 # setup clean log files
 setupLogs(){
+    echo ""
     rm -f $output_log_file
     rm -f prime.txt
     touch $output_log_file
+}
+
+# initial test output
+initial_output() {
+    outputOptions
+    print_topology
+    checkDeps
+    echo "STARTING TESTS IN 10 SECONDS..."
+    sleep 10
+    setupLogs
+    starLogger
 }
 
 # output help
@@ -84,10 +96,6 @@ outputOptions(){
     echo "$(tput setaf 5)Random tests: ${random_tests} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Random time: ${random_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Rest time: ${rest_time}s $(tput sgr0)" | tee -a $output_log_file
-    echo ""
-    echo "STARTING TESTS IN $rest_time SECONDS..."
-    echo ""
-    sleep $rest_time
 }
 
 # cleanup exit of program
