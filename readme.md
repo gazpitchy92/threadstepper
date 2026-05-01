@@ -6,6 +6,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ## Latest Updates - Version 2.7
 
+- CPU topology detection (detection of threads per core)
 - New beanchmarking tool
 - New RAM testing functionality (built into the existing tests)
 
@@ -41,8 +42,20 @@ Uses 3D WebGL browser tests to generate unpredictable background activity during
 **Test Patterns**  
 Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
 
+- Full core test
+![full](https://i.ibb.co/cKCKc3wh/Screenshot-20260501-223547.png)
+
+- Single core test (both threads)
+![pairs](https://i.ibb.co/BKsNJBNY/Screenshot-20260501-223108.png)
+
+- Random test
 ![random](https://i.ibb.co/3th93hd/random.png)
+
+- Rapid load test
 ![rapid](https://ibb.co/1JpVQ2wY)
+
+- Browser variable load test
+![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
 
 ## Requirements
 
