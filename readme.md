@@ -18,8 +18,8 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ## Screenshots
 
-![running](https://iili.io/fUTdO21.png)
-![errors](https://iili.io/fUT27wJ.png)
+![running](https://i.ibb.co/YTwBng7S/running.png)
+![errors](https://i.ibb.co/pjr2BpTR/errrrr.png)
 
 ## Methodology
 
