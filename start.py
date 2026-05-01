@@ -256,7 +256,7 @@ class StressTestGUI:
         ttk.Button(control_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
         ttk.Button(control_frame, text="💾 Save", bootstyle="success-outline", command=lambda: export_log(self)).pack(side="left", padx=2)
 
-        # Status bar & progress on the same line
+        # Status bar
         status_frame = ttk.Frame(main_container)
         status_frame.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(5,0))
         status_frame.columnconfigure(0, weight=1)
@@ -287,36 +287,23 @@ class StressTestGUI:
 
     def open_core_picker(self):
         topology = {}
+        physical_threads = set()
 
+        # Find CPU Topology
         try:
-            import psutil
-            for cpu in psutil.cpu_info() if hasattr(psutil, 'cpu_info') else []:
-                pass
-
-            cpu_details = psutil.cpu_count(logical=True)
-            try:
-                per_cpu = psutil.cpu_freq(percpu=True)
-            except Exception:
-                per_cpu = None
-
-            # Get Core ID from each thread
             import subprocess
-            try:
-                result = subprocess.run(
-                    ["lscpu", "--parse=CPU,CORE"],
-                    capture_output=True, text=True
-                )
-                for line in result.stdout.splitlines():
-                    if line.startswith("#") or not line.strip():
-                        continue
-                    parts = line.strip().split(",")
-                    if len(parts) == 2:
-                        thread_id, core_id = int(parts[0]), int(parts[1])
-                        topology.setdefault(core_id, []).append(thread_id)
-            except Exception:
-                topology = {}
-
-        except ImportError:
+            result = subprocess.run(
+                ["lscpu", "--parse=CPU,CORE"],
+                capture_output=True, text=True
+            )
+            for line in result.stdout.splitlines():
+                if line.startswith("#") or not line.strip():
+                    continue
+                parts = line.strip().split(",")
+                if len(parts) == 2:
+                    thread_id, core_id = int(parts[0]), int(parts[1])
+                    topology.setdefault(core_id, []).append(thread_id)
+        except Exception:
             topology = {}
 
         # /proc/cpuinfo fallback
@@ -338,10 +325,34 @@ class StressTestGUI:
             except Exception:
                 topology = {}
 
-        # No mult-threading
+        # No SMT fallback
         if not topology:
             num_cores = os.cpu_count() or 1
             topology = {i: [i] for i in range(num_cores)}
+
+        # Check physical and virtual threads
+        try:
+            seen_sibling_groups = set()
+            for core_threads in topology.values():
+                for thread_id in sorted(core_threads):
+                    sib_path = f"/sys/devices/system/cpu/cpu{thread_id}/topology/thread_siblings_list"
+                    with open(sib_path) as f:
+                        raw = f.read().strip()
+                    siblings = set()
+                    for part in raw.split(","):
+                        if "-" in part:
+                            a, b = part.split("-")
+                            siblings.update(range(int(a), int(b) + 1))
+                        else:
+                            siblings.add(int(part))
+                    group_key = frozenset(siblings)
+                    if group_key not in seen_sibling_groups:
+                        seen_sibling_groups.add(group_key)
+                        physical_threads.add(min(siblings))
+        except Exception:
+            for core_threads in topology.values():
+                if core_threads:
+                    physical_threads.add(min(core_threads))
 
         # Check existing blacklist
         current = self.core_blacklist_var.get()
@@ -350,14 +361,16 @@ class StressTestGUI:
         except ValueError:
             blacklisted = set()
 
-        # Build the pop-up window
+        # Build pop-up window
         win = tk.Toplevel(self.root)
         win.title("Enabled Threads")
         win.resizable(False, False)
         win.grab_set()
 
         ttk.Label(win, text="Select threads to enable  (red = disabled)",
-                font=("Segoe UI", 10)).pack(pady=(10, 2), padx=10)
+            font=("Segoe UI", 10)).pack(pady=(2, 2), padx=2)
+        ttk.Label(win, text="(P) = Physical  (HT) = Virtual",
+            font=("Segoe UI", 10)).pack(pady=(2, 2), padx=2)
 
         scroll_frame_outer = ttk.Frame(win)
         scroll_frame_outer.pack(fill="both", expand=True, padx=10, pady=5)
@@ -379,22 +392,22 @@ class StressTestGUI:
         btn_vars = {}
 
         for grid_row, (core_id, threads) in enumerate(sorted(topology.items())):
-            # Core
             ttk.Label(grid_frame, text=f"Core {core_id}",
                     font=("Segoe UI", 9, "bold")).grid(
                 row=grid_row * 2, column=0, columnspan=THREAD_COLS,
                 sticky="w", padx=6, pady=(8, 0)
             )
 
-            # Thread buttons
             for col, thread_id in enumerate(sorted(threads)):
                 is_enabled = thread_id not in blacklisted
                 var = tk.BooleanVar(value=is_enabled)
                 btn_vars[thread_id] = var
 
+                tag = "(P)" if thread_id in physical_threads else "(HT)"
+                label = f"Thread {thread_id} {tag}"
+
                 style = "success-outline" if is_enabled else "danger"
-                btn = ttk.Button(grid_frame, text=f"Thread {thread_id}",
-                                width=10, bootstyle=style)
+                btn = ttk.Button(grid_frame, text=label, width=14, bootstyle=style)
 
                 def make_toggle(t_id, b):
                     def toggle():
@@ -409,7 +422,6 @@ class StressTestGUI:
         content_height = min(grid_frame.winfo_reqheight() + 20, 400)
         canvas.config(height=content_height)
 
-        # Confirm/Cancel
         def confirm():
             result = ",".join(
                 str(t) for t in sorted(k for k, v in btn_vars.items() if not v.get())
