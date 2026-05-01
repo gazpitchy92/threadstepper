@@ -11,7 +11,7 @@ random_tests=5
 random_time=2
 rest_time=2
 core_blacklist=""
-max_ram=16
+max_ram=4
 
 # DO NOT EDIT
 output_log_file="$(pwd)/logs/output.log"
