@@ -4,8 +4,9 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.7
+## Latest Updates - Version 2.8
 
+- Improved UI and easier settings
 - CPU topology detection (detection of threads per core)
 - New beanchmarking tool
 - New RAM testing functionality (built into the existing tests)
@@ -19,7 +20,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ## Screenshots
 
-![running](https://i.ibb.co/YTwBng7S/running.png)
+![running](https://i.ibb.co/9HXcfygt/Screenshot-20260501-234328.png)
 ![errors](https://i.ibb.co/pjr2BpTR/errrrr.png)
 
 ## Methodology
