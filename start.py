@@ -29,6 +29,7 @@ class StressTestGUI:
         
         self.process = None
         self.is_running = False
+        self.benchmark_mode = False
         self.log_queue = queue.Queue()
         
         self.error_status = False
@@ -44,6 +45,9 @@ class StressTestGUI:
         update_settings_content(self)
     
     def on_close(self):
+        if self.is_running and self.process:
+            self.process.terminate()
+            self.process = None
         full_reset(self)
         self.stop_stress_test()
         self.root.destroy()
@@ -122,7 +126,7 @@ class StressTestGUI:
         ]
 
         for idx, (label, var) in enumerate(fields):
-            row = idx // 2  # This gives rows 0-5 for 12 items
+            row = idx // 2
             col = (idx % 2) * 2
             ttk.Label(options_frame, text=label).grid(row=row, column=col, padx=(0,5), pady=(5,0), sticky="w")
             ttk.Entry(options_frame, width=6, textvariable=var).grid(row=row, column=col+1, padx=(0,15), pady=(5,0), sticky="w")
@@ -240,10 +244,13 @@ class StressTestGUI:
             pady=0
         )
         self.timer_label.pack(side="left", padx=(0,5), fill="y")
-        self.start_button = ttk.Button(control_frame, text="🔥 Start", style="Uniform.TButton", command=self.start_stress_test)
+        
+        self.start_button = ttk.Button(control_frame, text="🔥 Run Test", style="Uniform.TButton", command=self.start_stress_test)
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="🛑 Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
         self.stop_button.pack(side="left", padx=2)
+        self.benchmark_button = ttk.Button(control_frame, text="💪 Benchmark", style="Uniform.TButton", command=self.start_benchmark)
+        self.benchmark_button.pack(side="left", padx=2)
         ttk.Button(control_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
         ttk.Button(control_frame, text="💾 Save", bootstyle="success-outline", command=lambda: export_log(self)).pack(side="left", padx=2)
 
@@ -349,7 +356,9 @@ class StressTestGUI:
             return
         
         self.is_running = True
+        self.benchmark_mode = False
         self.start_button.config(state=tk.DISABLED)
+        self.benchmark_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
         
         log_message(self, f"Starting stress test at {datetime.now().strftime('%H:%M:%S')}", "info")
@@ -376,30 +385,98 @@ class StressTestGUI:
             
             return_code = self.process.wait()
             
-            self.log_queue.put(f"\nProcess completed with return code: {return_code}")
+            self.log_queue.put(f"\nTests completed!")
             
         except Exception as e:
-            self.log_queue.put(f"Error running stress test: {str(e)}")
+            self.log_queue.put(f"Error running tests: {str(e)}")
+        finally:
+            self.process = None
+            self.is_running = False
+            self.benchmark_mode = False
+            self.root.after(0, self.on_process_stop)
+
+    def start_benchmark(self):
+        if self.is_running:
+            return
+            
+        full_reset(self)
+        self.reset_timer()
+        self.start_timer()
+        self.progress.grid()
+        self.progress.start(10)
+        
+        self.is_running = True
+        self.benchmark_mode = True
+        self.start_button.config(state=tk.DISABLED)
+        self.benchmark_button.config(state=tk.DISABLED)
+        self.stop_button.config(state=tk.NORMAL)
+        
+        log_message(self, f"\033[95mStarting benchmark at {datetime.now().strftime('%H:%M:%S')}\033[0m", "info")
+        self.status_bar.config(text="Benchmark running...")
+        
+        threading.Thread(target=self.run_benchmark, daemon=True).start()
+
+    def run_benchmark(self):
+        script_path = "./functions/benchmark.sh"
+        if not os.path.exists(script_path):
+            self.log_queue.put(f"Error: {script_path} not found!")
+            self.root.after(0, self.on_process_stop)
+            return
+        
+        try:
+            os.chmod(script_path, 0o755)
+            self.process = subprocess.Popen(
+                [script_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                universal_newlines=True
+            )
+            
+            for line in self.process.stdout:
+                if line:
+                    self.log_queue.put(line.strip())
+            
+            return_code = self.process.wait()
+            
+        except Exception as e:
+            self.log_queue.put(f"Error running benchmark: {str(e)}")
         finally:
             self.process = None
             self.is_running = False
             self.root.after(0, self.on_process_stop)
 
-    def on_process_stop(self):
-        self.start_button.config(state=tk.NORMAL)
-        self.stop_button.config(state=tk.DISABLED)
-        self.status_bar.config(text="Stress test stopped")
-        log_message(self, f"Stress test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
-        self.stop_timer()
-        self.progress.stop()
-        self.progress.grid_remove() 
-
     def stop_stress_test(self):
         if self.process and self.is_running:
             self.process.terminate()
-            log_message(self, "Stopping stress test...", "warning")
-            self.status_bar.config(text="Stopping stress test...")
+            if self.benchmark_mode:
+                log_message(self, "Stopping benchmark...", "warning")
+                self.status_bar.config(text="Stopping benchmark...")
+            else:
+                log_message(self, "Stopping test...", "warning")
+                self.status_bar.config(text="Stopping test...")
+                if not self.benchmark_mode:
+                    self.stop_timer()
+
+    def on_process_stop(self):
+        self.start_button.config(state=tk.NORMAL)
+        self.stop_button.config(state=tk.DISABLED)
+        self.benchmark_button.config(state=tk.NORMAL)
+        if self.benchmark_mode:
+            self.status_bar.config(text="Benchmark stopped")
+            log_message(self, f"\033[95mBenchmark finished at {datetime.now().strftime('%H:%M:%S')}\033[0m", "info")
             self.stop_timer()
+            self.progress.stop()
+            self.progress.grid_remove()
+        else:
+            self.status_bar.config(text="Stress test stopped")
+            log_message(self, f"Test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
+            self.stop_timer()
+            self.progress.stop()
+            self.progress.grid_remove()
+        self.is_running = False
+        self.benchmark_mode = False
 
 def main():
     os.makedirs("./logs", exist_ok=True)
