@@ -164,15 +164,20 @@ class StressTestGUI:
             ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w", padx=(0, 5), pady=3)
             ttk.Entry(parent, width=6, textvariable=var).grid(row=row, column=1, sticky="w", pady=3)
 
+        # Test Loops
+        loops_frame = ttk.Frame(settings_outer)
+        loops_frame.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 8))
+        ttk.Label(loops_frame, text="Full Test Loops", font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 8))
+        ttk.Spinbox(loops_frame, from_=1, to=999, width=6, textvariable=self.loops_var).pack(side="left")
+
         # High Load
         high_frame = ttk.LabelFrame(settings_outer, text="🔥 High Load", padding=8)
-        high_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 5), pady=(0, 5))
-        make_entry_row(high_frame, "Loops", self.loops_var, 0)
-        make_entry_row(high_frame, "Load Time", self.all_core_time_var, 3)
+        high_frame.grid(row=1, column=0, sticky="nsew", padx=(0, 5), pady=(0, 5))
+        make_entry_row(high_frame, "Load Time", self.heavy_time_var, 0)
 
         # Low Load
         low_frame = ttk.LabelFrame(settings_outer, text="🌀 Low Load", padding=8)
-        low_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=(0, 5))
+        low_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=(0, 5))
         make_entry_row(low_frame, "Rapid Loops", self.rapid_tests_var, 0)
         make_entry_row(low_frame, "Rapid Time", self.rapid_time_var, 1)
         make_entry_row(low_frame, "Random Loops", self.random_tests_var, 2)
@@ -180,14 +185,14 @@ class StressTestGUI:
 
         # Single Core
         single_frame = ttk.LabelFrame(settings_outer, text="🎯 Single Core", padding=8)
-        single_frame.grid(row=0, column=2, sticky="nsew", padx=(5, 0), pady=(0, 5))
+        single_frame.grid(row=1, column=2, sticky="nsew", padx=(5, 0), pady=(0, 5))
         make_entry_row(single_frame, "Low Time", self.light_time_var, 0)
         make_entry_row(single_frame, "Medium Time", self.medium_time_var, 1)
         make_entry_row(single_frame, "High Time", self.heavy_time_var, 2)
 
         # Browser Tests + Enabled Cores
         bottom_settings = ttk.Frame(settings_outer)
-        bottom_settings.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(5, 0))
+        bottom_settings.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(5, 0))
         bottom_settings.columnconfigure(0, weight=1)
         bottom_settings.columnconfigure(1, weight=1)
 
@@ -214,17 +219,17 @@ class StressTestGUI:
 
         adv_toggle_btn = ttk.Button(settings_outer, text="▶ Advanced Options",
                                     bootstyle="link", command=toggle_advanced)
-        adv_toggle_btn.grid(row=2, column=0, columnspan=3, sticky="w", pady=(5, 0))
+        adv_toggle_btn.grid(row=3, column=0, columnspan=3, sticky="w", pady=(5, 0))
 
         advanced_frame = ttk.Frame(settings_outer)
-        advanced_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(0, 5))
+        advanced_frame.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(0, 5))
         advanced_frame.grid_remove()
         make_entry_row(advanced_frame, "Rest Time", self.rest_time_var, 0)
         make_entry_row(advanced_frame, "Max RAM (GB)", self.max_ram_var, 1)
 
         # Save
         save_frame = ttk.Frame(settings_outer)
-        save_frame.grid(row=4, column=0, columnspan=3, sticky="e", pady=(5, 0))
+        save_frame.grid(row=5, column=0, columnspan=3, sticky="e", pady=(5, 0))
         self.unsaved_label = ttk.Label(save_frame, text="", foreground="#e67e00", font=("Segoe UI", 9, "italic"))
         self.unsaved_label.pack(side="left", padx=(0, 10))
         ttk.Button(save_frame, text="💾 Save Settings", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
