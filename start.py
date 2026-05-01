@@ -168,7 +168,7 @@ class StressTestGUI:
         high_frame = ttk.LabelFrame(settings_outer, text="🔥 High Load", padding=8)
         high_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 5), pady=(0, 5))
         make_entry_row(high_frame, "Loops", self.loops_var, 0)
-        make_entry_row(high_frame, "Load Time", self.heavy_time_var, 1)
+        make_entry_row(high_frame, "Load Time", self.all_core_time_var, 3)
 
         # Low Load
         low_frame = ttk.LabelFrame(settings_outer, text="🌀 Low Load", padding=8)
@@ -184,7 +184,6 @@ class StressTestGUI:
         make_entry_row(single_frame, "Low Time", self.light_time_var, 0)
         make_entry_row(single_frame, "Medium Time", self.medium_time_var, 1)
         make_entry_row(single_frame, "High Time", self.heavy_time_var, 2)
-        make_entry_row(single_frame, "All Core Time", self.all_core_time_var, 3)
 
         # Browser Tests + Enabled Cores
         bottom_settings = ttk.Frame(settings_outer)
