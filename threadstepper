@@ -24,6 +24,7 @@ loops=${loops:-1}
 rapid_tests=${rapid_tests:-0}
 start_core=${start_core:-0}
 rest_time=${rest_time:-1}
+update_progress "Startup" 1 1 $loops $loop_counter
 
 PHYSICAL_CORES=$((num_cores / 2))
 
@@ -46,6 +47,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Rapid Tests" $rapid_counter $rapid_tests $loops $loop_counter
         rapidStressNgCore
         check_errors
     done
