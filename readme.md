@@ -97,23 +97,23 @@ All times in seconds. Default settings work for most users.
 
 - **High Load**: Tests that test all-core loads.
 
--- Load Time: How Long each change in CPU load is applied for.
+**Load Time**: How Long each change in CPU load is applied for.
 
 - **Low Load**: Tests that apply a low load tests.
 
--- **Rapid Loops**: The rapid test applies a rapid load to each core in order.
+**Rapid Loops**: The rapid test applies a rapid load to each core in order.
 
--- **Rapid Time**: How long to apply the rapid load for.
+**Rapid Time**: How long to apply the rapid load for.
 
--- **Rand Loops**: The random test applies a light load to random threads.
+**Rand Loops**: The random test applies a light load to random threads.
 
 - **Single Core**: These tests go through each core with a variatey of tests.
 
--- **Low Time**: How long to test each core with low load tests.
+**Low Time**: How long to test each core with low load tests.
 
--- **Medium Time**: How long to test each core with medium load tests.
+**Medium Time**: How long to test each core with medium load tests.
 
--- **High Time**: How long to test each core with medium load tests.
+**High Time**: How long to test each core with medium load tests.
 
 - **Browser Tests**: Opens browser tests during Single Core tests to apply a varying background load.
 
@@ -121,6 +121,6 @@ All times in seconds. Default settings work for most users.
 
 - ** Advanced Options**
 
--- **Rest Time**: How much time to rest for between test types.
+**Rest Time**: How much time to rest for between test types.
 
--- **Max RAM**(gb): The maximum memory which will be used in tests.
+**Max RAM**(gb): The maximum memory which will be used in tests.
