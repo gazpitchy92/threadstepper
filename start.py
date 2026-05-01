@@ -13,7 +13,7 @@ from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
 from ui.system import refresh_system_info, full_reset
-from ui.options import parse_settings_options, update_settings_content, save_settings
+from ui.options import parse_settings_options, update_settings_content, save_settings, register_settings_traces
 from ui.errors import clear_error_log, monitor_error_status, update_error_log, toggle_error_log, show_error_log, update_error_status
 from ui.clocks import reset_clock_speed, monitor_clock_speed, update_clock_speed
 from ui.logs import export_log, log_message, clear_output
@@ -24,7 +24,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
-        self.root.title("Thread Stepper (2.7)")
+        self.root.title("Thread Stepper (2.8)")
         self.root.geometry("800x1040")
         
         self.process = None
@@ -43,6 +43,7 @@ class StressTestGUI:
         self.start_monitors()
         full_reset(self)
         update_settings_content(self)
+        register_settings_traces(self)  
     
     def on_close(self):
         if self.is_running and self.process:
@@ -53,7 +54,6 @@ class StressTestGUI:
         self.root.destroy()
 
     def setup_ui(self):
-
         self.loops_var = tk.IntVar(value=1)
         self.browsers_var = tk.IntVar(value=1)
         self.light_time_var = tk.IntVar(value=1)
@@ -67,186 +67,187 @@ class StressTestGUI:
         self.rest_time_var = tk.IntVar(value=1)
         self.core_blacklist_var = tk.StringVar()
         self.max_ram_var = tk.IntVar(value=1)
+        self.advanced_visible = False
 
         main_container = ttk.Frame(self.root, padding=10)
         main_container.grid(row=0, column=0, sticky="nsew")
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         main_container.columnconfigure(0, weight=1)
-        main_container.columnconfigure(1, weight=1)
-        for i in range(8):
-            main_container.rowconfigure(i, weight=1 if i in [1,4] else 0)
+        for i in range(10):
+            main_container.rowconfigure(i, weight=1 if i == 6 else 0)
 
         # Header
-        install_frame = ttk.Frame(main_container)
-        install_frame.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0,5))
-        header_frame = ttk.Frame(install_frame)
-        header_frame.pack(fill="x", pady=(5,5))
+        header_frame = ttk.Frame(main_container)
+        header_frame.grid(row=0, column=0, sticky="ew", pady=(0, 5))
         img = Image.open("favicon.png").resize((45, 45))
-        icon_img = ImageTk.PhotoImage(img)  
-        header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI",20,"bold"), image=icon_img, compound="left")
+        icon_img = ImageTk.PhotoImage(img)
+        header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI", 20, "bold"), image=icon_img, compound="left")
         header_label.pack(side="left")
-
         header_label.image = icon_img
         ttk.Button(header_frame, text="📦 Install Dependencies", bootstyle="primary", command=lambda: install_dependencies(self)).pack(side="right")
 
         # System Info
-        top_frame = ttk.Frame(main_container)
-        top_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
-        top_frame.columnconfigure(0, weight=1)
-        top_frame.columnconfigure(1, weight=1)
-        top_frame.rowconfigure(0, weight=1)
+        info_row = ttk.Frame(main_container)
+        info_row.grid(row=1, column=0, sticky="ew", padx=5, pady=(0, 5))
+        info_row.columnconfigure(0, weight=1)
+        info_row.columnconfigure(1, weight=1)
 
-        # Settings Editor
-        settings_frame = ttk.LabelFrame(top_frame, text="🖥 Settings Editor", padding=10)
-        settings_frame.grid(row=0, column=0, sticky="nsew", padx=(0,15))
-        settings_frame.columnconfigure(0, weight=1)
-        settings_frame.rowconfigure(0, weight=1)
-        settings_frame.rowconfigure(1, weight=0)
-
-        options_frame = ttk.Frame(settings_frame)
-        options_frame.grid(row=0, column=0, sticky="nw", pady=(0,5))
-        save_frame = ttk.Frame(settings_frame)
-        save_frame.grid(row=1, column=0, sticky="e", pady=(5,0))
-        ttk.Button(save_frame, text="💾 Save", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
-
-        fields = [
-            ("Loops", self.loops_var), 
-            ("Browsers", self.browsers_var),
-            ("Light", self.light_time_var), 
-            ("Medium", self.medium_time_var),
-            ("Heavy", self.heavy_time_var), 
-            ("All Core", self.all_core_time_var),
-            ("Rapid Tests", self.rapid_tests_var), 
-            ("Rapid Time", self.rapid_time_var),
-            ("Random Tests", self.random_tests_var), 
-            ("Random Time", self.random_time_var),
-            ("Rest", self.rest_time_var),
-            ("Max RAM (GB)", self.max_ram_var)
-        ]
-
-        for idx, (label, var) in enumerate(fields):
-            row = idx // 2
-            col = (idx % 2) * 2
-            ttk.Label(options_frame, text=label).grid(row=row, column=col, padx=(0,5), pady=(5,0), sticky="w")
-            ttk.Entry(options_frame, width=6, textvariable=var).grid(row=row, column=col+1, padx=(0,15), pady=(5,0), sticky="w")
-
-        # Core selection
-        ttk.Label(options_frame, text="Enabled Threads").grid(row=6, column=0, padx=(0,5), pady=(5,0), sticky="w")
-        self.core_blacklist_var = tk.StringVar()
-        ttk.Button(options_frame, text="⚙", width=3, bootstyle="secondary-outline",
-            command=self.open_core_picker).grid(row=6, column=1, padx=(0,0), pady=(5,0), sticky="w")
-            
-        # System Info
-        system_frame = ttk.LabelFrame(top_frame, text="🔎 System Information", padding=10)
-        system_frame.grid(row=0, column=1, sticky="nsew", padx=(5,0))
+        system_frame = ttk.LabelFrame(info_row, text="🔎 System Information", padding=10)
+        system_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
         system_frame.columnconfigure(0, weight=1)
-        system_frame.rowconfigure(0, weight=1)
-        system_frame.rowconfigure(1, weight=0)
 
         labels_frame = ttk.Frame(system_frame)
         labels_frame.grid(row=0, column=0, sticky="nw")
-
         self.os_label = ttk.Label(labels_frame, text=f"OS: {platform.system()} {platform.release()}")
         self.cores_label = ttk.Label(labels_frame, text="CPU Cores: N/A")
         self.threads_label = ttk.Label(labels_frame, text="CPU Threads: N/A")
         self.cpu_freq = ttk.Label(labels_frame, text="CPU Freq.: N/A")
         self.ram_label = ttk.Label(labels_frame, text="Total RAM: N/A")
         self.governor_label = ttk.Label(labels_frame, text="CPU Governor: N/A")
-
         for lbl in [self.os_label, self.cores_label, self.threads_label, self.cpu_freq, self.ram_label, self.governor_label]:
-            lbl.pack(anchor="w", pady=(0,2))
+            lbl.pack(anchor="w", pady=(0, 2))
+        sys_btn_frame = ttk.Frame(system_frame)
+        sys_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
+        ttk.Button(sys_btn_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: refresh_system_info(self)).pack(side="right")
 
-        bottom_frame = ttk.Frame(system_frame)
-        bottom_frame.grid(row=1, column=0, sticky="sew", pady=(10,0))
-        ttk.Button(bottom_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: refresh_system_info(self)).pack(side="right")
-
-        # Middle Row
-        middle_frame = ttk.Frame(main_container)
-        middle_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=10)
-        middle_frame.columnconfigure(0, weight=1)
-        middle_frame.columnconfigure(1, weight=1)
+        clock_frame = ttk.LabelFrame(info_row, text="🚀 Highest CPU Clock (GHz)", padding=10)
+        clock_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
+        clock_frame.columnconfigure(0, weight=1)
+        clock_frame.rowconfigure(0, weight=1)
+        self.clock_label = tk.Label(
+            clock_frame, text="N/A", font=("Segoe UI", 14, "bold"),
+            fg="#17a2b8", bg="#e8f4f8", relief="raised", padx=20, pady=10
+        )
+        self.clock_label.grid(row=0, column=0, sticky="nsew")
+        clock_btn_frame = ttk.Frame(clock_frame)
+        clock_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
+        ttk.Button(clock_btn_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: update_clock_speed(self)).pack(side="right", padx=2)
+        ttk.Button(clock_btn_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: reset_clock_speed(self)).pack(side="right", padx=2)
 
         # Error Status
-        error_frame = ttk.LabelFrame(middle_frame, text="⁉ Error Status", padding=10)
-        error_frame.grid(row=0, column=0, sticky="nsew", padx=(0,5))
+        error_frame = ttk.LabelFrame(main_container, text="⁉ Error Status", padding=10)
+        error_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=(0, 5))
         error_frame.columnconfigure(0, weight=1)
         self.error_indicator = tk.Label(
-            error_frame, text="NO ERRORS 🙂", font=("Segoe UI",14,"bold"),
+            error_frame, text="NO ERRORS 🙂", font=("Segoe UI", 14, "bold"),
             bg="#d4edda", fg="#155724", relief="raised", padx=20, pady=10
         )
         self.error_indicator.grid(row=0, column=0, sticky="nsew")
         error_btn_frame = ttk.Frame(error_frame)
-        error_btn_frame.grid(row=1, column=0, sticky="e", pady=(5,0))
+        error_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
         ttk.Button(error_btn_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: update_error_status(self)).pack(side="right", padx=2)
         self.toggle_error_btn = ttk.Button(error_btn_frame, text="👇 Show Logs", bootstyle="success-outline", command=lambda: toggle_error_log(self))
         self.toggle_error_btn.pack(side="right", padx=2)
 
-        # CPU Clock
-        clock_frame = ttk.LabelFrame(middle_frame, text="🚀 Highest CPU Clock (GHz)", padding=10)
-        clock_frame.grid(row=0, column=1, sticky="nsew", padx=(5,0))
-        clock_frame.columnconfigure(0, weight=1)
-        clock_frame.rowconfigure(0, weight=1)
-        clock_frame.rowconfigure(1, weight=0)
-
-        self.clock_label = tk.Label(
-            clock_frame, 
-            text="N/A", 
-            font=("Segoe UI",14,"bold"),
-            fg="#17a2b8", 
-            bg="#e8f4f8", 
-            relief="raised",
-            padx=20, 
-            pady=10
-        )
-        self.clock_label.grid(row=0, column=0, sticky="nsew")
-
-        clock_btn_frame = ttk.Frame(clock_frame)
-        clock_btn_frame.grid(row=1, column=0, sticky="e", pady=(5,0))
-        ttk.Button(clock_btn_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: update_clock_speed(self)).pack(side="right", padx=2)
-        ttk.Button(clock_btn_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: reset_clock_speed(self)).pack(side="right", padx=2)
-
         # Error Logs
         self.error_log_container = ttk.LabelFrame(main_container, text="✎ Error Logs", padding=5)
-        self.error_log_container.grid(row=3, column=0, columnspan=2, sticky="ew", padx=5, pady=(0,5))
+        self.error_log_container.grid(row=3, column=0, sticky="ew", padx=5, pady=(0, 5))
         self.error_log_container.grid_remove()
-        self.error_text = scrolledtext.ScrolledText(self.error_log_container, width=80, height=8, wrap="word", font=("Segoe UI",12))
+        self.error_text = scrolledtext.ScrolledText(self.error_log_container, width=80, height=8, wrap="word", font=("Segoe UI", 12))
         self.error_text.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
         self.error_log_container.columnconfigure(0, weight=1)
         self.error_log_container.rowconfigure(0, weight=1)
         error_log_btn_frame = ttk.Frame(self.error_log_container)
-        error_log_btn_frame.grid(row=1, column=0, sticky="e", pady=(0,5))
+        error_log_btn_frame.grid(row=1, column=0, sticky="e", pady=(0, 5))
         ttk.Button(error_log_btn_frame, text="🔁 Refresh", bootstyle="success-outline", command=lambda: update_error_log(self)).pack(side="right", padx=2)
         ttk.Button(error_log_btn_frame, text="❎ Clear", bootstyle="success-outline", command=lambda: clear_error_log(self)).pack(side="right", padx=2)
 
-        # Test Output
+        # Settings
+        settings_outer = ttk.LabelFrame(main_container, text="🖥 Settings", padding=10)
+        settings_outer.grid(row=4, column=0, sticky="ew", padx=5, pady=(0, 5))
+        settings_outer.columnconfigure(0, weight=1)
+        settings_outer.columnconfigure(1, weight=1)
+        settings_outer.columnconfigure(2, weight=1)
+
+        def make_entry_row(parent, label, var, row):
+            ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w", padx=(0, 5), pady=3)
+            ttk.Entry(parent, width=6, textvariable=var).grid(row=row, column=1, sticky="w", pady=3)
+
+        # High Load
+        high_frame = ttk.LabelFrame(settings_outer, text="🔥 High Load", padding=8)
+        high_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 5), pady=(0, 5))
+        make_entry_row(high_frame, "Loops", self.loops_var, 0)
+        make_entry_row(high_frame, "Load Time", self.all_core_time_var, 3)
+
+        # Low Load
+        low_frame = ttk.LabelFrame(settings_outer, text="🌀 Low Load", padding=8)
+        low_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=(0, 5))
+        make_entry_row(low_frame, "Rapid Loops", self.rapid_tests_var, 0)
+        make_entry_row(low_frame, "Rapid Time", self.rapid_time_var, 1)
+        make_entry_row(low_frame, "Random Loops", self.random_tests_var, 2)
+        make_entry_row(low_frame, "Random Time", self.random_time_var, 3)
+
+        # Single Core
+        single_frame = ttk.LabelFrame(settings_outer, text="🎯 Single Core", padding=8)
+        single_frame.grid(row=0, column=2, sticky="nsew", padx=(5, 0), pady=(0, 5))
+        make_entry_row(single_frame, "Low Time", self.light_time_var, 0)
+        make_entry_row(single_frame, "Medium Time", self.medium_time_var, 1)
+        make_entry_row(single_frame, "High Time", self.heavy_time_var, 2)
+
+        # Browser Tests + Enabled Cores
+        bottom_settings = ttk.Frame(settings_outer)
+        bottom_settings.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(5, 0))
+        bottom_settings.columnconfigure(0, weight=1)
+        bottom_settings.columnconfigure(1, weight=1)
+
+        browser_frame = ttk.LabelFrame(bottom_settings, text="🌐 Browser Tests", padding=8)
+        browser_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 5))
+        ttk.Label(browser_frame, text="Count").grid(row=0, column=0, sticky="w", padx=(0, 5), pady=3)
+        ttk.Spinbox(browser_frame, from_=0, to=99, width=6, textvariable=self.browsers_var).grid(row=0, column=1, sticky="w", pady=3)
+
+        cores_frame = ttk.LabelFrame(bottom_settings, text="🧵 Enabled Threads", padding=8)
+        cores_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
+        ttk.Button(cores_frame, text="⚙ Select Threads", bootstyle="success-outline",
+           command=self.open_core_picker).grid(row=0, column=0, sticky="w")
+
+        # Advanced Options toggle
+        def toggle_advanced():
+            if self.advanced_visible:
+                advanced_frame.grid_remove()
+                adv_toggle_btn.config(text="▶ Advanced Options")
+                self.advanced_visible = False
+            else:
+                advanced_frame.grid()
+                adv_toggle_btn.config(text="▼ Advanced Options")
+                self.advanced_visible = True
+
+        adv_toggle_btn = ttk.Button(settings_outer, text="▶ Advanced Options",
+                                    bootstyle="link", command=toggle_advanced)
+        adv_toggle_btn.grid(row=2, column=0, columnspan=3, sticky="w", pady=(5, 0))
+
+        advanced_frame = ttk.Frame(settings_outer)
+        advanced_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(0, 5))
+        advanced_frame.grid_remove()
+        make_entry_row(advanced_frame, "Rest Time", self.rest_time_var, 0)
+        make_entry_row(advanced_frame, "Max RAM (GB)", self.max_ram_var, 1)
+
+        # Save
+        save_frame = ttk.Frame(settings_outer)
+        save_frame.grid(row=4, column=0, columnspan=3, sticky="e", pady=(5, 0))
+        self.unsaved_label = ttk.Label(save_frame, text="", foreground="#e67e00", font=("Segoe UI", 9, "italic"))
+        self.unsaved_label.pack(side="left", padx=(0, 10))
+        ttk.Button(save_frame, text="💾 Save Settings", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
+
+        # Logging output
         output_frame = ttk.LabelFrame(main_container, text="🤖 Test Output", padding=10)
-        output_frame.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=5, pady=(0,5))
+        output_frame.grid(row=6, column=0, sticky="nsew", padx=5, pady=(0, 5))
         output_frame.columnconfigure(0, weight=1)
         output_frame.rowconfigure(0, weight=1)
-        self.output_text = scrolledtext.ScrolledText(output_frame, width=80, height=15, wrap="word", font=("Segoe UI",12))
+        self.output_text = scrolledtext.ScrolledText(output_frame, width=80, height=15, wrap="word", font=("Segoe UI", 12))
         self.output_text.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
-        # Control buttons
+        # Buttons
         control_frame = ttk.Frame(main_container)
-        control_frame.grid(row=5, column=0, columnspan=2, sticky="e", pady=(0,10))
-        button_height = 40
+        control_frame.grid(row=7, column=0, sticky="e", pady=(0, 10))
         style = ttk.Style()
-        style.configure("Uniform.TButton", padding=(10,(button_height-24)//2))
+        button_height = 40
+        style.configure("Uniform.TButton", padding=(10, (button_height - 24) // 2))
         self.timer_label = tk.Label(
-            control_frame,
-            text="00:00:00",
-            font=("Segoe UI", 12, "bold"),
-            fg="#28a745",
-            bg="#f0f0f0",
-            relief="sunken",
-            width=8,
-            height=1,
-            padx=5,
-            pady=0
+            control_frame, text="00:00:00", font=("Segoe UI", 12, "bold"),
+            fg="#28a745", bg="#f0f0f0", relief="sunken", width=8, height=1, padx=5, pady=0
         )
-        self.timer_label.pack(side="left", padx=(0,5), fill="y")
-        
+        self.timer_label.pack(side="left", padx=(0, 5), fill="y")
         self.start_button = ttk.Button(control_frame, text="🔥 Run Test", style="Uniform.TButton", command=self.start_stress_test)
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="🛑 Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
@@ -258,32 +259,18 @@ class StressTestGUI:
 
         # Status bar
         status_frame = ttk.Frame(main_container)
-        status_frame.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(5,0))
+        status_frame.grid(row=8, column=0, sticky="ew", pady=(5, 0))
         status_frame.columnconfigure(0, weight=1)
         status_frame.columnconfigure(1, weight=0)
         self.status_bar = ttk.Label(status_frame, text="Ready", relief="sunken")
-        self.status_bar.grid(row=0, column=0, sticky="ew", padx=(0,5))
-        style = ttk.Style()
-        style.configure(
-            "Green.Horizontal.TProgressbar",
-            troughcolor="#e0e0e0",
-            background="#28a745"
-        )
-        style.map(
-            "Green.Horizontal.TProgressbar",
-            background=[("active", "#28a745"), ("!active", "#28a745")]
-        )
-
-        self.progress = ttk.Progressbar(
-            status_frame,
-            style="Green.Horizontal.TProgressbar",
-            mode="determinate",
-            length=419
-        )
+        self.status_bar.grid(row=0, column=0, sticky="ew", padx=(0, 5))
+        style.configure("Green.Horizontal.TProgressbar", troughcolor="#e0e0e0", background="#28a745")
+        style.map("Green.Horizontal.TProgressbar", background=[("active", "#28a745"), ("!active", "#28a745")])
+        self.progress = ttk.Progressbar(status_frame, style="Green.Horizontal.TProgressbar", mode="determinate", length=419)
         self.progress.grid(row=0, column=1, sticky="ew")
         self.progress.grid_remove()
 
-        self.setup_styles()
+        self.setup_styles() 
 
     def open_core_picker(self):
         topology = {}

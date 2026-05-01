@@ -105,7 +105,26 @@ def save_settings(self):
                     f.write("\n")
                 f.write(preserved_content)
 
+        self.settings_dirty = False
+        self.unsaved_label.config(text="")
+
         log_message(self, "Settings saved", "success")
 
     except Exception as e:
         log_message(self, f"Error saving settings: {str(e)}", "error")
+
+def register_settings_traces(self):
+    self.settings_dirty = False
+
+    def on_setting_changed(*args):
+        if not self.settings_dirty:
+            self.settings_dirty = True
+            self.unsaved_label.config(text="⚠ Unsaved changes")
+
+    for var in [
+        self.loops_var, self.browsers_var, self.light_time_var, self.medium_time_var,
+        self.heavy_time_var, self.all_core_time_var, self.rapid_tests_var, self.rapid_time_var,
+        self.random_tests_var, self.random_time_var, self.rest_time_var, self.max_ram_var,
+        self.core_blacklist_var
+    ]:
+        var.trace_add("write", on_setting_changed)
