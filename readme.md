@@ -4,24 +4,29 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.6
+## Latest Updates - Version 2.7
 
+- CPU topology detection (detection of threads per core)
 - New beanchmarking tool
 - New RAM testing functionality (built into the existing tests)
-- New randomized thread load test
-- Improved output message formats
-- Improved installation script for python
+
+![memory](https://i.ibb.co/GfJqfkJW/memory.png)
+
+- Easier core/thread selection
+
+![threads](https://i.ibb.co/0yhzGcKY/cores.png)
+
 
 ## Screenshots
 
-![running](https://iili.io/fUTdO21.png)
-![errors](https://iili.io/fUT27wJ.png)
+![running](https://i.ibb.co/YTwBng7S/running.png)
+![errors](https://i.ibb.co/pjr2BpTR/errrrr.png)
 
 ## Methodology
 
 ### Problem with Traditional Stress Tests
 
-Most stress tests (Prime95, OCCT) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
+Most stress tests (, y-cruncher etc.) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
 
 ### How Thread Stepper Works
 
@@ -36,6 +41,28 @@ Uses 3D WebGL browser tests to generate unpredictable background activity during
 
 **Test Patterns**  
 Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
+
+### CPU Load examples
+
+- Full core test
+
+![full](https://i.ibb.co/cKCKc3wh/Screenshot-20260501-223547.png)
+
+- Single core test (both threads)
+
+![pairs](https://i.ibb.co/BKsNJBNY/Screenshot-20260501-223108.png)
+
+- Random test
+
+![random](https://i.ibb.co/3th93hd/random.png)
+
+- Rapid load test
+
+![rapid](https://i.ibb.co/2YL2hKf0/rapid.png)
+
+- Browser variable load test
+
+![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
 
 ## Requirements
 

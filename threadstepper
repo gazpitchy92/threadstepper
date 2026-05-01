@@ -4,6 +4,7 @@ trap cleanup SIGINT SIGTERM
 
 # includes
 source ./settings
+source ./functions/topology.sh
 source ./functions/testing.sh
 source ./functions/general.sh
 source ./functions/errors.sh
@@ -14,10 +15,7 @@ source ./functions/tests/allcore.sh
 source ./functions/tests/browser.sh
 
 # setup
-outputOptions
-checkDeps
-setupLogs
-starLogger
+initial_output
 
 num_cores=$(nproc)
 num_cores=${num_cores:-1}
