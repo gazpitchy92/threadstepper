@@ -8,8 +8,11 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 - New beanchmarking tool
 - New RAM testing functionality (built into the existing tests)
+
 ![memory](https://i.ibb.co/GfJqfkJW/memory.png)
+
 - Easier core/thread selection
+
 ![threads](https://i.ibb.co/0yhzGcKY/cores.png)
 
 
