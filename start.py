@@ -131,10 +131,12 @@ class StressTestGUI:
             ttk.Label(options_frame, text=label).grid(row=row, column=col, padx=(0,5), pady=(5,0), sticky="w")
             ttk.Entry(options_frame, width=6, textvariable=var).grid(row=row, column=col+1, padx=(0,15), pady=(5,0), sticky="w")
 
-        ttk.Label(options_frame, text="Core Blacklist").grid(row=6, column=0, padx=(0,5), pady=(5,0), sticky="w")
+        # Core selection
+        ttk.Label(options_frame, text="Enabled Threads").grid(row=6, column=0, padx=(0,5), pady=(5,0), sticky="w")
         self.core_blacklist_var = tk.StringVar()
-        ttk.Entry(options_frame, width=18, textvariable=self.core_blacklist_var).grid(row=6, column=1, columnspan=3, sticky="w", pady=(5,0))
-
+        ttk.Button(options_frame, text="⚙", width=3, bootstyle="secondary-outline",
+            command=self.open_core_picker).grid(row=6, column=1, padx=(0,0), pady=(5,0), sticky="w")
+            
         # System Info
         system_frame = ttk.LabelFrame(top_frame, text="🔎 System Information", padding=10)
         system_frame.grid(row=0, column=1, sticky="nsew", padx=(5,0))
@@ -282,6 +284,63 @@ class StressTestGUI:
         self.progress.grid_remove()
 
         self.setup_styles()
+
+    def open_core_picker(self):
+        num_cores = os.cpu_count() or 1
+
+        # Parse currently blacklisted cores to pre-deselect them
+        current = self.core_blacklist_var.get()
+        try:
+            blacklisted = {int(x.strip()) for x in current.split(",") if x.strip().isdigit()}
+        except ValueError:
+            blacklisted = set()
+
+        win = tk.Toplevel(self.root)
+        win.title("Enabled Threads")
+        win.resizable(False, False)
+        win.grab_set()
+
+        ttk.Label(win, text="Toggle cores to enable/disable (red = disabled)",
+                font=("Segoe UI", 10)).pack(pady=(10, 5), padx=10)
+
+        grid_frame = ttk.Frame(win, padding=10)
+        grid_frame.pack()
+
+        COLS = 4
+        btn_vars = {}  # core_index -> BooleanVar (True = enabled)
+
+        def make_toggle(idx, btn_ref):
+            def toggle():
+                btn_vars[idx].set(not btn_vars[idx].get())
+                if btn_vars[idx].get():
+                    btn_ref.config(bootstyle="success-outline")
+                else:
+                    btn_ref.config(bootstyle="danger")
+            return toggle
+
+        for i in range(num_cores):
+            row, col = divmod(i, COLS)
+            is_enabled = i not in blacklisted  # inverted — blacklisted cores start deselected
+            var = tk.BooleanVar(value=is_enabled)
+            btn_vars[i] = var
+
+            style = "success-outline" if is_enabled else "danger"
+            btn = ttk.Button(grid_frame, text=f"Core {i}", width=8, bootstyle=style)
+            btn.config(command=make_toggle(i, btn))
+            btn.grid(row=row, column=col, padx=4, pady=4)
+
+        def confirm():
+            # Disabled cores become the blacklist written back to settings
+            result = ",".join(str(i) for i in sorted(k for k, v in btn_vars.items() if not v.get()))
+            self.core_blacklist_var.set(result)
+            win.destroy()
+
+        btn_row = ttk.Frame(win, padding=(10, 5))
+        btn_row.pack(fill="x")
+        ttk.Button(btn_row, text="✅ Confirm", bootstyle="success",
+                command=confirm).pack(side="right", padx=4, pady=(0, 8))
+        ttk.Button(btn_row, text="❌ Cancel", bootstyle="secondary-outline",
+                command=win.destroy).pack(side="right", padx=4, pady=(0, 8))
 
     def setup_styles(self):
         style = ttk.Style()
