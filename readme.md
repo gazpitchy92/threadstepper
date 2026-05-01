@@ -41,6 +41,9 @@ Uses 3D WebGL browser tests to generate unpredictable background activity during
 **Test Patterns**  
 Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
 
+![random](https://i.ibb.co/3th93hd/random.png)
+![rapid](https://ibb.co/1JpVQ2wY)
+
 ## Requirements
 
 - stress-ng
