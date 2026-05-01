@@ -42,19 +42,26 @@ Uses 3D WebGL browser tests to generate unpredictable background activity during
 **Test Patterns**  
 Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
 
+### CPU Load examples
+
 - Full core test
+
 ![full](https://i.ibb.co/cKCKc3wh/Screenshot-20260501-223547.png)
 
 - Single core test (both threads)
+
 ![pairs](https://i.ibb.co/BKsNJBNY/Screenshot-20260501-223108.png)
 
 - Random test
+
 ![random](https://i.ibb.co/3th93hd/random.png)
 
 - Rapid load test
-![rapid](https://ibb.co/1JpVQ2wY)
+
+![rapid](https://i.ibb.co/2YL2hKf0/rapid.png)
 
 - Browser variable load test
+
 ![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
 
 ## Requirements
