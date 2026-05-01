@@ -12,6 +12,8 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
+from ui.logs import log_message
+
 def reset_clock_speed(self):
     try:
         with open("./logs/clock.log", 'w') as f:
