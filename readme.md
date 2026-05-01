@@ -27,7 +27,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ### Problem with Traditional Stress Tests
 
-Most stress tests (, y-cruncher etc.) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
+Most stress tests (mprime, systester, y-cruncher etc.) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
 
 ### How Thread Stepper Works
 
