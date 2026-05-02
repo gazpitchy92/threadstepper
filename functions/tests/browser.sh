@@ -31,7 +31,7 @@ browserTest() {
             update_threads "0-$((num_cores - 1))"
             taskset --cpu-list 0-$((num_cores - 1)) $current_dir/tests/browser/$chromium_appimage $chromium_flags --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
         fi
-        sleep $rest_time
+        rest
     done
 }
 
