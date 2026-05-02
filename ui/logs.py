@@ -184,9 +184,9 @@ def update_current_test(self):
                     fg="#28a745",
                     bg="#d4edda"
                 )
-            elif test_name == "🌐 Browser Tests":
+            elif test_name == "Browser Tests":
                 self.clock_label_bottom.config(
-                    text="🎯 " + test_name + "\n" + progress,
+                    text="🌐 " + test_name + "\n" + progress,
                     fg="#28a745",
                     bg="#d4edda"
                 )
