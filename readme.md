@@ -82,7 +82,8 @@ Cycles through different load combinations on each core and thread group, with c
 ```bash
    git clone https://github.com/gazpitchy92/threadstepper.git
    cd threadstepper
-   python start.py
+   chmod +x launch.sh
+   ./launch.sh
 ```
 
 2. **Install dependencies:**
