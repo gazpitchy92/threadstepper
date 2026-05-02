@@ -18,6 +18,7 @@ output_log_file="$(pwd)/logs/output.log"
 output_threads_file="$(pwd)/logs/threads.log"
 output_progress_file="$(pwd)/logs/current.log"
 cpu_topology=1
+dark_mode=0
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")
 heavy=("ackermann" "factorial")
