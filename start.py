@@ -545,7 +545,9 @@ class StressTestGUI:
             
             return_code = self.process.wait()
             
-            self.log_queue.put(f"\nTests completed!")
+            self.log_queue.put(f"\nTesting has completed")
+            update_error_status(self)
+            update_error_log(self)
             
         except Exception as e:
             self.log_queue.put(f"Error running tests: {str(e)}")
@@ -554,6 +556,7 @@ class StressTestGUI:
             self.is_running = False
             self.benchmark_mode = False
             self.root.after(0, self.on_process_stop)
+            clear_current_test()
 
     def start_benchmark(self):
         if self.is_running:
@@ -608,7 +611,6 @@ class StressTestGUI:
             self.root.after(0, self.on_process_stop)
 
     def stop_stress_test(self):
-        clear_current_test(self)
         if self.process and self.is_running:
             self.process.terminate()
             if self.benchmark_mode:
@@ -621,12 +623,12 @@ class StressTestGUI:
                     self.stop_timer()
 
     def on_process_stop(self):
-        clear_current_test(self)
         self.start_button.config(state=tk.NORMAL)
         self.stop_button.config(state=tk.DISABLED)
         self.benchmark_button.config(state=tk.NORMAL)
         if self.benchmark_mode:
             self.status_bar.config(text="Benchmark stopped")
+            update_error_status(self)
             log_message(self, f"\033[95mBenchmark finished at {datetime.now().strftime('%H:%M:%S')}\033[0m", "info")
             self.stop_timer()
             self.progress.stop()
@@ -634,6 +636,7 @@ class StressTestGUI:
         else:
             self.status_bar.config(text="Stress test stopped")
             log_message(self, f"Test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
+            update_error_status(self)
             self.stop_timer()
             self.progress.stop()
             self.progress.grid_remove()

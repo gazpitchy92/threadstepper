@@ -49,16 +49,17 @@ loggerErrorCheck() {
   ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | awk 'gsub(/ /,"")>=5')
 
   if [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$COREDUMPS" ] || [ -n "$ERRORS_FLAG" ] || [ -n "$ERRORS_HARDWARE" ]; then
-    {
-      echo "=== Errors detected at $(date -Iseconds) ==="
-      [ -n "$ERRORS_HARDWARE" ] && echo "$ERRORS_HARDWARE"
-      [ -n "$ERRORS_FLAG" ] && echo "$ERRORS_FLAG"
-      [ -n "$ERRORS_DUMPED" ] && echo "$ERRORS_DUMPED"
-      [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
-      [ -n "$COREDUMPS" ] && echo "=== Coredumps ===" && echo "$COREDUMPS"
-      echo "========================================"
-    } > "$ERROR_LOG"
-    exit 1
+      {
+          echo "true"
+          echo "=== Errors detected at $(date -Iseconds) ==="
+          [ -n "$ERRORS_HARDWARE" ] && echo "$ERRORS_HARDWARE"
+          [ -n "$ERRORS_FLAG" ] && echo "$ERRORS_FLAG"
+          [ -n "$ERRORS_DUMPED" ] && echo "$ERRORS_DUMPED"
+          [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
+          [ -n "$COREDUMPS" ] && echo "=== Coredumps ===" && echo "$COREDUMPS"
+          echo "========================================"
+      } > "$ERROR_LOG"
+      exit 1
   fi
 }
 

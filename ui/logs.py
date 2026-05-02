@@ -162,7 +162,7 @@ def update_current_test(self):
                         fg="#343a40",
                         bg="#e9ecef",
                     )
-                elif test_name == "Error!":
+                elif test_name == "Failed!":
                     self.clock_label_bottom.config(
                         text="😤 " + test_name + "\n" + progress,
                         fg="#ffffff",
