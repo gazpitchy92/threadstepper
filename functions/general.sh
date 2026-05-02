@@ -13,8 +13,8 @@ initial_output() {
     outputOptions
     print_topology
     checkDeps
-    echo "STARTING TESTS IN 10 SECONDS..."
-    sleep 10
+    echo "STARTING TESTS IN 2 SECONDS..."
+    sleep 2
     setupLogs
     starLogger
 }
@@ -43,14 +43,6 @@ usageText(){
 
 # check dependencies
 checkDeps(){
-    # stress-ng
-    if check_installed "stress-ng" ; then
-        echo "$(tput setaf 2)stress-ng dependancy is met$(tput sgr0)"
-    else
-        echo "$(tput setaf 1)stress-ng is not installed!$(tput sgr0)"
-        echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
-        exit 1
-    fi
     # ungoogled-chromium AppImage
     shopt -s nullglob
     appimages=(./tests/browser/*.AppImage)

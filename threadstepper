@@ -11,7 +11,7 @@ source ./functions/general.sh
 source ./functions/errors.sh
 source ./functions/tests/load_test.sh
 source ./functions/tests/cores/rapid.sh
-source ./functions/tests/cores/stressng.sh
+source ./functions/tests/cores/single_core.sh
 source ./functions/tests/cores/random.sh
 source ./functions/tests/allcore.sh
 source ./functions/tests/browser.sh
@@ -51,24 +51,24 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     fi
 
     # ------ High Load tests ------
-    # All core test
+    All core test
     update_progress "All Core" $loop_counter $loops 
-    # allCoreTest
-    # check_errors
+    allCoreTest
+    check_errors
 
     # ------ Low Load tests ------
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rapid Tests" $loop_counter $loops 
-        rapidStressNgCore
+        rapidTest
         check_errors
     done
     # Random core tests
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
         echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Random Tests" $loop_counter $loops 
-        randomStressNgCore
+        randomStress
         check_errors
     done
 
@@ -80,7 +80,16 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         core_next=$((core + 1))
         core_last=$((core_second + 1))
 
-        echo "$(tput setaf 3)Starting tests for core $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        if [[ ",$cpu_topology," == *"0"* ]]; then
+            echo "$(tput setaf 3)Starting tests for cores $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"1"* ]]; then
+            echo "$(tput setaf 3)Starting tests for cores $core + $core_second ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"2"* ]]; then
+            echo "$(tput setaf 3)Starting tests for cores $core + $core_next ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+
         sleep "$rest_time"
         runTests "$core"
 
@@ -88,7 +97,16 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
         HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
 
-        echo "$(tput setaf 3)Finished testing core $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        if [[ ",$cpu_topology," == *"0"* ]]; then
+            echo "$(tput setaf 3)Finished tests for cores $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"1"* ]]; then
+            echo "$(tput setaf 3)Finished tests for cores $core + $core_second ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"2"* ]]; then
+            echo "$(tput setaf 3)Finished tests for cores $core + $core_next ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        
         echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
         check_errors
     done

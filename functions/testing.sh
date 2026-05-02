@@ -4,13 +4,13 @@
 runTests(){
     local core=$1
     update_progress "Single Core Tests" $loop_counter $loops 
-    stressNgCore $core
+    singleCoreTests $core
     check_errors
     if (( browsers != 0 )); then
         # browsers
         update_progress "Browser Tests" $loop_counter $loops 
         browserTest
-        stressNgCore $core
+        singleCoreTests $core
         stopBrowserTest
         check_errors
     fi 

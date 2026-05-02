@@ -1,6 +1,6 @@
 #!/bin/bash
 
-randomStressNgCore() {
+randomStress() {
     num_cores=$(nproc)
     max_parallel=$(( num_cores / 4 ))
 
@@ -18,16 +18,11 @@ randomStressNgCore() {
     for (( parallel = 1; parallel <= max_parallel; parallel++ )); do
         core_list=($(seq 0 $((num_cores - 1))))
         fisher_yates_shuffle core_list
+
         for (( i = 0; i < num_cores; i += parallel )); do
-            slice=("${core_list[@]:$i:$parallel}")+= parallel )); do
             slice=("${core_list[@]:$i:$parallel}")
             filtered=()
-            for core in "${slice[@]}"; do
-                IFS=',' read -ra bl <<< "$core_blacklist"
-                blacklisted=false
-                for b in "${bl[@]}"; do
-                    [[ "$core" == "$b" ]
-            filtered=()
+
             for core in "${slice[@]}"; do
                 IFS=',' read -ra bl <<< "$core_blacklist"
                 blacklisted=false
@@ -36,15 +31,20 @@ randomStressNgCore() {
                 done
                 [[ "$blacklisted" == false ]] && filtered+=("$core")
             done
+
             if [[ ${#filtered[@]} -eq 0 ]]; then
                 echo "$(tput setaf 1)Skipping cores ${slice[*]} due to core_blacklist$(tput sgr0)" | tee -a "$output_log_file"
                 continue
             fi
+
             taskset_cores=$(IFS=,; echo "${filtered[*]}")
             vm_count=${#filtered[@]}
-            echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for ${random_time}s [${parallel} at a time]$(tput sgr0)" | tee -a "$output_log_file"
+
+            echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s$(tput sgr0)" | tee -a "$output_log_file"
             update_threads "$taskset_cores"
-            stress-ng --cpu "${#filtered[@]}" --taskset "$taskset_cores" --timeout "${random_time}s" --cpu-method "$rapid" --vm "$vm_count" --vm-bytes "$max_ram"G  > /dev/null 2>&1
+            run_phase "$taskset_cores" high
+            sleep "$rapid_time"
+            kill_phase
             check_errors
         done
     done
