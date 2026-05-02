@@ -45,6 +45,13 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         echo "$(tput setaf 5)Starting loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
     fi
 
+    # ------ High Load tests ------
+    # All core test
+    update_progress "All Core" $loop_counter $loops 
+    allCoreTest
+    check_errors
+
+    # ------ Low Load tests ------
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
@@ -52,7 +59,6 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         rapidStressNgCore
         check_errors
     done
-
     # Random core tests
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
         echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
@@ -61,11 +67,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         check_errors
     done
 
-    # All core tests
-    allCoreTest
-    check_errors
-
-    # individual core tests
+    # ------ Signle Core tests ------
     for ((core=start_core; core<=END_CORE; core++)); do
         ELAPSED=$((SECONDS - START_TIME))
         ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
