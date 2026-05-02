@@ -1,13 +1,13 @@
 #!/bin/bash
-loops=1
+loops=5
 browsers=2
-light_time=3
-medium_time=6
-heavy_time=12
+light_time=5
+medium_time=10
+heavy_time=5
 all_core_time=5
 rapid_tests=10
 rapid_time=1
-random_tests=5
+random_tests=10
 random_time=2
 rest_time=2
 core_blacklist=""
@@ -15,6 +15,7 @@ max_ram=4
 
 # DO NOT EDIT
 output_log_file="$(pwd)/logs/output.log"
+output_progress_file="$(pwd)/logs/current.log"
 cpu_topology=1
 light=("bitops" "pi" "gcd" "sieve")
 mixed=("prime" "matrixprod" "fft" "loop")

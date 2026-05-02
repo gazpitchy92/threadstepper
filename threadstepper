@@ -24,6 +24,7 @@ loops=${loops:-1}
 rapid_tests=${rapid_tests:-0}
 start_core=${start_core:-0}
 rest_time=${rest_time:-1}
+update_progress "Startup" $loop_counter $loops 
 
 PHYSICAL_CORES=$((num_cores / 2))
 
@@ -46,6 +47,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Rapid Tests" $loop_counter $loops 
         rapidStressNgCore
         check_errors
     done
@@ -53,6 +55,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # Random core tests
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
         echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Random Tests" $loop_counter $loops 
         randomStressNgCore
         check_errors
     done

@@ -12,19 +12,16 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
-from ui.logs import log_message
+from ui.logs import log_message, clear_current_test, set_current_test
 
 def clear_error_log(self):
     try:
         if os.path.exists("./logs/errors.log"):
-
             with open("./logs/errors.log", "w") as f:
                 f.write("false")
-
             update_error_status(self)
             update_error_log(self)
             log_message(self, "Error log cleared", "info")
-
     except Exception as e:
         log_message(self, f"Error clearing log: {str(e)}", "error")
 
@@ -129,10 +126,12 @@ def update_error_status(self):
 
         if self.error_status:
             self.error_indicator.config(
-                text="ERRORS DETECTED 😤", 
+                text="ERRORS DETECTED 😤",
                 bg='#f8d7da',
                 fg='#721c24'
             )
+            clear_current_test(self)
+            set_current_test(self, "Failed!")
 
             if self.is_running:
                 self.stop_stress_test()
@@ -143,7 +142,7 @@ def update_error_status(self):
                     log_message(self, f"Error killing logger.sh: {str(e)}", "error")
 
             if not self.error_log_visible:
-                self.show_error_log()
+                show_error_log(self)
 
         else:
             self.error_indicator.config(
@@ -159,6 +158,7 @@ def update_error_status(self):
         return self.error_status
 
     except Exception as e:
+        print(f"DEBUG update_error_status error: {e}")
         self.error_status = False
         self.error_indicator.config(
             text="ERROR READING STATUS",

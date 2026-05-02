@@ -1,7 +1,7 @@
 import os
 import platform
 
-from ui.logs import log_message, clear_output
+from ui.logs import log_message, clear_output, clear_current_test
 from ui.errors import clear_error_log, update_error_log, update_error_status
 from ui.clocks import update_clock_speed
 
@@ -49,6 +49,7 @@ def full_reset(self):
     with open("./logs/output.log", "w") as f:
         f.write("-- STARTUP --")
 
+    clear_current_test(self)
     clear_error_log(self)
     clear_output(self)
     refresh_system_info(self)
