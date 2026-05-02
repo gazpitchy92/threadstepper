@@ -4,8 +4,9 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.11
+## Latest Updates - Version 2.12
 
+- Replaced 7z with our own all-core stress tests
 - Improved UI and easier settings
 - Error testing now shows which core/thread failed
 - CPU topology detection (detection of threads per core)
@@ -72,7 +73,6 @@ Cycles through different load combinations on each core and thread group, with c
 ## Requirements
 
 - stress-ng
-- p7zip
 - python
 - Linux
 
@@ -91,7 +91,7 @@ Cycles through different load combinations on each core and thread group, with c
    chmod +x install.sh
    sudo ./install.sh
 ```
-   Installs stress-ng, p7zip, and downloads ungoogled-chromium AppImage for WebGL tests.
+   Installs stress-ng, and downloads ungoogled-chromium AppImage for WebGL tests.
 
 ## Settings
 
