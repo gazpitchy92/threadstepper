@@ -51,16 +51,18 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     fi
 
     # ------ High Load tests ------
-    All core test
-    update_progress "All Core" $loop_counter $loops 
-    allCoreTest
-    check_errors
-    rest
+    # All core test
+    for ((all_core_counter=1; all_core_counter<=all_core_tests; all_core_counter++)); do
+        update_progress "All Core ${all_core_counter}/${all_core_tests}" $loop_counter $loops 
+        allCoreTest
+        check_errors
+        rest
+    done
 
     # ------ Low Load tests ------
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
-        echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)Running rapid test "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
         rapidTest
         check_errors
@@ -68,7 +70,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     done
     # Random core tests
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
-        echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)Running random test "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
         randomStress
         check_errors
@@ -84,13 +86,13 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         core_last=$((core_second + 1))
 
         if [[ ",$cpu_topology," == *"0"* ]]; then
-            echo "$(tput setaf 3)Starting tests for cores $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next + $core_second + $core_last] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"1"* ]]; then
-            echo "$(tput setaf 3)Starting tests for cores $core + $core_second ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_second] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"2"* ]]; then
-            echo "$(tput setaf 3)Starting tests for cores $core + $core_next ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
 
         rest
@@ -101,13 +103,13 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
 
         if [[ ",$cpu_topology," == *"0"* ]]; then
-            echo "$(tput setaf 3)Finished tests for cores $core + ($core_next + $core_second + $core_last) ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next + $core_second + $core_last] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"1"* ]]; then
-            echo "$(tput setaf 3)Finished tests for cores $core + $core_second ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_second] of [core $core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"2"* ]]; then
-            echo "$(tput setaf 3)Finished tests for cores $core + $core_next ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
         
         echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"

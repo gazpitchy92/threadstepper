@@ -19,28 +19,34 @@ randomStress() {
         core_list=($(seq 0 $((num_cores - 1))))
         fisher_yates_shuffle core_list
 
+        saved_core_list=("${core_list[@]}")
+
         for (( i = 0; i < num_cores; i += parallel )); do
-            slice=("${core_list[@]:$i:$parallel}")
+            slice=("${saved_core_list[@]:$i:$parallel}")
             filtered=()
 
+            if [[ ${#slice[@]} -eq 0 ]]; then
+                continue
+            fi
+
+            IFS=',' read -ra bl <<< "$core_blacklist"
+
             for core in "${slice[@]}"; do
-                IFS=',' read -ra bl <<< "$core_blacklist"
                 blacklisted=false
                 for b in "${bl[@]}"; do
-                    [[ "$core" == "$b" ]] && blacklisted=true && break
+                    [[ -n "$b" && "$core" == "$b" ]] && blacklisted=true && break
                 done
                 [[ "$blacklisted" == false ]] && filtered+=("$core")
             done
 
             if [[ ${#filtered[@]} -eq 0 ]]; then
-                echo "$(tput setaf 1)Skipping cores ${slice[*]} due to core_blacklist$(tput sgr0)" | tee -a "$output_log_file"
+                echo "$(tput setaf 1)Skipping thread(s) [${slice[*]}] due to as disabled$(tput sgr0)" | tee -a "$output_log_file"
                 continue
             fi
 
             taskset_cores=$(IFS=,; echo "${filtered[*]}")
             vm_count=${#filtered[@]}
-
-            echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 2)Testing high load on thread(s) [$taskset_cores] for ${random_time}s$(tput sgr0)" | tee -a "$output_log_file"
             update_threads "$taskset_cores"
             run_phase "$taskset_cores" high
             sleep "$random_time"

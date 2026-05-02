@@ -24,8 +24,8 @@ allCoreTest() {
     for core in $(seq 0 $((total_cores - 1))); do
         cores_list=$(seq -s, 0 "$core")
         cores_list=$(filter_cores "$cores_list")
-        [[ -z "$cores_list" ]] && echo "$(tput setaf 0)Skipping cores $cores_list due to core_blacklist$(tput sgr0)" | tee -a "$output_log_file" && continue
-        echo "$(tput setaf 2)Stressing cores $cores_list for $all_core_time seconds$(tput sgr0)" | tee -a "$output_log_file"
+        [[ -z "$cores_list" ]] && echo "$(tput setaf 0)Skipping thread(s) $cores_list as disabled$(tput sgr0)" | tee -a "$output_log_file" && continue
+        echo "$(tput setaf 2)Stressing thread(s) [$cores_list] for $all_core_time seconds$(tput sgr0)" | tee -a "$output_log_file"
         update_threads "$cores_list"
         start_stressor "$cores_list"
         sleep "$all_core_time"
@@ -37,8 +37,8 @@ allCoreTest() {
     for core in $(seq $((total_cores - 2)) -1 0); do
         cores_list=$(seq -s, 0 "$core")
         cores_list=$(filter_cores "$cores_list")
-        [[ -z "$cores_list" ]] && echo "$(tput setaf 0)Skipping cores $cores_list due to core_blacklist$(tput sgr0)" | tee -a "$output_log_file" && continue
-        echo "$(tput setaf 2)Stressing cores $cores_list for $all_core_time seconds$(tput sgr0)" | tee -a "$output_log_file"
+        [[ -z "$cores_list" ]] && echo "$(tput setaf 0)Skipping thread(s) $cores_list as disabled$(tput sgr0)" | tee -a "$output_log_file" && continue
+        echo "$(tput setaf 2)Stressing thread(s) [$cores_list] for $all_core_time seconds$(tput sgr0)" | tee -a "$output_log_file"
         update_threads "$cores_list"
         start_stressor "$cores_list"
         sleep "$all_core_time"
@@ -49,8 +49,8 @@ allCoreTest() {
     for core in $(seq $((total_cores - 1)) -1 0); do
         cores_list=$(seq -s, "$core" $((total_cores - 1)))
         cores_list=$(filter_cores "$cores_list")
-        [[ -z "$cores_list" ]] && echo "$(tput setaf 0)Skipping cores $cores_list due to core_blacklist$(tput sgr0)" | tee -a "$output_log_file" && continue
-        echo "$(tput setaf 2)Stressing cores $cores_list for $all_core_time seconds$(tput sgr0)" | tee -a "$output_log_file"
+        [[ -z "$cores_list" ]] && echo "$(tput setaf 0)Skipping thread(s) $cores_list as disabled$(tput sgr0)" | tee -a "$output_log_file" && continue
+        echo "$(tput setaf 2)Stressing thread(s) [$cores_list] for $all_core_time seconds$(tput sgr0)" | tee -a "$output_log_file"
         update_threads "$cores_list"
         start_stressor "$cores_list"
         sleep "$all_core_time"
