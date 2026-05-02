@@ -55,6 +55,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     update_progress "All Core" $loop_counter $loops 
     allCoreTest
     check_errors
+    rest
 
     # ------ Low Load tests ------
     # Rapid tests
@@ -63,6 +64,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         update_progress "Rapid Tests" $loop_counter $loops 
         rapidTest
         check_errors
+        rest
     done
     # Random core tests
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
@@ -70,6 +72,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         update_progress "Random Tests" $loop_counter $loops 
         randomStress
         check_errors
+        rest
     done
 
     # ------ Signle Core tests ------
@@ -90,7 +93,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
             echo "$(tput setaf 3)Starting tests for cores $core + $core_next ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
         fi
 
-        sleep "$rest_time"
+        rest
         runTests "$core"
 
         ELAPSED=$((SECONDS - START_TIME))
@@ -109,6 +112,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         
         echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
         check_errors
+        rest
     done
 
     FINISHED_LOOPS=$loop_counter

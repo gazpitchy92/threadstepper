@@ -13,8 +13,8 @@ initial_output() {
     outputOptions
     print_topology
     checkDeps
-    echo "STARTING TESTS IN 2 SECONDS..."
-    sleep 2
+    echo "STARTING TESTS IN ${rest_time} SECONDS..."
+    sleep $rest_time
     setupLogs
     starLogger
 }
@@ -107,5 +107,10 @@ stopLogger() {
         kill "$(cat "$current_dir/logs/logger.pid")"
         rm -f "$current_dir/logs/logger.pid"
     fi
+}
+
+rest() {
+    echo "$(tput setaf 3)Resting for ${rest_time}s$(tput sgr0)" 
+    sleep $rest_time
 }
 

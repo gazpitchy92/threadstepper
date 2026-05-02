@@ -20,7 +20,7 @@ singleCoreTests() {
             sleep "$light_time"
             kill_phase
             check_errors
-            sleep "$rest_time"
+            rest
         fi
         if [[ ",$core_blacklist," == *",$core,"* || ",$core_blacklist," == *",$core_second,"* ]]; then
             echo "$(tput setaf 0)Skipping test for core $core + $core_second $(tput sgr0)" | tee -a "$output_log_file"
@@ -31,7 +31,7 @@ singleCoreTests() {
             sleep "$medium_time"
             kill_phase
             check_errors
-            sleep "$rest_time"
+            rest
         fi
         if [[ ",$core_blacklist," == *",$core,"* || ",$core_blacklist," == *",$core_second,"* ]]; then
             echo "$(tput setaf 0)Skipping test for core $core + $core_second $(tput sgr0)" | tee -a "$output_log_file"
@@ -42,7 +42,7 @@ singleCoreTests() {
             sleep "$heavy_time"
             kill_phase
             check_errors
-            sleep "$rest_time"
+            rest
         fi
     fi
     
@@ -59,7 +59,7 @@ singleCoreTests() {
                 sleep "$light_time"
                 kill_phase
                 check_errors
-                sleep "$rest_time"
+                rest
             fi
             if [[ ",$core_blacklist," == *",$core,"* || ",$core_blacklist," == *",$core_next,"* ]]; then
                 echo "$(tput setaf 0)Skipping test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
@@ -70,7 +70,7 @@ singleCoreTests() {
                 sleep "$medium_time"
                 kill_phase
                 check_errors
-                sleep "$rest_time"
+                rest
             fi
             if [[ ",$core_blacklist," == *",$core,"* || ",$core_blacklist," == *",$core_next,"* ]]; then
                 echo "$(tput setaf 0)Skipping test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
@@ -81,7 +81,7 @@ singleCoreTests() {
                 sleep "$heavy_time"
                 kill_phase
                 check_errors
-                sleep "$rest_time"
+                rest
             fi
         fi
     fi
@@ -99,7 +99,7 @@ singleCoreTests() {
                 sleep "$light_time"
                 kill_phase
                 check_errors
-                sleep "$rest_time"
+                rest
             fi
             if [[ ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
                 echo "$(tput setaf 0)Skipping test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
@@ -110,7 +110,7 @@ singleCoreTests() {
                 sleep "$medium_time"
                 kill_phase
                 check_errors
-                sleep "$rest_time"
+                rest
             fi
             if [[ ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
                 echo "$(tput setaf 0)Skipping test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
@@ -121,7 +121,7 @@ singleCoreTests() {
                 sleep "$high_time"
                 kill_phase
                 check_errors
-                sleep "$rest_time"
+                rest
             fi
         fi
     fi
