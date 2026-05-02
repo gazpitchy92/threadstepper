@@ -13,6 +13,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 - Easier core/thread selection
 
 ![memory](https://i.ibb.co/GfJqfkJW/memory.png)
+
 ![threads](https://i.ibb.co/0yhzGcKY/cores.png)
 
 ### To-Do List
