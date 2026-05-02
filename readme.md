@@ -15,8 +15,8 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ### To-Do List
 
-- Show estimated runtime based on settings
-- Add Benchmark UI to show history
+- Add installer to AUR
+- Add benchmark UI to show score history
 
 ## Screenshots
 
@@ -87,7 +87,8 @@ Cycles through different load combinations on each core and thread group, with c
    chmod +x install.sh
    sudo ./install.sh
 ```
-   Installs stress-ng, and downloads ungoogled-chromium AppImage for WebGL tests.
+
+Downloads ungoogled-chromium AppImage for WebGL tests.
 
 ## Settings
 
