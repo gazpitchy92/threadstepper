@@ -22,7 +22,7 @@ update_progress(){
     local all_loop=$2
     local all_outof=$3
     echo "${test}" > "$output_progress_file"
-    echo "Full Test Loop ${all_loop}/${all_outof}" >> "$output_progress_file"
+    echo "Test Run ${all_loop}/${all_outof}" >> "$output_progress_file"
 }
 
 # Update current threads being tested

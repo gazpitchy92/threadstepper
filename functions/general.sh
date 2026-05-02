@@ -24,7 +24,7 @@ helpText(){
     echo ""
     usageText
     echo ""
-    echo "-l                number of test loops to perform (default: 1)"
+    echo "-l                number of Test Runs to perform (default: 1)"
     echo "-t                'cores' tests all cores"
     echo "                  'threads' tests all threads (default: cores)"
     echo "-b                number of browsers to launch (default: 2) (0 to skip test)"
@@ -75,6 +75,7 @@ outputOptions(){
     echo "$(tput setaf 5)Medium time: ${medium_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Heavy time: ${heavy_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)All core time: ${all_core_time}s $(tput sgr0)" | tee -a $output_log_file
+    echo "$(tput setaf 5)All core time: ${all_core_tests}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Rapid tests: ${rapid_tests} $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Rapid time: ${rapid_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Random tests: ${random_tests} $(tput sgr0)" | tee -a $output_log_file

@@ -19,6 +19,8 @@ def parse_settings_options(self, content):
             self.heavy_time_var.set(int(line.split("=")[1]))
         elif line.startswith("all_core_time="):
             self.all_core_time_var.set(int(line.split("=")[1]))
+        elif line.startswith("all_core_tests="):
+            self.all_core_tests_var.set(int(line.split("=")[1]))
         elif line.startswith("rapid_tests="):
             self.rapid_tests_var.set(int(line.split("=")[1]))
         elif line.startswith("rapid_time="):
@@ -69,6 +71,7 @@ def save_settings(self):
             f"medium_time={self.medium_time_var.get()}",
             f"heavy_time={self.heavy_time_var.get()}",
             f"all_core_time={self.all_core_time_var.get()}",
+            f"all_core_tests={self.all_core_tests_var.get()}",
             f"rapid_tests={self.rapid_tests_var.get()}",
             f"rapid_time={self.rapid_time_var.get()}",
             f"random_tests={self.random_tests_var.get()}",
@@ -114,7 +117,7 @@ def register_settings_traces(self):
 
     for var in [
         self.loops_var, self.browsers_var, self.light_time_var, self.medium_time_var,
-        self.heavy_time_var, self.all_core_time_var, self.rapid_tests_var, self.rapid_time_var,
+        self.heavy_time_var, self.all_core_time_var, self.all_core_tests_var, self.rapid_tests_var, self.rapid_time_var,
         self.random_tests_var, self.random_time_var, self.rest_time_var, self.max_ram_var,
         self.core_blacklist_var
     ]:

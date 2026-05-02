@@ -57,7 +57,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (2.14)")
+        self.root.title("Thread Stepper (2.15)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -86,6 +86,7 @@ class StressTestGUI:
         self.medium_time_var = tk.IntVar(value=1)
         self.heavy_time_var = tk.IntVar(value=1)
         self.all_core_time_var = tk.IntVar(value=1)
+        self.all_core_tests_var = tk.IntVar(value=1)
         self.rapid_tests_var = tk.IntVar(value=1)
         self.rapid_time_var = tk.IntVar(value=1)
         self.random_tests_var = tk.IntVar(value=1)
@@ -212,16 +213,17 @@ class StressTestGUI:
             ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w", padx=(0, 0), pady=3)
             ttk.Entry(parent, width=6, textvariable=var).grid(row=row, column=1, sticky="w", pady=3)
 
-        # Test Loops
+        # Test Runs
         loops_frame = ttk.Frame(settings_outer)
         loops_frame.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 8))
-        ttk.Label(loops_frame, text="Full Test Loops", font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 8))
+        ttk.Label(loops_frame, text="Test Runs", font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 8))
         ttk.Spinbox(loops_frame, from_=1, to=999, width=6, textvariable=self.loops_var).pack(side="left")
 
         # High Load
         high_frame = ttk.LabelFrame(settings_outer, text="🔥 High Load", padding=8)
         high_frame.grid(row=1, column=0, sticky="nsew", padx=(0, 0), pady=(0, 5))
-        make_entry_row(high_frame, "Load Time", self.all_core_time_var, 0)
+        make_entry_row(high_frame, "All Core Time", self.all_core_time_var, 0)
+        make_entry_row(high_frame, "All Core Tests", self.all_core_tests_var, 1)
 
         # Low Load
         low_frame = ttk.LabelFrame(settings_outer, text="🌀 Low Load", padding=8)
@@ -246,7 +248,7 @@ class StressTestGUI:
 
         browser_frame = ttk.LabelFrame(bottom_settings, text="🌐 Browser Tests", padding=8)
         browser_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 0))
-        ttk.Label(browser_frame, text="Count").grid(row=0, column=0, sticky="w", padx=(0, 0), pady=3)
+        ttk.Label(browser_frame, text="Instances").grid(row=0, column=0, sticky="w", padx=(0, 0), pady=3)
         ttk.Spinbox(browser_frame, from_=0, to=99, width=6, textvariable=self.browsers_var).grid(row=0, column=1, sticky="w", pady=3)
 
         cores_frame = ttk.LabelFrame(bottom_settings, text="🧵 Enabled Threads", padding=8)
