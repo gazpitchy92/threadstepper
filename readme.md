@@ -101,6 +101,8 @@ All times in seconds. Default settings work for most users.
 
 - **All Core Time**: How long each change in CPU load is applied for. (seconds)
 
+- **All Core Tests**: The amount of times to run the all core tests. (number)
+
 **Low Load**: Tests that apply a low load tests.
 
 - **Rapid Tests**: The rapid test applies a rapid load to each core in order. (number)
