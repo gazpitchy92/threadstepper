@@ -12,11 +12,40 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
-from ui.system import refresh_system_info, full_reset, on_close, detect_cpu_topology
-from ui.options import parse_settings_options, update_settings_content, save_settings, register_settings_traces
-from ui.errors import clear_error_log, monitor_error_status, update_error_log, toggle_error_log, show_error_log, update_error_status
-from ui.clocks import reset_clock_speed, monitor_clock_speed, update_clock_speed
-from ui.logs import export_log, log_message, clear_output, monitor_current_test, clear_current_test, set_current_test, process_log_queue
+from ui.system import (
+    refresh_system_info,
+    full_reset,
+    on_close,
+    detect_cpu_topology
+)
+from ui.options import (
+    parse_settings_options,
+    update_settings_content,
+    save_settings,
+    register_settings_traces
+)
+from ui.errors import (
+    clear_error_log,
+    monitor_error_status,
+    update_error_log,
+    toggle_error_log,
+    show_error_log,
+    update_error_status
+)
+from ui.clocks import (
+    reset_clock_speed,
+    monitor_clock_speed,
+    update_clock_speed
+)
+from ui.logs import (
+    export_log,
+    log_message,
+    clear_output,
+    monitor_current_test,
+    clear_current_test,
+    set_current_test,
+    process_log_queue
+)
 from ui.dependencies import install_dependencies
 from ui.styling import toggle_dark_mode
 from ui.core_picker import open_core_picker
