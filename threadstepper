@@ -9,6 +9,7 @@ source ./functions/testing.sh
 source ./functions/stressor.sh
 source ./functions/general.sh
 source ./functions/errors.sh
+source ./functions/tests/load_test.sh
 source ./functions/tests/cores/rapid.sh
 source ./functions/tests/cores/stressng.sh
 source ./functions/tests/cores/random.sh
@@ -52,8 +53,8 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # ------ High Load tests ------
     # All core test
     update_progress "All Core" $loop_counter $loops 
-    allCoreTest
-    check_errors
+    # allCoreTest
+    # check_errors
 
     # ------ Low Load tests ------
     # Rapid tests

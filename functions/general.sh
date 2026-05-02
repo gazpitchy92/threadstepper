@@ -97,7 +97,8 @@ cleanup() {
         echo "$(tput setaf 5)Stopping tests and cleaning up $(tput sgr0)" | tee -a $output_log_file
         stopLogger
         stop_stressor
-        pkill stress
+        kill_phase
+        pkill load_worker.sh
         stopBrowserTest
         exit
     fi
