@@ -56,3 +56,117 @@ def full_reset(self):
     update_clock_speed(self)
     update_error_log(self)
     update_error_status(self)
+
+def on_close(self):
+    if self.is_running and self.process:
+        self.process.terminate()
+        self.process = None
+    full_reset(self)
+    clear_current_test(self)
+    self.stop_stress_test()
+    self.root.destroy()
+
+def detect_cpu_topology(settings_path="./settings"):
+    import re
+
+    num_logical = os.cpu_count() or 1
+
+    # Build map: cpu_id -> core_id
+    cpu_to_core = {}
+    try:
+        for cpu_path in os.listdir("/sys/devices/system/cpu"):
+            if not re.match(r"^cpu\d+$", cpu_path):
+                continue
+            cpu_id = int(cpu_path[3:])
+            core_file = f"/sys/devices/system/cpu/{cpu_path}/topology/core_id"
+            if os.path.exists(core_file):
+                with open(core_file) as f:
+                    cpu_to_core[cpu_id] = int(f.read().strip())
+    except Exception:
+        pass
+
+    if not cpu_to_core:
+        topology = 0
+    else:
+        # First cpu_id per physical core
+        core_to_first_cpu = {}
+        for cpu_id, core_id in cpu_to_core.items():
+            if core_id not in core_to_first_cpu or cpu_id < core_to_first_cpu[core_id]:
+                core_to_first_cpu[core_id] = cpu_id
+
+        sorted_cores = sorted(core_to_first_cpu.keys())
+        num_cores = len(sorted_cores)
+        half_cores = num_cores // 2
+
+        # cross-die
+        cross_matches, cross_checks = 0, 0
+        for i in range(half_cores):
+            core_a, core_b = sorted_cores[i], sorted_cores[i + half_cores]
+            cpu_a, cpu_b = core_to_first_cpu[core_a], core_to_first_cpu[core_b]
+            sib_path_a = f"/sys/devices/system/cpu/cpu{cpu_a}/topology/thread_siblings_list"
+            sib_path_b = f"/sys/devices/system/cpu/cpu{cpu_b}/topology/thread_siblings_list"
+            try:
+                with open(sib_path_a) as f:
+                    sib_a = set()
+                    for part in f.read().strip().split(","):
+                        if "-" in part:
+                            a, b = part.split("-")
+                            sib_a.update(range(int(a), int(b) + 1))
+                        else:
+                            sib_a.add(int(part))
+                with open(sib_path_b) as f:
+                    sib_b = set()
+                    for part in f.read().strip().split(","):
+                        if "-" in part:
+                            a, b = part.split("-")
+                            sib_b.update(range(int(a), int(b) + 1))
+                        else:
+                            sib_b.add(int(part))
+                cross_checks += 1
+                if cpu_b not in sib_a and cpu_a not in sib_b:
+                    cross_matches += 1
+            except Exception:
+                pass
+
+        # adjacent die
+        adj_matches, adj_checks = 0, 0
+        for i in range(num_cores - 1):
+            core_a, core_b = sorted_cores[i], sorted_cores[i + 1]
+            cpu_a, cpu_b = core_to_first_cpu[core_a], core_to_first_cpu[core_b]
+            die_path_a = f"/sys/devices/system/cpu/cpu{cpu_a}/topology/die_id"
+            die_path_b = f"/sys/devices/system/cpu/cpu{cpu_b}/topology/die_id"
+            adj_checks += 1
+            try:
+                with open(die_path_a) as f:
+                    die_a = f.read().strip()
+                with open(die_path_b) as f:
+                    die_b = f.read().strip()
+                if die_a == die_b:
+                    adj_matches += 1
+            except Exception:
+                if (core_b - core_a) == 1:
+                    adj_matches += 1
+
+        cross_ratio = (cross_matches * 100 // cross_checks) if cross_checks else 0
+        adj_ratio   = (adj_matches * 100 // adj_checks)   if adj_checks   else 0
+
+        if cross_ratio >= 80:
+            topology = 1
+        elif adj_ratio >= 80:
+            topology = 2
+        else:
+            topology = 0
+
+    # Save topology
+    try:
+        if os.path.exists(settings_path):
+            with open(settings_path, "r") as f:
+                content = f.read()
+            if re.search(r"^cpu_topology=", content, re.MULTILINE):
+                content = re.sub(r"^cpu_topology=.*", f"cpu_topology={topology}", content, flags=re.MULTILINE)
+            else:
+                content += f"\ncpu_topology={topology}"
+            with open(settings_path, "w") as f:
+                f.write(content)
+    except Exception:
+        pass
