@@ -208,3 +208,11 @@ def update_current_test(self):
             fg="#721c24",
             bg="#f8d7da"
         )
+
+def process_log_queue(self):
+    while True:
+        try:
+            message = self.log_queue.get_nowait()
+            self.root.after(0, lambda msg=message: log_message(self, msg))
+        except queue.Empty:
+            time.sleep(0.1)
