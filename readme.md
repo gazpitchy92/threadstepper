@@ -20,14 +20,6 @@ Designed specifically for testing undervolting and boost stability, where conven
 - Add installer to AUR
 - Add benchmark UI to show score history
 
-## Screenshots
-
-![running](https://i.ibb.co/MyxL83XT/Screenshot-20260502-205501-1.png)
-![errors](https://i.ibb.co/n97s589/Screenshot-20260502-030048-1.png)
-![threads](https://i.ibb.co/0yhzGcKY/cores.png)
-![benchmark](https://i.ibb.co/6dxq7t9/Screenshot-20260502-205753-1.png)
-
-
 ## Methodology
 
 ### Problem with Traditional Stress Tests
@@ -66,9 +58,6 @@ Cycles through different load combinations on each core and thread group, with c
 
 ![rapid](https://i.ibb.co/2YL2hKf0/rapid.png)
 
-- Browser variable load test
-
-![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
 
 ## Requirements
 
@@ -130,3 +119,11 @@ All times in seconds. Default settings work for most users.
 **Advanced Options**
 
 - **Rest Time**: How much time to rest for between test types. (seconds)
+
+## Screenshots
+
+![running](https://i.ibb.co/MyxL83XT/Screenshot-20260502-205501-1.png)
+![errors](https://i.ibb.co/n97s589/Screenshot-20260502-030048-1.png)
+![threads](https://i.ibb.co/0yhzGcKY/cores.png)
+![benchmark](https://i.ibb.co/6dxq7t9/Screenshot-20260502-205753-1.png)
+![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
