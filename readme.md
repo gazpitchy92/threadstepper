@@ -87,7 +87,8 @@ Cycles through different load combinations on each core and thread group, with c
    chmod +x install.sh
    sudo ./install.sh
 ```
-   Installs stress-ng, and downloads ungoogled-chromium AppImage for WebGL tests.
+
+Downloads ungoogled-chromium AppImage for WebGL tests.
 
 ## Settings
 
