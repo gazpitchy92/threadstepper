@@ -106,11 +106,11 @@ All times in seconds. Default settings work for most users.
 
 **Low Load**: Tests that apply a low load tests.
 
-- **Rapid Loops**: The rapid test applies a rapid load to each core in order.
+- **Rapid Tests**: The rapid test applies a rapid load to each core in order.
 
 - **Rapid Time**: How long to apply the rapid load for.
 
-- **Rand Loops**: The random test applies a light load to random threads.
+- **Rand Tests**: The random test applies a light load to random threads.
 
 **Single Core**: These tests go through each core with a variatey of tests.
 
