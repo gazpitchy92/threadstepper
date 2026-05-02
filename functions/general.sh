@@ -28,8 +28,8 @@ helpText(){
     echo "-t                'cores' tests all cores"
     echo "                  'threads' tests all threads (default: cores)"
     echo "-b                number of browsers to launch (default: 2) (0 to skip test)"
-    echo "--first-half      tests the first half of the cores/threads (skips 7z tests)"
-    echo "--second-half     tests the second half of the cores/threads (skips 7z tests)"
+    echo "--first-half      tests the first half of the cores/threads"
+    echo "--second-half     tests the second half of the cores/threads"
     echo "--help            show this help menu"
     echo ""
     echo "Additional test settings can be found in settings"
@@ -43,14 +43,6 @@ usageText(){
 
 # check dependencies
 checkDeps(){
-    # 7zip
-    if check_installed "7z" ; then
-        echo "$(tput setaf 2)7zip dependancy is met$(tput sgr0)"
-    else
-        echo "$(tput setaf 1)7zip is not installed!$(tput sgr0)"
-        echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
-        exit 1
-    fi
     # stress-ng
     if check_installed "stress-ng" ; then
         echo "$(tput setaf 2)stress-ng dependancy is met$(tput sgr0)"
