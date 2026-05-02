@@ -48,7 +48,7 @@ class BenchmarkWindow:
         body.rowconfigure(0, weight=1)
 
         # Output log
-        log_frame = ttk.LabelFrame(body, text="🤖 Benchmark Output", padding=5)
+        log_frame = ttk.LabelFrame(body, text="💪 Benchmark Output", padding=5)
         log_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 8))
         log_frame.columnconfigure(0, weight=1)
         log_frame.rowconfigure(0, weight=1)

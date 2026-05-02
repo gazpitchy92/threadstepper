@@ -15,8 +15,8 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ### To-Do List
 
-- Show estimated runtime based on settings
-- Add Benchmark UI to show history
+- Add installer to AUR
+- Add benchmark UI to show score history
 
 ## Screenshots
 
