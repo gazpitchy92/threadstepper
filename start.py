@@ -226,9 +226,9 @@ class StressTestGUI:
         # Low Load
         low_frame = ttk.LabelFrame(settings_outer, text="🌀 Low Load", padding=8)
         low_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=(0, 5))
-        make_entry_row(low_frame, "Rapid Loops", self.rapid_tests_var, 0)
+        make_entry_row(low_frame, "Rapid Tests", self.rapid_tests_var, 0)
         make_entry_row(low_frame, "Rapid Time", self.rapid_time_var, 1)
-        make_entry_row(low_frame, "Rand Loops", self.random_tests_var, 2)
+        make_entry_row(low_frame, "Rand Tests", self.random_tests_var, 2)
         make_entry_row(low_frame, "Rand Time", self.random_time_var, 3)
 
         # Single Core
