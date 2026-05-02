@@ -61,7 +61,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # Rapid tests
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
-        update_progress "Rapid Tests" $loop_counter $loops 
+        update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
         rapidTest
         check_errors
         rest
@@ -69,7 +69,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # Random core tests
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
         echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
-        update_progress "Random Tests" $loop_counter $loops 
+        update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
         randomStress
         check_errors
         rest
