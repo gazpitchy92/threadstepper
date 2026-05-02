@@ -66,10 +66,6 @@ Cycles through different load combinations on each core and thread group, with c
 
 ![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
 
-- Variable RAM load
-
-![memory](https://i.ibb.co/GfJqfkJW/memory.png)
-
 ## Requirements
 
 - python
@@ -127,5 +123,3 @@ All times in seconds. Default settings work for most users.
 **Advanced Options**
 
 - **Rest Time**: How much time to rest for between test types.
-
-- **Max RAM**(gb): The maximum memory which will be used in tests.
