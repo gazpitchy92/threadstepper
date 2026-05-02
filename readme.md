@@ -12,10 +12,6 @@ Designed specifically for testing undervolting and boost stability, where conven
 - New RAM testing functionality (built into the existing tests)
 - Easier core/thread selection
 
-![memory](https://i.ibb.co/GfJqfkJW/memory.png)
-
-![threads](https://i.ibb.co/0yhzGcKY/cores.png)
-
 ### To-Do List
 
 - Error testing to specify which core/thread
@@ -26,6 +22,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ![running](https://i.ibb.co/1tFsCxLb/Screenshot-20260502-020036-1.png)
 ![errors](https://i.ibb.co/9HGDZttG/Screenshot-20260502-022259.png)
+![threads](https://i.ibb.co/0yhzGcKY/cores.png)
 
 ## Methodology
 
@@ -68,6 +65,10 @@ Cycles through different load combinations on each core and thread group, with c
 - Browser variable load test
 
 ![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
+
+- Variable RAM load
+
+![memory](https://i.ibb.co/GfJqfkJW/memory.png)
 
 ## Requirements
 
