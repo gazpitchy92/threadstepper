@@ -12,18 +12,21 @@ import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
-from ui.system import refresh_system_info, full_reset
+from ui.system import refresh_system_info, full_reset, on_close, detect_cpu_topology
 from ui.options import parse_settings_options, update_settings_content, save_settings, register_settings_traces
 from ui.errors import clear_error_log, monitor_error_status, update_error_log, toggle_error_log, show_error_log, update_error_status
 from ui.clocks import reset_clock_speed, monitor_clock_speed, update_clock_speed
 from ui.logs import export_log, log_message, clear_output, monitor_current_test, clear_current_test, set_current_test
 from ui.dependencies import install_dependencies
+from ui.styling import toggle_dark_mode
+from ui.core_picker import open_core_picker
 
 class StressTestGUI:
+
     def __init__(self, root):
         
         self.root = root
-        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (2.10)")
         self.root.geometry("800x1060")
         
@@ -46,14 +49,7 @@ class StressTestGUI:
         register_settings_traces(self)
         clear_current_test(self)
     
-    def on_close(self):
-        if self.is_running and self.process:
-            self.process.terminate()
-            self.process = None
-        full_reset(self)
-        clear_current_test(self)
-        self.stop_stress_test()
-        self.root.destroy()
+
 
     def setup_ui(self):
         self.loops_var = tk.IntVar(value=1)
@@ -87,7 +83,18 @@ class StressTestGUI:
         header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI", 18, "bold"), image=icon_img, compound="left")
         header_label.pack(side="left")
         header_label.image = icon_img
-        ttk.Button(header_frame, text="📦 Install Dependencies", bootstyle="primary", command=lambda: install_dependencies(self)).pack(side="right")
+
+        # Create a frame for the buttons on the right
+        button_frame = ttk.Frame(header_frame)
+        button_frame.pack(side="right")
+
+        # Dark/Night mode button
+        self.dark_mode_btn = ttk.Button(button_frame, text="🌙 Dark Mode", bootstyle="primary", command=lambda: toggle_dark_mode(self))
+        self.dark_mode_btn.pack(side="left", padx=(0, 5))
+
+        # Install Dependencies button
+        ttk.Button(button_frame, text="📦 Install Dependencies", bootstyle="primary", 
+            command=lambda: install_dependencies(self)).pack(side="left")
 
         # System Info
         info_row = ttk.Frame(main_container)
@@ -217,7 +224,7 @@ class StressTestGUI:
         cores_frame = ttk.LabelFrame(bottom_settings, text="🧵 Enabled Threads", padding=8)
         cores_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
         ttk.Button(cores_frame, text="⚙ Select Threads", bootstyle="success-outline",
-           command=self.open_core_picker).grid(row=0, column=0, sticky="w")
+           command=lambda: open_core_picker(self)).grid(row=0, column=0, sticky="w")
 
         # Advanced Options toggle
         def toggle_advanced():
@@ -231,7 +238,7 @@ class StressTestGUI:
                 self.advanced_visible = True
 
         adv_toggle_btn = ttk.Button(settings_outer, text="▶ Advanced Options",
-                                    bootstyle="link", command=toggle_advanced)
+            bootstyle="link", command=toggle_advanced)
         adv_toggle_btn.grid(row=3, column=0, columnspan=3, sticky="w", pady=(5, 0))
 
         advanced_frame = ttk.Frame(settings_outer)
@@ -247,7 +254,7 @@ class StressTestGUI:
         self.unsaved_label.pack(side="left", padx=(0, 10))
         ttk.Button(save_frame, text="💾 Save Settings", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
 
-                # Logging output
+        # Logging output
         output_frame = ttk.LabelFrame(main_container, text="🤖 Test Output", padding=10)
         output_frame.grid(row=5, column=0, sticky="nsew", padx=5, pady=(0, 5))
         output_frame.columnconfigure(0, weight=1)
@@ -289,157 +296,6 @@ class StressTestGUI:
         self.progress.grid_remove()
 
         self.setup_styles()
-
-    def open_core_picker(self):
-        topology = {}
-        physical_threads = set()
-
-        # Find CPU Topology
-        try:
-            import subprocess
-            result = subprocess.run(
-                ["lscpu", "--parse=CPU,CORE"],
-                capture_output=True, text=True
-            )
-            for line in result.stdout.splitlines():
-                if line.startswith("#") or not line.strip():
-                    continue
-                parts = line.strip().split(",")
-                if len(parts) == 2:
-                    thread_id, core_id = int(parts[0]), int(parts[1])
-                    topology.setdefault(core_id, []).append(thread_id)
-        except Exception:
-            topology = {}
-
-        # /proc/cpuinfo fallback
-        if not topology:
-            try:
-                current_processor = None
-                current_core = None
-                with open("/proc/cpuinfo") as f:
-                    for line in f:
-                        line = line.strip()
-                        if line.startswith("processor"):
-                            current_processor = int(line.split(":")[1].strip())
-                        elif line.startswith("core id"):
-                            current_core = int(line.split(":")[1].strip())
-                        elif line == "" and current_processor is not None and current_core is not None:
-                            topology.setdefault(current_core, []).append(current_processor)
-                            current_processor = None
-                            current_core = None
-            except Exception:
-                topology = {}
-
-        # No SMT fallback
-        if not topology:
-            num_cores = os.cpu_count() or 1
-            topology = {i: [i] for i in range(num_cores)}
-
-        # Check physical and virtual threads
-        try:
-            seen_sibling_groups = set()
-            for core_threads in topology.values():
-                for thread_id in sorted(core_threads):
-                    sib_path = f"/sys/devices/system/cpu/cpu{thread_id}/topology/thread_siblings_list"
-                    with open(sib_path) as f:
-                        raw = f.read().strip()
-                    siblings = set()
-                    for part in raw.split(","):
-                        if "-" in part:
-                            a, b = part.split("-")
-                            siblings.update(range(int(a), int(b) + 1))
-                        else:
-                            siblings.add(int(part))
-                    group_key = frozenset(siblings)
-                    if group_key not in seen_sibling_groups:
-                        seen_sibling_groups.add(group_key)
-                        physical_threads.add(min(siblings))
-        except Exception:
-            for core_threads in topology.values():
-                if core_threads:
-                    physical_threads.add(min(core_threads))
-
-        # Check existing blacklist
-        current = self.core_blacklist_var.get()
-        try:
-            blacklisted = {int(x.strip()) for x in current.split(",") if x.strip().isdigit()}
-        except ValueError:
-            blacklisted = set()
-
-        # Build pop-up window
-        win = tk.Toplevel(self.root)
-        win.title("Enabled Threads")
-        win.resizable(False, False)
-        win.grab_set()
-
-        ttk.Label(win, text="Select threads to enable  (red = disabled)",
-            font=("Segoe UI", 10)).pack(pady=(2, 2), padx=2)
-        ttk.Label(win, text="(P) = Physical  (HT) = Virtual",
-            font=("Segoe UI", 10)).pack(pady=(2, 2), padx=2)
-
-        scroll_frame_outer = ttk.Frame(win)
-        scroll_frame_outer.pack(fill="both", expand=True, padx=10, pady=5)
-
-        canvas = tk.Canvas(scroll_frame_outer, highlightthickness=0)
-        scrollbar = ttk.Scrollbar(scroll_frame_outer, orient="vertical", command=canvas.yview)
-        grid_frame = ttk.Frame(canvas)
-
-        grid_frame.bind("<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-
-        canvas.create_window((0, 0), window=grid_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
-
-        THREAD_COLS = 4
-        btn_vars = {}
-
-        for grid_row, (core_id, threads) in enumerate(sorted(topology.items())):
-            ttk.Label(grid_frame, text=f"Core {core_id}",
-                    font=("Segoe UI", 9, "bold")).grid(
-                row=grid_row * 2, column=0, columnspan=THREAD_COLS,
-                sticky="w", padx=6, pady=(8, 0)
-            )
-
-            for col, thread_id in enumerate(sorted(threads)):
-                is_enabled = thread_id not in blacklisted
-                var = tk.BooleanVar(value=is_enabled)
-                btn_vars[thread_id] = var
-
-                tag = "(P)" if thread_id in physical_threads else "(HT)"
-                label = f"Thread {thread_id} {tag}"
-
-                style = "success-outline" if is_enabled else "danger"
-                btn = ttk.Button(grid_frame, text=label, width=14, bootstyle=style)
-
-                def make_toggle(t_id, b):
-                    def toggle():
-                        btn_vars[t_id].set(not btn_vars[t_id].get())
-                        b.config(bootstyle="success-outline" if btn_vars[t_id].get() else "danger")
-                    return toggle
-
-                btn.config(command=make_toggle(thread_id, btn))
-                btn.grid(row=grid_row * 2 + 1, column=col, padx=4, pady=2)
-
-        win.update_idletasks()
-        content_height = min(grid_frame.winfo_reqheight() + 20, 400)
-        canvas.config(height=content_height)
-
-        def confirm():
-            result = ",".join(
-                str(t) for t in sorted(k for k, v in btn_vars.items() if not v.get())
-            )
-            self.core_blacklist_var.set(result)
-            win.destroy()
-
-        btn_row = ttk.Frame(win, padding=(10, 5))
-        btn_row.pack(fill="x")
-        ttk.Button(btn_row, text="✅ Confirm", bootstyle="success",
-                command=confirm).pack(side="right", padx=4, pady=(0, 8))
-        ttk.Button(btn_row, text="❌ Cancel", bootstyle="secondary-outline",
-                command=win.destroy).pack(side="right", padx=4, pady=(0, 8))
 
     def setup_styles(self):
         style = ttk.Style()
@@ -642,111 +498,6 @@ class StressTestGUI:
             self.progress.grid_remove()
         self.is_running = False
         self.benchmark_mode = False
-
-def detect_cpu_topology(settings_path="./settings"):
-    import re
-
-    num_logical = os.cpu_count() or 1
-
-    # Build map: cpu_id -> core_id
-    cpu_to_core = {}
-    try:
-        for cpu_path in os.listdir("/sys/devices/system/cpu"):
-            if not re.match(r"^cpu\d+$", cpu_path):
-                continue
-            cpu_id = int(cpu_path[3:])
-            core_file = f"/sys/devices/system/cpu/{cpu_path}/topology/core_id"
-            if os.path.exists(core_file):
-                with open(core_file) as f:
-                    cpu_to_core[cpu_id] = int(f.read().strip())
-    except Exception:
-        pass
-
-    if not cpu_to_core:
-        topology = 0
-    else:
-        # First cpu_id per physical core
-        core_to_first_cpu = {}
-        for cpu_id, core_id in cpu_to_core.items():
-            if core_id not in core_to_first_cpu or cpu_id < core_to_first_cpu[core_id]:
-                core_to_first_cpu[core_id] = cpu_id
-
-        sorted_cores = sorted(core_to_first_cpu.keys())
-        num_cores = len(sorted_cores)
-        half_cores = num_cores // 2
-
-        # cross-die
-        cross_matches, cross_checks = 0, 0
-        for i in range(half_cores):
-            core_a, core_b = sorted_cores[i], sorted_cores[i + half_cores]
-            cpu_a, cpu_b = core_to_first_cpu[core_a], core_to_first_cpu[core_b]
-            sib_path_a = f"/sys/devices/system/cpu/cpu{cpu_a}/topology/thread_siblings_list"
-            sib_path_b = f"/sys/devices/system/cpu/cpu{cpu_b}/topology/thread_siblings_list"
-            try:
-                with open(sib_path_a) as f:
-                    sib_a = set()
-                    for part in f.read().strip().split(","):
-                        if "-" in part:
-                            a, b = part.split("-")
-                            sib_a.update(range(int(a), int(b) + 1))
-                        else:
-                            sib_a.add(int(part))
-                with open(sib_path_b) as f:
-                    sib_b = set()
-                    for part in f.read().strip().split(","):
-                        if "-" in part:
-                            a, b = part.split("-")
-                            sib_b.update(range(int(a), int(b) + 1))
-                        else:
-                            sib_b.add(int(part))
-                cross_checks += 1
-                if cpu_b not in sib_a and cpu_a not in sib_b:
-                    cross_matches += 1
-            except Exception:
-                pass
-
-        # adjacent die
-        adj_matches, adj_checks = 0, 0
-        for i in range(num_cores - 1):
-            core_a, core_b = sorted_cores[i], sorted_cores[i + 1]
-            cpu_a, cpu_b = core_to_first_cpu[core_a], core_to_first_cpu[core_b]
-            die_path_a = f"/sys/devices/system/cpu/cpu{cpu_a}/topology/die_id"
-            die_path_b = f"/sys/devices/system/cpu/cpu{cpu_b}/topology/die_id"
-            adj_checks += 1
-            try:
-                with open(die_path_a) as f:
-                    die_a = f.read().strip()
-                with open(die_path_b) as f:
-                    die_b = f.read().strip()
-                if die_a == die_b:
-                    adj_matches += 1
-            except Exception:
-                if (core_b - core_a) == 1:
-                    adj_matches += 1
-
-        cross_ratio = (cross_matches * 100 // cross_checks) if cross_checks else 0
-        adj_ratio   = (adj_matches * 100 // adj_checks)   if adj_checks   else 0
-
-        if cross_ratio >= 80:
-            topology = 1
-        elif adj_ratio >= 80:
-            topology = 2
-        else:
-            topology = 0
-
-    # Save topology
-    try:
-        if os.path.exists(settings_path):
-            with open(settings_path, "r") as f:
-                content = f.read()
-            if re.search(r"^cpu_topology=", content, re.MULTILINE):
-                content = re.sub(r"^cpu_topology=.*", f"cpu_topology={topology}", content, flags=re.MULTILINE)
-            else:
-                content += f"\ncpu_topology={topology}"
-            with open(settings_path, "w") as f:
-                f.write(content)
-    except Exception:
-        pass
 
 def main():
     os.makedirs("./logs", exist_ok=True)
