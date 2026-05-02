@@ -35,7 +35,7 @@ Most stress tests (mprime, systester, y-cruncher etc.) apply continuous, predict
 ### How Thread Stepper Works
 
 **Variable Load Patterns**  
-Applies light, medium, and heavy loads in varying durations and rapid transitions. This forces voltage/frequency changes where instability typically occurs.
+Applies low, medium, and high loads in varying durations and rapid transitions. This forces voltage/frequency changes where instability typically occurs.
 
 **Sequential Core Testing**  
 Tests individual cores and thread groups in sequence rather than loading all cores uniformly. Isolates per-core curve optimizer issues.
@@ -44,7 +44,7 @@ Tests individual cores and thread groups in sequence rather than loading all cor
 Uses 3D WebGL browser tests to generate unpredictable background activity during testing. Mimics real usage patterns where undervolts typically fail.
 
 **Test Patterns**  
-Cycles through different load combinations on each core and thread group, with configurable durations for light/medium/heavy workloads and rest periods between tests.
+Cycles through different load combinations on each core and thread group, with configurable durations for low/medium/high workloads and rest periods between tests.
 
 ### CPU Load examples
 
