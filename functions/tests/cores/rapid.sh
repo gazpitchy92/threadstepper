@@ -1,5 +1,5 @@
 # rapid core tests
-rapidStressNgCore() {
+rapidTest() {
     rapid_num_cores=$(nproc)
     physical_cores=$((rapid_num_cores / 2))
     
@@ -26,9 +26,11 @@ rapidStressNgCore() {
             else
                 taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                 num_cores=${#active_cores[@]}
-                echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s (rapid)$(tput sgr0)" | tee -a "$output_log_file"
                 update_threads "$taskset_cores"
-                stress-ng --cpu "${#active_cores[@]}" --taskset "$taskset_cores" --timeout "$rapid_time"s --cpu-method "$rapid" --vm "$num_cores" --vm-bytes "$max_ram"G > /dev/null 2>&1
+                run_phase "$taskset_cores" high
+                sleep "$rapid_time"
+                kill_phase
                 check_errors
             fi
         fi
@@ -53,9 +55,11 @@ rapidStressNgCore() {
                 else
                     taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
-                    echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                    echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s (rapid)$(tput sgr0)" | tee -a "$output_log_file"
                     update_threads "$taskset_cores"
-                    stress-ng --cpu "${#active_cores[@]}" --taskset "$taskset_cores" --timeout "$rapid_time"s --cpu-method "$rapid" --vm "$num_cores" --vm-bytes "$max_ram"G > /dev/null 2>&1
+                    run_phase "$taskset_cores" high
+                    sleep "$rapid_time"
+                    kill_phase
                     check_errors
                 fi
             fi
@@ -82,9 +86,11 @@ rapidStressNgCore() {
                 else
                     taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
-                    echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                    echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s (rapid)$(tput sgr0)" | tee -a "$output_log_file"
                     update_threads "$taskset_cores"
-                    stress-ng --cpu "${#active_cores[@]}" --taskset "$taskset_cores" --timeout "$rapid_time"s --cpu-method "$rapid" --vm "$num_cores" --vm-bytes "$max_ram"G > /dev/null 2>&1
+                    run_phase "$taskset_cores" high
+                    sleep "$rapid_time"
+                    kill_phase
                     check_errors
                 fi
             fi

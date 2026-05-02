@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# launch browsers for stressng
+# launch browsers on cores
 browserTest() {
     current_dir=$(pwd)
     rm -rf "${current_dir}/tests/browser/tmp"
@@ -17,7 +17,7 @@ browserTest() {
         num_cores=$(nproc)
         half_cores=$((num_cores / 2))
         if (( browsers > 1 )); then
-            if (( (i + 1) % 2 == 0 )); then
+            if (( i % 2 == 0 )); then
                 echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 update_threads "0-$((half_cores - 1))"
                 taskset --cpu-list 0-$((half_cores - 1)) $current_dir/tests/browser/$chromium_appimage $chromium_flags --user-data-dir=$current_dir/tests/browser/tmp "$file_path" > /dev/null 2>&1 &
@@ -36,11 +36,9 @@ browserTest() {
 }
 
 stopBrowserTest(){
-    # Terminate chrome first, avoiding coredump cause by Appimage FUSE teardown race condition
+    # kill running browser tests
     pkill chrome &>/dev/null
     sleep 1
-    
-    # kill running browser tests
     pgrep -f "$chromium_appimage" | while read -r pid; do
         kill -9 "$pid" &>/dev/null
     done

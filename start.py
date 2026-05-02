@@ -57,7 +57,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (2.13)")
+        self.root.title("Thread Stepper (2.14)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -273,7 +273,7 @@ class StressTestGUI:
         advanced_frame.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(0, 5))
         advanced_frame.grid_remove()
         make_entry_row(advanced_frame, "Rest Time", self.rest_time_var, 0)
-        make_entry_row(advanced_frame, "Max RAM (GB)", self.max_ram_var, 1)
+        # make_entry_row(advanced_frame, "Max RAM (GB)", self.max_ram_var, 1)
 
         # Save (moved up to row 5, reduced pady)
         save_frame = ttk.Frame(settings_outer)

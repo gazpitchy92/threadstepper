@@ -4,9 +4,9 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.13
+## Latest Updates - Version 2.14
 
-- Replaced 7z with our own all-core stress tests
+- Replaced 7z and Stress-ng with our own tests
 - Improved UI and easier settings
 - Error testing now shows which core/thread failed
 - CPU topology detection (detection of threads per core)
@@ -66,13 +66,8 @@ Cycles through different load combinations on each core and thread group, with c
 
 ![browser](https://i.ibb.co/zhFSPdhs/Screenshot-20260501-223807.png)
 
-- Variable RAM load
-
-![memory](https://i.ibb.co/GfJqfkJW/memory.png)
-
 ## Requirements
 
-- stress-ng
 - python
 - Linux
 
@@ -128,5 +123,3 @@ All times in seconds. Default settings work for most users.
 **Advanced Options**
 
 - **Rest Time**: How much time to rest for between test types.
-
-- **Max RAM**(gb): The maximum memory which will be used in tests.
