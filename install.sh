@@ -3,33 +3,13 @@ source ./settings
 current_dir=$(pwd)
 clear
 
-echo "This will install stress-ng and download ungoogled-chromium executable. Continue? [Y/n]"
+echo "This will download ungoogled-chromium executable. Continue? [Y/n]"
 read -r response
 
 if [[ "$response" =~ ^[Nn]$ ]]; then
     echo "Installation aborted."
     exit 0
 fi
-
-install_failed() {
-    echo "There has been an error. Please manually install stress-ng to use threadstepper."
-    exit 1
-}
-
-if command -v pacman &>/dev/null; then
-    sudo pacman -Sy --noconfirm stress-ng || install_failed
-elif command -v apt &>/dev/null; then
-    sudo apt update && sudo apt install -y stress-ng || install_failed
-elif command -v dnf &>/dev/null; then
-    sudo dnf install -y stress-ng || install_failed
-elif command -v zypper &>/dev/null; then
-    sudo zypper install -y stress-ng || install_failed
-else
-    echo "Unsupported package manager"
-    install_failed
-fi
-
-echo "Dependencies have been installed"
 
 APPIMAGE_URL="$chromium_domain/$chromium_version/$chromium_appimage"
 APPIMAGE_PATH="$current_dir/tests/browser/$chromium_appimage"
