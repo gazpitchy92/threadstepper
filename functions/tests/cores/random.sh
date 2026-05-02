@@ -43,7 +43,7 @@ randomStress() {
             echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s$(tput sgr0)" | tee -a "$output_log_file"
             update_threads "$taskset_cores"
             run_phase "$taskset_cores" high
-            sleep "$rapid_time"
+            sleep "$random_time"
             kill_phase
             check_errors
         done
