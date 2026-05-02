@@ -20,9 +20,11 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ## Screenshots
 
-![running](https://i.ibb.co/1tFsCxLb/Screenshot-20260502-020036-1.png)
+![running](https://i.ibb.co/MyxL83XT/Screenshot-20260502-205501-1.png)
 ![errors](https://i.ibb.co/n97s589/Screenshot-20260502-030048-1.png)
 ![threads](https://i.ibb.co/0yhzGcKY/cores.png)
+![benchmark](https://i.ibb.co/6dxq7t9/Screenshot-20260502-205753-1.png)
+
 
 ## Methodology
 
