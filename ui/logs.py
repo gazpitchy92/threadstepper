@@ -166,25 +166,19 @@ def update_current_test(self):
                     fg="#ffffff",
                     bg="#dc3545"
                 )
-            elif test_name == "Rapid Tests":
+            elif "Rapid" in test_name or "Random" in test_name:
                 self.clock_label_bottom.config(
                     text="🌀 " + test_name + "\n" + progress,
                     fg="#28a745",
                     bg="#d4edda"
                 )
-            elif test_name == "Random Tests":
-                self.clock_label_bottom.config(
-                    text="🌀 " + test_name + "\n" + progress,
-                    fg="#28a745",
-                    bg="#d4edda"
-                )
-            elif test_name == "Single Core Tests":
+            elif "Single" in test_name:
                 self.clock_label_bottom.config(
                     text="🎯 " + test_name + "\n" + progress,
                     fg="#28a745",
                     bg="#d4edda"
                 )
-            elif test_name == "Browser Tests":
+            elif "Browser" in test_name:
                 self.clock_label_bottom.config(
                     text="🌐 " + test_name + "\n" + progress,
                     fg="#28a745",
