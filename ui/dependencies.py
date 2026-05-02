@@ -1,16 +1,8 @@
-import tkinter as tk
-from tkinter import ttk, scrolledtext, filedialog, messagebox, PhotoImage
-import subprocess
-import threading
-import time
 import os
-import queue
-from datetime import datetime
 import platform
-import re
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from PIL import Image, ImageTk
+import subprocess
+import tkinter as tk
+from tkinter import messagebox
 
 from ui.logs import export_log, log_message, clear_output
 

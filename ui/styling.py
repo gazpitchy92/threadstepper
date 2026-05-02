@@ -1,15 +1,7 @@
 import tkinter as tk
-from tkinter import ttk, scrolledtext, filedialog, messagebox, PhotoImage
-import subprocess
-import threading
-import time
+from tkinter import ttk, scrolledtext
 import os
-import queue
-from datetime import datetime
-import platform
 import re
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 
 # apply theme on load

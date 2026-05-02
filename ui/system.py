@@ -1,5 +1,8 @@
 import os
 import platform
+import subprocess
+import re
+import psutil
 
 from ui.logs import log_message, clear_output, clear_current_test
 from ui.errors import clear_error_log, update_error_log, update_error_status

@@ -1,20 +1,11 @@
-import tkinter as tk
-from tkinter import ttk, scrolledtext, filedialog, messagebox, PhotoImage
+import os
 import subprocess
 import threading
-import time
-import os
-import queue
+import tkinter as tk
 from datetime import datetime
-import platform
-import re
-import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from PIL import Image, ImageTk
 
 from ui.system import full_reset
 from ui.logs import log_message
-
 
 def start_benchmark(self):
     if self.is_running:
