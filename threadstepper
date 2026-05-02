@@ -18,16 +18,20 @@ source ./functions/tests/browser.sh
 # setup
 initial_output
 
+# clear ram cache
+echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null 2>&1
+
+# calculate cores
 num_cores=$(nproc)
 num_cores=${num_cores:-1}
+PHYSICAL_CORES=$((num_cores / 2))
 
+# Get run vars
 loops=${loops:-1}
 rapid_tests=${rapid_tests:-0}
 start_core=${start_core:-0}
 rest_time=${rest_time:-1}
 update_progress "Startup" $loop_counter $loops 
-
-PHYSICAL_CORES=$((num_cores / 2))
 
 # main loop
 START_TIME=$SECONDS
