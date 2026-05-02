@@ -24,3 +24,9 @@ update_progress(){
     echo "${test}" > "$output_progress_file"
     echo "Full Test Loop ${all_loop}/${all_outof}" >> "$output_progress_file"
 }
+
+# Update current threads being tested
+update_threads(){
+    local threads=$1
+    echo "${threads}" > "$output_threads_file"
+}

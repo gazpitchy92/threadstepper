@@ -27,6 +27,7 @@ rapidStressNgCore() {
                 taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                 num_cores=${#active_cores[@]}
                 echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                update_threads "$taskset_cores"
                 stress-ng --cpu "${#active_cores[@]}" --taskset "$taskset_cores" --timeout "$rapid_time"s --cpu-method "$rapid" --vm "$num_cores" --vm-bytes "$max_ram"G > /dev/null 2>&1
                 check_errors
             fi
@@ -53,6 +54,7 @@ rapidStressNgCore() {
                     taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
                     echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                    update_threads "$taskset_cores"
                     stress-ng --cpu "${#active_cores[@]}" --taskset "$taskset_cores" --timeout "$rapid_time"s --cpu-method "$rapid" --vm "$num_cores" --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                 fi
@@ -81,6 +83,7 @@ rapidStressNgCore() {
                     taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
                     echo "$(tput setaf 2)Testing with method $rapid on core(s) $taskset_cores for $rapid_time (rapid) $(tput sgr0)" | tee -a "$output_log_file"
+                    update_threads "$taskset_cores"
                     stress-ng --cpu "${#active_cores[@]}" --taskset "$taskset_cores" --timeout "$rapid_time"s --cpu-method "$rapid" --vm "$num_cores" --vm-bytes "$max_ram"G > /dev/null 2>&1
                     check_errors
                 fi

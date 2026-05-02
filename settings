@@ -15,6 +15,7 @@ max_ram=4
 
 # DO NOT EDIT
 output_log_file="$(pwd)/logs/output.log"
+output_threads_file="$(pwd)/logs/threads.log"
 output_progress_file="$(pwd)/logs/current.log"
 cpu_topology=1
 light=("bitops" "pi" "gcd" "sieve")
