@@ -1,4 +1,5 @@
-# Thread Stepper
+# Thread Stepper 
+![icon](https://i.ibb.co/9kmwL1p1/favicon.png)
 
 A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
