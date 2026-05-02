@@ -26,5 +26,5 @@ else
 fi
 
 # Launch the application
-echo "Starting ThreadStepper..."
+echo "Starting Thread Stepper..."
 python3 start.py
