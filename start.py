@@ -47,7 +47,7 @@ from ui.logs import (
     process_log_queue
 )
 from ui.dependencies import install_dependencies
-from ui.styling import toggle_dark_mode
+from ui.styling import toggle_dark_mode, apply_theme_on_load
 from ui.core_picker import open_core_picker
 from ui.benchmark import start_benchmark
 
@@ -57,7 +57,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (2.10)")
+        self.root.title("Thread Stepper (2.11)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -108,9 +108,9 @@ class StressTestGUI:
         header_frame.grid(row=0, column=0, sticky="ew", pady=(0, 5))
         img = Image.open("favicon.png").resize((45, 45))
         icon_img = ImageTk.PhotoImage(img)
-        header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI", 18, "bold"), image=icon_img, compound="left")
-        header_label.pack(side="left")
-        header_label.image = icon_img
+        self.header_label = tk.Label(header_frame, text=" Thread Stepper", font=("Segoe UI", 18, "bold"), image=icon_img, compound="left")
+        self.header_label.pack(side="left")
+        self.header_label.image = icon_img
 
         # Create a frame for the buttons on the right
         button_frame = ttk.Frame(header_frame)
@@ -324,6 +324,7 @@ class StressTestGUI:
         self.progress.grid_remove()
 
         self.setup_styles()
+        apply_theme_on_load(self)
 
     def setup_styles(self):
         style = ttk.Style()
@@ -478,11 +479,22 @@ def main():
 
     if not os.path.exists("./logs/clock.log"):
         with open("./logs/clock.log", 'w') as f:
-            f.write("4.2 GHz (Highest Recorded)")
-    
+            f.write("0")
     if not os.path.exists("./logs/errors.log"):
         with open("./logs/errors.log", 'w') as f:
-            f.write("False\n")
+            f.write("false")
+    if not os.path.exists("./logs/current.log"):
+        with open("./logs/current.log", 'w') as f:
+            f.write("Waiting...")
+    if not os.path.exists("./logs/benchmark.log"):
+        with open("./logs/current.log", 'w') as f:
+            f.write("")
+    if not os.path.exists("./logs/output.log"):
+        with open("./logs/current.log", 'w') as f:
+            f.write("")
+    if not os.path.exists("./logs/threads.log"):
+        with open("./logs/threads.log", 'w') as f:
+            f.write("0, 0")
 
     root = tb.Window(themename="flatly") 
     root.resizable(False, False)
