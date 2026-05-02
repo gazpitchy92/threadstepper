@@ -9,9 +9,11 @@ Designed specifically for testing undervolting and boost stability, where conven
 - Replaced 7z and Stress-ng with our own tests
 - Improved UI and easier settings
 - Error testing now shows which core/thread failed
+- Improved error detection accuracy
 - CPU topology detection (detection of threads per core)
 - New dark and light mode theme
 - Easier core/thread selection
+- Benchmarking tool added
 
 ### To-Do List
 
