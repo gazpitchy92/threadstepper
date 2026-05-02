@@ -221,7 +221,7 @@ class StressTestGUI:
         # High Load
         high_frame = ttk.LabelFrame(settings_outer, text="🔥 High Load", padding=8)
         high_frame.grid(row=1, column=0, sticky="nsew", padx=(0, 0), pady=(0, 5))
-        make_entry_row(high_frame, "Load Time", self.heavy_time_var, 0)
+        make_entry_row(high_frame, "Load Time", self.all_core_time_var, 0)
 
         # Low Load
         low_frame = ttk.LabelFrame(settings_outer, text="🌀 Low Load", padding=8)
