@@ -138,79 +138,70 @@ def monitor_current_test(self):
 
 def update_current_test(self):
     try:
+        lines = []
+        threads = "N/A"
+
         if os.path.exists("./logs/current.log"):
             with open("./logs/current.log", "r") as f:
                 lines = f.readlines()
-            
-            if lines:
-                # Get first line (test name) and second line (progress)
-                test_name = lines[0].strip() if len(lines) > 0 else ""
-                progress = lines[1].strip() if len(lines) > 1 else ""
-                
-                # Combine with newline for multi-line display
-                display_text = f"{test_name}\n{progress}"
-                
-                if test_name == "Starting...":
-                    self.clock_label_bottom.config(
-                        text="⚠️ " + test_name + "\n" + progress,
-                        fg="#856404",
-                        bg="#fff3cd"
-                    )
-                elif test_name == "Waiting...":
-                    self.clock_label_bottom.config(
-                        text="💤 " + test_name + "\n" + progress,
-                        fg="#343a40",
-                        bg="#e9ecef",
-                    )
-                elif test_name == "Failed!":
-                    self.clock_label_bottom.config(
-                        text="😤 " + test_name + "\n" + progress,
-                        fg="#ffffff",
-                        bg="#dc3545",
-                    )
-                elif test_name == "Rapid Tests":
-                    self.clock_label_bottom.config(
-                        text="🌀 " + test_name + "\n" + progress,
-                        fg="#28a745",
-                        bg="#d4edda",
-                    )
-                elif test_name == "Random Tests":
-                    self.clock_label_bottom.config(
-                        text="🌀 " + test_name + "\n" + progress,
-                        fg="#28a745",
-                        bg="#d4edda",
-                    )
-                elif test_name == "Random Tests":
-                    self.clock_label_bottom.config(
-                        text="🌀 " + test_name + "\n" + progress,
-                        fg="#28a745",
-                        bg="#d4edda",
-                    )
-                elif test_name == "Single Core Tests":
-                    self.clock_label_bottom.config(
-                        text="🎯 " + test_name + "\n" + progress,
-                        fg="#28a745",
-                        bg="#d4edda",
-                    )
-                else:
-                    self.clock_label_bottom.config(
-                        text="🔥 " + test_name + "\n" + progress,
-                        fg="#28a745",
-                        bg="#d4edda"
-                    )
+
+        if os.path.exists("./logs/threads.log"):
+            with open("./logs/threads.log", "r") as f:
+                threads = f.read().strip()
+                core = threads.split(",")[0]
+
+        if lines:
+            test_name = lines[0].strip() if len(lines) > 0 else ""
+            progress = lines[1].strip() if len(lines) > 1 else ""
+
+            if test_name == "Starting...":
+                self.clock_label_bottom.config(
+                    text="⚠️ " + test_name + "\n" + progress,
+                    fg="#856404",
+                    bg="#fff3cd"
+                )
+            elif test_name == "Waiting...":
+                self.clock_label_bottom.config(
+                    text="💤 " + test_name + "\n" + progress,
+                    fg="#343a40",
+                    bg="#e9ecef"
+                )
+            elif test_name == "Failed!":
+                self.clock_label_bottom.config(
+                    text="😤 " + test_name + "\n Threads: " + threads + "\n Core: " + core,
+                    fg="#ffffff",
+                    bg="#dc3545"
+                )
+            elif test_name == "Rapid Tests":
+                self.clock_label_bottom.config(
+                    text="🌀 " + test_name + "\n" + progress,
+                    fg="#28a745",
+                    bg="#d4edda"
+                )
+            elif test_name == "Random Tests":
+                self.clock_label_bottom.config(
+                    text="🌀 " + test_name + "\n" + progress,
+                    fg="#28a745",
+                    bg="#d4edda"
+                )
+            elif test_name == "Single Core Tests":
+                self.clock_label_bottom.config(
+                    text="🎯 " + test_name + "\n" + progress,
+                    fg="#28a745",
+                    bg="#d4edda"
+                )
             else:
                 self.clock_label_bottom.config(
-                    text="No data",
-                    fg="#6c757d",
-                    bg="#f8f9fa"
+                    text="🔥 " + test_name + "\n" + progress,
+                    fg="#28a745",
+                    bg="#d4edda"
                 )
         else:
             self.clock_label_bottom.config(
-                text="No current.log file",
+                text="No data",
                 fg="#6c757d",
                 bg="#f8f9fa"
             )
-
     except Exception as e:
         self.clock_label_bottom.config(
             text="Error reading",
