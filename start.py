@@ -556,7 +556,7 @@ class StressTestGUI:
             self.is_running = False
             self.benchmark_mode = False
             self.root.after(0, self.on_process_stop)
-            clear_current_test()
+            clear_current_test(self)
 
     def start_benchmark(self):
         if self.is_running:
