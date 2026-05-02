@@ -6,6 +6,7 @@ trap cleanup SIGINT SIGTERM
 source ./settings
 source ./functions/topology.sh
 source ./functions/testing.sh
+source ./functions/stressor.sh
 source ./functions/general.sh
 source ./functions/errors.sh
 source ./functions/tests/cores/rapid.sh
@@ -36,29 +37,29 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
     END_CORE=$((PHYSICAL_CORES - 2))
 
-    # Starting of the loop
-    if [[ "$loop_counter" -gt 1 ]]; then
-        echo "$(tput setaf 5)Running loop $loop_counter of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
-        echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
-    else
-        echo "$(tput setaf 5)Starting loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
-    fi
+    # # Starting of the loop
+    # if [[ "$loop_counter" -gt 1 ]]; then
+    #     echo "$(tput setaf 5)Running loop $loop_counter of $loops ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+    #     echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
+    # else
+    #     echo "$(tput setaf 5)Starting loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
+    # fi
 
-    # Rapid tests
-    for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
-        echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
-        update_progress "Rapid Tests" $loop_counter $loops 
-        rapidStressNgCore
-        check_errors
-    done
+    # # Rapid tests
+    # for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
+    #     echo "$(tput setaf 4)Running rapid test loop "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
+    #     update_progress "Rapid Tests" $loop_counter $loops 
+    #     rapidStressNgCore
+    #     check_errors
+    # done
 
-    # Random core tests
-    for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
-        echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
-        update_progress "Random Tests" $loop_counter $loops 
-        randomStressNgCore
-        check_errors
-    done
+    # # Random core tests
+    # for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
+    #     echo "$(tput setaf 4)Running random test loop "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
+    #     update_progress "Random Tests" $loop_counter $loops 
+    #     randomStressNgCore
+    #     check_errors
+    # done
 
     # All core tests
     allCoreTest
