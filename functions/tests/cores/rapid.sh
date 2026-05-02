@@ -26,7 +26,7 @@ rapidTest() {
             else
                 taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                 num_cores=${#active_cores[@]}
-                echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s (rapid)$(tput sgr0)" | tee -a "$output_log_file"
+                echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${rapid_time}s$(tput sgr0)" | tee -a "$output_log_file"
                 update_threads "$taskset_cores"
                 run_phase "$taskset_cores" high
                 sleep "$rapid_time"
@@ -55,7 +55,7 @@ rapidTest() {
                 else
                     taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
-                    echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s (rapid)$(tput sgr0)" | tee -a "$output_log_file"
+                    echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${rapid_time}s$(tput sgr0)" | tee -a "$output_log_file"
                     update_threads "$taskset_cores"
                     run_phase "$taskset_cores" high
                     sleep "$rapid_time"
@@ -86,7 +86,7 @@ rapidTest() {
                 else
                     taskset_cores=$(IFS=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
-                    echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${random_time}s (rapid)$(tput sgr0)" | tee -a "$output_log_file"
+                    echo "$(tput setaf 2)Testing high load on core(s) $taskset_cores for ${rapid_time}s$(tput sgr0)" | tee -a "$output_log_file"
                     update_threads "$taskset_cores"
                     run_phase "$taskset_cores" high
                     sleep "$rapid_time"
