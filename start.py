@@ -51,6 +51,7 @@ class StressTestGUI:
             self.process.terminate()
             self.process = None
         full_reset(self)
+        clear_current_test(self)
         self.stop_stress_test()
         self.root.destroy()
 
@@ -192,8 +193,8 @@ class StressTestGUI:
         low_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=(0, 5))
         make_entry_row(low_frame, "Rapid Loops", self.rapid_tests_var, 0)
         make_entry_row(low_frame, "Rapid Time", self.rapid_time_var, 1)
-        make_entry_row(low_frame, "Random Loops", self.random_tests_var, 2)
-        make_entry_row(low_frame, "Random Time", self.random_time_var, 3)
+        make_entry_row(low_frame, "Rand Loops", self.random_tests_var, 2)
+        make_entry_row(low_frame, "Rand Time", self.random_time_var, 3)
 
         # Single Core
         single_frame = ttk.LabelFrame(settings_outer, text="🎯 Single Core", padding=8)
