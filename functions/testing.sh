@@ -21,5 +21,6 @@ update_progress(){
     local test_outof=$3
     local all_loop=$4
     local all_outof=$5
-    echo "${test} ${test_loop}/${test_outof} , ${all_loop}/${all_outof}" > $output_progress_file
+    echo "${test}" > "$output_progress_file"
+    echo "Full Test Loop ${all_loop}/${all_outof}" >> "$output_progress_file"
 }

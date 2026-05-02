@@ -45,26 +45,26 @@ def update_clock_speed(self):
                 clock_speed = f.read().strip()
 
             if clock_speed:
-                self.clock_label.config(
+                self.clock_label_top.config(
                     text=clock_speed,
                     fg="#17a2b8",
                     bg="#e8f4f8"
                 )
             else:
-                self.clock_label.config(
+                self.clock_label_top.config(
                     text="No data",
                     fg="#6c757d",
                     bg="#f8f9fa"
                 )
         else:
-            self.clock_label.config(
+            self.clock_label_top.config(
                 text="No clock.log file",
                 fg="#6c757d",
                 bg="#f8f9fa"
             )
 
     except:
-        self.clock_label.config(
+        self.clock_label_top.config(
             text="Error reading",
             fg="#721c24",
             bg="#f8d7da"

@@ -99,5 +99,97 @@ def log_message(self, message, tag="info"):
     self.output_text.update_idletasks()
 
 def clear_output(self):
+    clear_current_test(self)
     self.output_text.delete(1.0, tk.END)
     self.reset_timer()
+
+def clear_current_test(self):
+    try:
+        if os.path.exists("./logs/current.log"):
+            with open("./logs/current.log", "w") as f:
+                f.write("Waiting...")
+            update_current_test(self)
+
+    except Exception as e:
+        log_message(self, f"Error clearing test: {str(e)}", "error")
+
+def set_current_test(self, test):
+    try:
+        if os.path.exists("./logs/current.log"):
+            with open("./logs/current.log", "w") as f:
+                f.write(test)
+            update_current_test(self)
+
+    except Exception as e:
+        log_message(self, f"Error setting current test: {str(e)}", "error")
+
+def monitor_current_test(self):
+    last_mtime = 0
+    while True:
+        try:
+            if os.path.exists("./logs/current.log"):
+                current_mtime = os.path.getmtime("./logs/current.log")
+                if current_mtime > last_mtime:
+                    last_mtime = current_mtime
+                    self.root.after(0, lambda: update_current_test(self))
+        except:
+            pass
+        time.sleep(0.5)
+
+def update_current_test(self):
+    try:
+        if os.path.exists("./logs/current.log"):
+            with open("./logs/current.log", "r") as f:
+                lines = f.readlines()
+            
+            if lines:
+                # Get first line (test name) and second line (progress)
+                test_name = lines[0].strip() if len(lines) > 0 else ""
+                progress = lines[1].strip() if len(lines) > 1 else ""
+                
+                # Combine with newline for multi-line display
+                display_text = f"{test_name}\n{progress}"
+                
+                if test_name == "Starting...":
+                    self.clock_label_bottom.config(
+                        text="⚠️ " + test_name + "\n" + progress,
+                        fg="#856404",
+                        bg="#fff3cd"
+                    )
+                elif test_name == "Waiting...":
+                    self.clock_label_bottom.config(
+                        text="💤 " + test_name + "\n" + progress,
+                        fg="#343a40",
+                        bg="#e9ecef",
+                    )
+                elif test_name == "Error!":
+                    self.clock_label_bottom.config(
+                        text="😤 " + test_name + "\n" + progress,
+                        fg="#ffffff",
+                        bg="#dc3545",
+                    )
+                else:
+                    self.clock_label_bottom.config(
+                        text="🔥 " + test_name + "\n" + progress,
+                        fg="#28a745",
+                        bg="#d4edda"
+                    )
+            else:
+                self.clock_label_bottom.config(
+                    text="No data",
+                    fg="#6c757d",
+                    bg="#f8f9fa"
+                )
+        else:
+            self.clock_label_bottom.config(
+                text="No current.log file",
+                fg="#6c757d",
+                bg="#f8f9fa"
+            )
+
+    except Exception as e:
+        self.clock_label_bottom.config(
+            text="Error reading",
+            fg="#721c24",
+            bg="#f8d7da"
+        )
