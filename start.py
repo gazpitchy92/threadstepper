@@ -329,7 +329,7 @@ class StressTestGUI:
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="⊠ Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
         self.stop_button.pack(side="left", padx=2)
-        ttk.Button(control_frame, text="⊗ Clear", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
+        ttk.Button(control_frame, text="⇄ Reset", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
         ttk.Button(
             control_frame,
             text="⎘ View Logs",
