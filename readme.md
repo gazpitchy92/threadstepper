@@ -63,7 +63,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 ## Requirements
 
-- python
+- python 3
 - Linux
 
 ## Installation
@@ -77,14 +77,27 @@ Cycles through different load combinations on each core and thread group, with c
 ```
 
 2. **Install (optional) dependencies:**
-   These are used for the Browser based single Core tests.
-   Via GUI (top right) or terminal:
+
+   Downloads ungoogled-chromium AppImage for WebGL test, used for the Browser based single Core tests.
+
+   These can be installed using the GUI or the install script.
+
+   ![installer](https://i.ibb.co/YTKLSpQx/Screenshot-20260508-232724-1.png)
+
 ```bash
    chmod +x install.sh
    sudo ./install.sh
 ```
 
-Downloads ungoogled-chromium AppImage for WebGL tests.
+3. **Run the launch.sh script:**
+
+   On the first run this will setup the python environment. Otherwise it will just launch Thread Stepper.
+
+```bash
+   chmod +x launch.sh
+   ./launch.sh
+```
+
 
 ## Settings
 
