@@ -7,16 +7,14 @@ runTests(){
     singleCoreTests $core
     check_errors
     if (( browsers != 0 )); then
-        appimages=(./tests/browser/*.AppImage)
-        if [ ${#appimages[@]} -gt 0 ]; then
-            # browsers
-            update_progress "Browser Tests" $loop_counter $loops
+        if compgen -c | grep -q '^electron[0-9]'; then
+            update_progress "WebGL Tests" $loop_counter $loops
             browserTest
             singleCoreTests $core
             stopBrowserTest
             check_errors
         else
-            echo "$(tput setaf 8)[DEBUG] Skipping browser tests: no AppImage found in ./tests/browser" | tee -a "$output_log_file"
+            echo "$(tput setaf 8)[DEBUG] Skipping WebGL tests: Electron not found$(tput sgr0)" | tee -a "$output_log_file"
         fi
     fi
 }

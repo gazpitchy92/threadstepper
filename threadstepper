@@ -18,6 +18,7 @@ source ./functions/tests/browser.sh
 
 # setup
 initial_output
+ELECTRON_BIN=$(compgen -c | grep '^electron[0-9]' | sort -V | tail -1)
 
 # clear ram cache
 echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null 2>&1

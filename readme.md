@@ -5,17 +5,21 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.17
+## Latest Updates - Version 3.0
 
-- Replaced 7z and Stress-ng with our own tests
-- Improved UI and easier settings
-- Browser tests are now optional
-- Error testing now shows which core/thread failed
-- Improved error detection accuracy
-- CPU topology detection (detection of threads per core)
-- New dark and light mode theme
-- Easier core/thread selection
-- Benchmarking tool added
+Recent updates have focused on removing most third-party dependencies.
+
+Instead of relying on 7-Zip and stress-ng, we have written our own stress engine, giving us much more control. In principle, this allows us to load a single thread anywhere between 10% and 100%.
+
+The entire UI has also been reworked with significantly more functionality, making it easier for everyone to use while still providing the flexibility experienced overclockers expect.
+
+- Replaced 7z and Stress-ng with our own testing engine
+- Browser (WebGL) tests no longer require ungoogled-chromium
+- Improved UI and simplified settings
+- Improved error detection accuracy (show failed cores)
+- Added CPU topology detection
+- Simplified core/thread selection
+- Added a new benchmarking tool
 
 ### To-Do List
 
@@ -43,6 +47,12 @@ Uses 3D WebGL browser tests to generate unpredictable background activity during
 **Test Patterns**  
 Cycles through different load combinations on each core and thread group, with configurable durations for low/medium/high workloads and rest periods between tests.
 
+## Screenshots
+
+![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
+![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
+![browser](https://i.ibb.co/zTT4LvRG/Screenshot-20260509-003545-1.png)
+
 ### CPU Load examples
 
 - Full core test
@@ -65,7 +75,7 @@ Cycles through different load combinations on each core and thread group, with c
 ## Requirements
 
 - python 3
-- Linux
+- electron41 (or above)
 
 ## Installation
 
@@ -77,9 +87,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 2. **Install (optional) dependencies:**
 
-   Downloads ungoogled-chromium AppImage for WebGL test, used for the Browser based single Core tests.
-
-   These can be installed using the GUI or the install script.
+   Installs the Electron dependancy
 
    ![installer](https://i.ibb.co/YTKLSpQx/Screenshot-20260508-232724-1.png)
 
@@ -117,14 +125,8 @@ Default settings work for most users.
 - **Medium Time**: How long to test each core at medium load. (seconds)
 - **High Time**: How long to test each core at high load. (seconds)
 
-**Browser Tests**: Repeats the single-core tests with a number of browser instances running variable CPU loads in the background.
+**WebGL Tests**: Repeats the single-core tests with a number of WebGL instances running variable CPU loads in the background.
 - **Instances**: How many browser instances to open during each test. (number)
 
 **Advanced Options**
 - **Rest Time**: How long to pause between test types. (seconds)
-
-## Screenshots
-
-![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
-![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
-![browser](https://i.ibb.co/mVyjrdmM/Screenshot-20260502-211611.png)
