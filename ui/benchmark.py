@@ -78,13 +78,13 @@ class BenchmarkWindow:
         btn_frame = ttk.Frame(ctrl)
         btn_frame.grid(row=0, column=1, sticky="e")
 
-        self.start_btn = ttk.Button(btn_frame, text="🔥 Start", bootstyle="success", command=self._start)
+        self.start_btn = ttk.Button(btn_frame, text="▶ Start", bootstyle="success", command=self._start)
         self.start_btn.pack(side="left", padx=(0, 4))
 
-        self.stop_btn = ttk.Button(btn_frame, text="🛑 Stop", bootstyle="danger", state="disabled", command=self._stop)
+        self.stop_btn = ttk.Button(btn_frame, text="⊠ Stop", bootstyle="danger", state="disabled", command=self._stop)
         self.stop_btn.pack(side="left", padx=(0, 4))
 
-        ttk.Button(btn_frame, text="❎ Close", bootstyle="secondary-outline", command=self._close).pack(side="left")
+        ttk.Button(btn_frame, text="⊗ Close", bootstyle="secondary-outline", command=self._close).pack(side="left")
 
     # Benchmark control
     def _start(self):
