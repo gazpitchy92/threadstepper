@@ -9,7 +9,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 - Replaced 7z and Stress-ng with our own tests
 - Improved UI and easier settings
-- Browser tests are now optional
+- Browser tests no longer require ungoogled-chromium
 - Error testing now shows which core/thread failed
 - Improved error detection accuracy
 - CPU topology detection (detection of threads per core)
@@ -65,7 +65,7 @@ Cycles through different load combinations on each core and thread group, with c
 ## Requirements
 
 - python 3
-- Linux
+- electron
 
 ## Installation
 
