@@ -58,7 +58,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (2.16)")
+        self.root.title("Thread Stepper (2.17)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -81,6 +81,14 @@ class StressTestGUI:
         update_settings_content(self)
         register_settings_traces(self)
         clear_current_test(self)
+
+    def check_browser_dependency(self):
+        browser_dir = "./tests/browser"
+        if os.path.isdir(browser_dir):
+            for f in os.listdir(browser_dir):
+                if f.lower().endswith(".appimage"):
+                    return True
+        return False
     
     def setup_ui(self):
         self.loops_var = tk.IntVar(value=1)
@@ -263,9 +271,25 @@ class StressTestGUI:
         bottom_settings.columnconfigure(1, weight=1)
 
         browser_frame = ttk.LabelFrame(bottom_settings, text="☉ Browser Tests", padding=8)
+        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ Browser Tests", padding=8)
         browser_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 0))
-        ttk.Label(browser_frame, text="Instances").grid(row=0, column=0, sticky="w", padx=(0, 0), pady=3)
-        ttk.Spinbox(browser_frame, from_=0, to=99, width=6, textvariable=self.browsers_var).grid(row=0, column=1, sticky="w", pady=3)
+
+        self.browsers_label = ttk.Label(browser_frame, text="Instances")
+        self.browsers_label.grid(row=0, column=0, sticky="w", padx=(0, 0), pady=3)
+
+        self.browsers_spinbox = ttk.Spinbox(browser_frame, from_=0, to=99, width=6, textvariable=self.browsers_var)
+        self.browsers_spinbox.grid(row=0, column=1, sticky="w", pady=3)
+
+        if not self.check_browser_dependency():
+            self.browsers_label.grid_remove()
+            self.browsers_spinbox.grid_remove()
+            self.browser_dep_label = ttk.Label(
+                browser_frame,
+                text="⚠ Please install dependencies for this test",
+                foreground="#e67e00",
+                font=("Segoe UI", 8, "italic")
+            )
+            self.browser_dep_label.grid(row=0, column=0, sticky="w", pady=(2, 0))
 
         cores_frame = ttk.LabelFrame(bottom_settings, text="∼ Enabled Threads", padding=8)
         cores_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
