@@ -45,5 +45,6 @@ stopBrowserTest() {
     for pid in "${browser_pids[@]}"; do
         kill -9 "$pid" &>/dev/null
     done
+    pkill -f "launch.js"
     browser_pids=()
 }

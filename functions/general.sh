@@ -63,7 +63,6 @@ outputOptions(){
     echo "$(tput setaf 5)CPU topology: ${cpu_topology} $(tput sgr0)" | tee -a $output_log_file
     echo ""
     echo "$(tput setaf 6)Test Settings" | tee -a $output_log_file
-    # echo "$(tput setaf 5)Max RAM Usage: ${max_ram}GB $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Light time: ${light_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Medium time: ${medium_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Heavy time: ${heavy_time}s $(tput sgr0)" | tee -a $output_log_file
@@ -86,6 +85,7 @@ cleanup() {
         kill_phase
         pkill load_worker.sh
         stopBrowserTest
+        pkill -f "launch.js"
         exit
     fi
 }
