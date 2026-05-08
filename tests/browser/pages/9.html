@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ThreadStepper 9</title>
+    <script src="three.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+        position: relative;
+      }
+      #watermark {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.3;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      document.body.appendChild(renderer.domElement);
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      camera.position.set(0, 0, 40);
+      camera.lookAt(0, 0, 0);
+
+      const geometries = [
+        new THREE.IcosahedronGeometry(2, 1),
+        new THREE.TorusGeometry(2, 0.6, 16, 60),
+        new THREE.OctahedronGeometry(2),
+        new THREE.TorusKnotGeometry(1.5, 0.4, 100, 16),
+        new THREE.DodecahedronGeometry(2),
+      ];
+
+      const meshes = [];
+      for (let i = 0; i < 30; i++) {
+        const geo = geometries[i % geometries.length];
+        const mat = new THREE.MeshBasicMaterial({
+          color: new THREE.Color().setHSL(Math.random(), 1, 0.6),
+          wireframe: true,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60);
+        mesh.userData.rotSpeed = new THREE.Vector3(
+          (Math.random() - 0.5) * 0.04,
+          (Math.random() - 0.5) * 0.04,
+          (Math.random() - 0.5) * 0.04
+        );
+        mesh.userData.floatOffset = Math.random() * Math.PI * 2;
+        scene.add(mesh);
+        meshes.push(mesh);
+      }
+
+      let t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.016;
+        meshes.forEach((m) => {
+          m.rotation.x += m.userData.rotSpeed.x;
+          m.rotation.y += m.userData.rotSpeed.y;
+          m.rotation.z += m.userData.rotSpeed.z;
+          m.position.y += Math.sin(t + m.userData.floatOffset) * 0.05;
+          m.material.color.setHSL((t * 0.05 + m.userData.floatOffset) % 1, 1, 0.6);
+        });
+        camera.position.x = Math.sin(t * 0.2) * 10;
+        camera.position.y = Math.cos(t * 0.15) * 10;
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+    <img id="watermark" src="logo.png" alt="Watermark" width="200" />
+  </body>
+</html>
