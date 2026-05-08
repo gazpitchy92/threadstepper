@@ -125,8 +125,6 @@ All times in seconds. Default settings work for most users.
 
 ## Screenshots
 
-![running](https://i.ibb.co/MyxL83XT/Screenshot-20260502-205501-1.png)
-![errors](https://i.ibb.co/n97s589/Screenshot-20260502-030048-1.png)
-![threads](https://i.ibb.co/0yhzGcKY/cores.png)
-![benchmark](https://i.ibb.co/6dxq7t9/Screenshot-20260502-205753-1.png)
+![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
+![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
 ![browser](https://i.ibb.co/mVyjrdmM/Screenshot-20260502-211611.png)
