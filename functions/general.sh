@@ -38,16 +38,16 @@ helpText(){
 
 # output usage help
 usageText(){
-    echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]"
+    echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of WebGL tests] [--second-half] [--first-half]"
 }
 
 # check dependencies
 checkDeps(){
     if command -v $(compgen -c | grep '^electron[0-9]' | sort -V | tail -1) &>/dev/null; then
-        echo "$(tput setaf 2)Electron Found - Browser Tests Enabled$(tput sgr0)"
+        echo "$(tput setaf 2)Electron Found - WebGL Tests Enabled$(tput sgr0)"
     else
         echo "$(tput setaf 1)!!!!! Electron not found !!!!!$(tput sgr0)"
-        echo "$(tput setaf 1)!!!!! Browser Tests are Disabled !!!!!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! WebGL Tests are Disabled !!!!!$(tput sgr0)"
         echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
     fi
     echo ""
