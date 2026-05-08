@@ -9,6 +9,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 - Replaced 7z and Stress-ng with our own tests
 - Improved UI and easier settings
+- Browser tests are now optional
 - Error testing now shows which core/thread failed
 - Improved error detection accuracy
 - CPU topology detection (detection of threads per core)
@@ -75,7 +76,8 @@ Cycles through different load combinations on each core and thread group, with c
    ./launch.sh
 ```
 
-2. **Install dependencies:**
+2. **Install (optional) dependencies:**
+   These are used for the Browser based single Core tests.
    Via GUI (top right) or terminal:
 ```bash
    chmod +x install.sh

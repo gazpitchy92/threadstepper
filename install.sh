@@ -31,5 +31,5 @@ fi
 chmod +x ./threadstepper
 
 clear
-echo "You can now use Thread Stepper!"
+echo "Please restart Thread Stepper!"
 echo "Please close this window..."
