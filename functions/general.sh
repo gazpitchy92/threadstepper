@@ -43,21 +43,14 @@ usageText(){
 
 # check dependencies
 checkDeps(){
-    # ungoogled-chromium AppImage
-    shopt -s nullglob
-    appimages=(./tests/browser/*.AppImage)
-    if [ ${#appimages[@]} -gt 0 ]; then
-        echo "$(tput setaf 2)ungoogled-chromium AppImage found$(tput sgr0)"
-        echo "$(tput setaf 8)$chromium_appimage$(tput sgr0)"
+    if command -v $(compgen -c | grep '^electron[0-9]' | sort -V | tail -1) &>/dev/null; then
+        echo "$(tput setaf 2)Electron Found - Browser Tests Enabled$(tput sgr0)"
     else
-        echo "$(tput setaf 1)!!!!! ungoogled-chromium AppImage not found !!!!!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! Electron not found !!!!!$(tput sgr0)"
         echo "$(tput setaf 1)!!!!! Browser Tests are Disabled !!!!!$(tput sgr0)"
         echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
     fi
     echo ""
-}
-check_installed() {
-    command -v "$1" &>/dev/null
 }
 
 # output selected options and settings
