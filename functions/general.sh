@@ -51,8 +51,8 @@ checkDeps(){
         echo "$(tput setaf 8)$chromium_appimage$(tput sgr0)"
     else
         echo "$(tput setaf 1)!!!!! ungoogled-chromium AppImage not found !!!!!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! Browser Tests are Disabled !!!!!$(tput sgr0)"
         echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
-        exit 1
     fi
     echo ""
 }

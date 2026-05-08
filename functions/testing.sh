@@ -7,13 +7,18 @@ runTests(){
     singleCoreTests $core
     check_errors
     if (( browsers != 0 )); then
-        # browsers
-        update_progress "Browser Tests" $loop_counter $loops 
-        browserTest
-        singleCoreTests $core
-        stopBrowserTest
-        check_errors
-    fi 
+        appimages=(./tests/browser/*.AppImage)
+        if [ ${#appimages[@]} -gt 0 ]; then
+            # browsers
+            update_progress "Browser Tests" $loop_counter $loops
+            browserTest
+            singleCoreTests $core
+            stopBrowserTest
+            check_errors
+        else
+            echo "$(tput setaf 8)[DEBUG] Skipping browser tests: no AppImage found in ./tests/browser" | tee -a "$output_log_file"
+        fi
+    fi
 }
 
 # Updates progress file for UI
