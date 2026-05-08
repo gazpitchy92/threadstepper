@@ -20,6 +20,7 @@ Designed specifically for testing undervolting and boost stability, where conven
 ### To-Do List
 
 - Add installer to AUR
+- Add installer for Flatpak
 - Add benchmark UI to show score history
 
 ## Methodology
