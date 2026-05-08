@@ -98,43 +98,31 @@ Cycles through different load combinations on each core and thread group, with c
    ./launch.sh
 ```
 
-
 ## Settings
 
-All times in seconds. Default settings work for most users.
-
+Default settings work for most users.
 
 **Test Runs**: How many times to run the entire test suite.
 
-**High Load**: Tests that test all-core loads.
+**High Load**: Tests that apply an all-core load.
+- **All Core Time**: How long each CPU load level is sustained. (seconds)
+- **All Core Tests**: How many times to repeat the all-core tests. (number)
 
-- **All Core Time**: How long each change in CPU load is applied for. (seconds)
+**Low Load**: Tests that apply a reduced load across cores.
+- **Rapid Tests**: How many times to run the rapid test, which applies a brief load to each core in sequence. (number)
+- **Rapid Time**: How long the rapid load is applied per core. (seconds)
+- **Rand Tests**: How many times to run the random test, which applies a light load to random threads. (number)
 
-- **All Core Tests**: The amount of times to run the all core tests. (number)
+**Single Core**: Tests that cycle through each core individually with varying load levels.
+- **Low Time**: How long to test each core at low load. (seconds)
+- **Medium Time**: How long to test each core at medium load. (seconds)
+- **High Time**: How long to test each core at high load. (seconds)
 
-**Low Load**: Tests that apply a low load tests.
-
-- **Rapid Tests**: The rapid test applies a rapid load to each core in order. (number)
-
-- **Rapid Time**: How long to apply the rapid load for. (seconds)
-
-- **Rand Tests**: The random test applies a light load to random threads.
-
-**Single Core**: These tests go through each core with a variatey of tests.
-
-- **Low Time**: How long to test each core with low load tests. (seconds)
-
-- **Medium Time**: How long to test each core with medium load tests. (seconds)
-
-- **High Time**: How long to test each core with medium load tests. (seconds)
-
-**Browser Tests**: Repeats single core tests, with a number of browsers running variable cpu loads.
-
-- **Instances**: How many browsers to open for each test. 
+**Browser Tests**: Repeats the single-core tests with a number of browser instances running variable CPU loads in the background.
+- **Instances**: How many browser instances to open during each test. (number)
 
 **Advanced Options**
-
-- **Rest Time**: How much time to rest for between test types. (seconds)
+- **Rest Time**: How long to pause between test types. (seconds)
 
 ## Screenshots
 
