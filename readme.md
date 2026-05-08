@@ -65,7 +65,7 @@ Cycles through different load combinations on each core and thread group, with c
 ## Requirements
 
 - python 3
-- electron
+- electron41 (or above)
 
 ## Installation
 
@@ -77,9 +77,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 2. **Install (optional) dependencies:**
 
-   Downloads ungoogled-chromium AppImage for WebGL test, used for the Browser based single Core tests.
-
-   These can be installed using the GUI or the install script.
+   Installs the Electron dependancy
 
    ![installer](https://i.ibb.co/YTKLSpQx/Screenshot-20260508-232724-1.png)
 
