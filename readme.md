@@ -7,13 +7,19 @@ Designed specifically for testing undervolting and boost stability, where conven
 
 ## Latest Updates - Version 2.18
 
-- Replaced 7z and Stress-ng with built-in tests
-- Browser tests no longer require ungoogled-chromium
+Recent updates have focused on removing most third-party dependencies.
+
+Instead of relying on 7-Zip and stress-ng, we have written our own stress engine, giving us much more control. In principle, this allows us to load a single thread anywhere between 10% and 100%.
+
+The entire UI has also been reworked with significantly more functionality, making it easier for everyone to use while still providing the flexibility experienced overclockers expect.
+
+- Replaced 7z and Stress-ng with our own testing engine
+- Browser (WebGL) tests no longer require ungoogled-chromium
 - Improved UI and simplified settings
 - Improved error detection accuracy (show failed cores)
 - Added CPU topology detection
 - Simplified core/thread selection
-- Added benchmarking tool
+- Added a new benchmarking tool
 
 ### To-Do List
 
@@ -40,6 +46,12 @@ Uses 3D WebGL browser tests to generate unpredictable background activity during
 
 **Test Patterns**  
 Cycles through different load combinations on each core and thread group, with configurable durations for low/medium/high workloads and rest periods between tests.
+
+## Screenshots
+
+![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
+![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
+![browser](https://i.ibb.co/zTT4LvRG/Screenshot-20260509-003545-1.png)
 
 ### CPU Load examples
 
@@ -113,14 +125,8 @@ Default settings work for most users.
 - **Medium Time**: How long to test each core at medium load. (seconds)
 - **High Time**: How long to test each core at high load. (seconds)
 
-**Browser Tests**: Repeats the single-core tests with a number of browser instances running variable CPU loads in the background.
+**WebGL Tests**: Repeats the single-core tests with a number of WebGL instances running variable CPU loads in the background.
 - **Instances**: How many browser instances to open during each test. (number)
 
 **Advanced Options**
 - **Rest Time**: How long to pause between test types. (seconds)
-
-## Screenshots
-
-![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
-![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
-![browser](https://i.ibb.co/mVyjrdmM/Screenshot-20260502-211611.png)
