@@ -3,6 +3,7 @@ from tkinter import ttk, scrolledtext, filedialog, messagebox, PhotoImage
 import subprocess
 import threading
 import time
+import shutil
 import os
 import queue
 from datetime import datetime
@@ -58,7 +59,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (2.17)")
+        self.root.title("Thread Stepper (3.0)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -83,12 +84,12 @@ class StressTestGUI:
         clear_current_test(self)
 
     def check_browser_dependency(self):
-        browser_dir = "./tests/browser"
-        if os.path.isdir(browser_dir):
-            for f in os.listdir(browser_dir):
-                if f.lower().endswith(".appimage"):
-                    return True
-        return False
+        result = subprocess.run(
+            "compgen -c | grep '^electron[0-9]' | sort -V | tail -1",
+            shell=True, executable='/bin/bash',
+            capture_output=True, text=True
+        )
+        return bool(result.stdout.strip())
     
     def setup_ui(self):
         self.loops_var = tk.IntVar(value=1)
@@ -133,8 +134,12 @@ class StressTestGUI:
         self.dark_mode_btn.pack(side="left", padx=(0, 5))
 
         # Install Dependencies button
-        ttk.Button(button_frame, text="⌂ Install Dependencies", bootstyle="primary", 
-            command=lambda: install_dependencies(self)).pack(side="left")
+        self.install_dep_btn = ttk.Button(button_frame, text="⌂ Install Dependencies", bootstyle="primary", 
+            command=lambda: install_dependencies(self))
+        self.install_dep_btn.pack(side="left")
+
+        if self.check_browser_dependency():
+            self.install_dep_btn.pack_forget()
 
         # System Info
         info_row = ttk.Frame(main_container)
@@ -270,8 +275,7 @@ class StressTestGUI:
         bottom_settings.columnconfigure(0, weight=1)
         bottom_settings.columnconfigure(1, weight=1)
 
-        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ Browser Tests", padding=8)
-        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ Browser Tests", padding=8)
+        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ WebGL Tests", padding=8)
         browser_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 0))
 
         self.browsers_label = ttk.Label(browser_frame, text="Instances")

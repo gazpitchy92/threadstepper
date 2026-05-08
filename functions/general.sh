@@ -38,26 +38,19 @@ helpText(){
 
 # output usage help
 usageText(){
-    echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of browsers] [--second-half] [--first-half]"
+    echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of WebGL tests] [--second-half] [--first-half]"
 }
 
 # check dependencies
 checkDeps(){
-    # ungoogled-chromium AppImage
-    shopt -s nullglob
-    appimages=(./tests/browser/*.AppImage)
-    if [ ${#appimages[@]} -gt 0 ]; then
-        echo "$(tput setaf 2)ungoogled-chromium AppImage found$(tput sgr0)"
-        echo "$(tput setaf 8)$chromium_appimage$(tput sgr0)"
+    if command -v $(compgen -c | grep '^electron[0-9]' | sort -V | tail -1) &>/dev/null; then
+        echo "$(tput setaf 2)Electron Found - WebGL Tests Enabled$(tput sgr0)"
     else
-        echo "$(tput setaf 1)!!!!! ungoogled-chromium AppImage not found !!!!!$(tput sgr0)"
-        echo "$(tput setaf 1)!!!!! Browser Tests are Disabled !!!!!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! Electron not found !!!!!$(tput sgr0)"
+        echo "$(tput setaf 1)!!!!! WebGL Tests are Disabled !!!!!$(tput sgr0)"
         echo "$(tput setaf 1)!!!!! Please select the 'Install Dependencies' button (top right) !!!!!$(tput sgr0)"
     fi
     echo ""
-}
-check_installed() {
-    command -v "$1" &>/dev/null
 }
 
 # output selected options and settings
@@ -70,7 +63,6 @@ outputOptions(){
     echo "$(tput setaf 5)CPU topology: ${cpu_topology} $(tput sgr0)" | tee -a $output_log_file
     echo ""
     echo "$(tput setaf 6)Test Settings" | tee -a $output_log_file
-    # echo "$(tput setaf 5)Max RAM Usage: ${max_ram}GB $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Light time: ${light_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Medium time: ${medium_time}s $(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 5)Heavy time: ${heavy_time}s $(tput sgr0)" | tee -a $output_log_file
@@ -93,6 +85,7 @@ cleanup() {
         kill_phase
         pkill load_worker.sh
         stopBrowserTest
+        pkill -f "launch.js"
         exit
     fi
 }

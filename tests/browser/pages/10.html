@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ThreadStepper 10</title>
+    <script src="three.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+        position: relative;
+      }
+      #watermark {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.3;
+        z-index: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      document.body.appendChild(renderer.domElement);
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      camera.position.set(0, 60, 0);
+      camera.lookAt(0, 0, 0);
+
+      const rings = [];
+      for (let i = 0; i < 20; i++) {
+        const geo = new THREE.RingGeometry(0.1, 0.5, 64);
+        const mat = new THREE.MeshBasicMaterial({
+          color: new THREE.Color().setHSL(i / 20, 1, 0.6),
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.8,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.rotation.x = Math.PI / 2;
+        mesh.userData.delay = i * 0.3;
+        scene.add(mesh);
+        rings.push(mesh);
+      }
+
+      let t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        t += 0.016;
+        rings.forEach((r, i) => {
+          const phase = (t * 0.5 + r.userData.delay) % 8;
+          const scale = phase * 8;
+          r.scale.set(scale, scale, scale);
+          r.material.opacity = Math.max(0, 1 - phase / 8);
+          r.material.color.setHSL((t * 0.02 + i / 20) % 1, 1, 0.6);
+        });
+        camera.position.x = Math.sin(t * 0.2) * 20;
+        camera.position.z = Math.cos(t * 0.2) * 20;
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+    <img id="watermark" src="logo.png" alt="Watermark" width="200" />
+  </body>
+</html>

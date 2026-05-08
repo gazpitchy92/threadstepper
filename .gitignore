@@ -1,5 +1,3 @@
-tests/browser/ungoogled-chromium*.AppImage
-tests/browser/tmp
 ui/__pycache__
 logs/*.log
 
