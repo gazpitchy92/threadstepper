@@ -152,7 +152,20 @@ class StressTestGUI:
             lbl.pack(anchor="w", pady=(0, 2))
         sys_btn_frame = ttk.Frame(system_frame)
         sys_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
-        ttk.Button(sys_btn_frame, text="↻ Refresh", bootstyle="success-outline", command=lambda: refresh_system_info(self)).pack(side="right")
+
+        ttk.Button(
+            sys_btn_frame,
+            text="◷ Benchmark",
+            style="Uniform.TButton",
+            command=lambda: start_benchmark(self)
+        ).pack(side="right", padx=2)
+
+        ttk.Button(
+            sys_btn_frame,
+            text="↻ Refresh",
+            bootstyle="success-outline",
+            command=lambda: refresh_system_info(self)
+        ).pack(side="right", padx=2)
 
         # CPU Clock
         clock_frame_top = ttk.LabelFrame(info_row, text="⬆ Highest CPU Clock (GHz)", padding=10)
@@ -316,8 +329,6 @@ class StressTestGUI:
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="⊠ Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
         self.stop_button.pack(side="left", padx=2)
-        self.benchmark_button = ttk.Button(control_frame, text="◷ Benchmark", style="Uniform.TButton", command=lambda: start_benchmark(self))
-        self.benchmark_button.pack(side="left", padx=2)
         ttk.Button(control_frame, text="⊗ Clear", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
         ttk.Button(
             control_frame,
