@@ -275,8 +275,7 @@ class StressTestGUI:
         bottom_settings.columnconfigure(0, weight=1)
         bottom_settings.columnconfigure(1, weight=1)
 
-        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ Browser Tests", padding=8)
-        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ Browser Tests", padding=8)
+        browser_frame = ttk.LabelFrame(bottom_settings, text="☉ WebGL Tests", padding=8)
         browser_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 0))
 
         self.browsers_label = ttk.Label(browser_frame, text="Instances")
