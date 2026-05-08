@@ -93,14 +93,14 @@ def toggle_error_log(self):
 def show_error_log(self):
     self.error_log_container.grid()
     self.error_log_visible = True
-    self.toggle_error_btn.config(text="👆 Hide Logs")
+    self.toggle_error_btn.config(text="▼ Error Logs")
     update_error_log(self)
     self.root.update()
 
 def hide_error_log(self):
     self.error_log_container.grid_remove()
     self.error_log_visible = False
-    self.toggle_error_btn.config(text="▼ Show Logs")
+    self.toggle_error_btn.config(text="▶ Error Logs")
     self.bootstyle="success-outline"
     self.root.update()
 
@@ -142,7 +142,7 @@ def update_error_status(self):
             )
 
         self.toggle_error_btn.config(
-            text="▲ Hide Logs" if self.error_log_visible else "▼ Show Logs"
+            text="▼ Error Logs" if self.error_log_visible else "▶ Error Logs"
         )
 
         return self.error_status

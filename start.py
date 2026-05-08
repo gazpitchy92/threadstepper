@@ -189,7 +189,7 @@ class StressTestGUI:
         error_btn_frame = ttk.Frame(error_frame)
         error_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
         ttk.Button(error_btn_frame, text="↻ Refresh", bootstyle="success-outline", command=lambda: update_error_status(self)).pack(side="right", padx=2)
-        self.toggle_error_btn = ttk.Button(error_btn_frame, text="▼ Show Logs", bootstyle="success-outline", command=lambda: toggle_error_log(self))
+        self.toggle_error_btn = ttk.Button(error_btn_frame, text="▶ Error Logs", bootstyle="success-outline", command=lambda: toggle_error_log(self))
         self.toggle_error_btn.pack(side="right", padx=2)
 
         # Error Logs
