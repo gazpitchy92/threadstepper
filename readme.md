@@ -73,8 +73,6 @@ Cycles through different load combinations on each core and thread group, with c
 ```bash
    git clone https://github.com/gazpitchy92/threadstepper.git
    cd threadstepper
-   chmod +x launch.sh
-   ./launch.sh
 ```
 
 2. **Install (optional) dependencies:**
