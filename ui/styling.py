@@ -37,14 +37,14 @@ def save_dark_mode(self, mode, settings_path="./settings"):
 
 # Toggle between dark and light
 def toggle_dark_mode(self):
-    if self.dark_mode_btn.cget("text") == "🌙 Dark Mode":
+    if self.dark_mode_btn.cget("text") == "☾ Dark Mode":
         dark_mode(self)
     else:
         light_mode(self)
 
 # Switch to light mode
 def light_mode(self):
-    self.dark_mode_btn.config(text="🌙 Dark Mode")
+    self.dark_mode_btn.config(text="☾ Dark Mode")
     
     # Colors
     bg_light = "#f0f0f0"
@@ -72,7 +72,7 @@ def light_mode(self):
 
 # Switch to dark Mode
 def dark_mode(self):
-    self.dark_mode_btn.config(text="☀️ Light Mode")
+    self.dark_mode_btn.config(text="◌ Light Mode")
     
     # Colors
     bg_dark = "#1e1e1e"
