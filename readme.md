@@ -5,7 +5,7 @@ A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
 
 Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
 
-## Latest Updates - Version 2.18
+## Latest Updates - Version 3.0
 
 Recent updates have focused on removing most third-party dependencies.
 
