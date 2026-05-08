@@ -148,7 +148,7 @@ def open_core_picker(self):
 
     btn_row = ttk.Frame(win, padding=(10, 5))
     btn_row.pack(fill="x")
-    ttk.Button(btn_row, text="✅ Confirm", bootstyle="success",
+    ttk.Button(btn_row, text="✔ Confirm", bootstyle="success",
             command=confirm).pack(side="right", padx=4, pady=(0, 8))
-    ttk.Button(btn_row, text="❌ Cancel", bootstyle="secondary-outline",
+    ttk.Button(btn_row, text="⊗ Cancel", bootstyle="secondary-outline",
             command=win.destroy).pack(side="right", padx=4, pady=(0, 8))
