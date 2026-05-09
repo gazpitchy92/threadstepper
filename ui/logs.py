@@ -175,7 +175,7 @@ def open_output_window(self):
     ttk.Button(
         btn_frame,
         text="⊗ Close",
-        bootstyle="secondary-outline",
+        bootstyle="danger-outline",
         command=window.destroy
     ).pack(side="right", padx=2)
 
