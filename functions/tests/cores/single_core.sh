@@ -48,7 +48,7 @@ singleCoreTests() {
     
     # Test C0+C1, C1+C2, etc. (adjacent core pairs)
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
-        if [[ $core_next -lt $physical_cores ]]; then
+        if [[ $core_next -le $physical_cores ]]; then
             echo "$(tput setaf 4)Testing core $core + $core_next with increasing load$(tput sgr0)" | tee -a "$output_log_file"
             if [[ ",$core_blacklist," == *",$core,"* || ",$core_blacklist," == *",$core_next,"* ]]; then
                 echo "$(tput setaf 0)Skipping light load test for core $core + $core_next $(tput sgr0)" | tee -a "$output_log_file"
@@ -88,7 +88,7 @@ singleCoreTests() {
 
     # Test C8+C9, C9+C10, etc. (adjacent core pairs on second die)
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
-        if [[ $core_last -lt $(nproc) ]]; then
+        if [[ $core_last -le $(nproc) ]]; then
             echo "$(tput setaf 4)Testing core $core_second + $core_last with increasing load$(tput sgr0)" | tee -a "$output_log_file"
             if [[ ",$core_blacklist," == *",$core_second,"* || ",$core_blacklist," == *",$core_last,"* ]]; then
                 echo "$(tput setaf 0)Skipping light load test for core $core_second + $core_last $(tput sgr0)" | tee -a "$output_log_file"
