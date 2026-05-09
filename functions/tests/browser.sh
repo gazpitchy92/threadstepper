@@ -48,3 +48,38 @@ stopBrowserTest() {
     pkill -f "launch.js"
     browser_pids=()
 }
+
+willRunBrowserTest() {
+    local core=$1
+    local physical_cores=$(($(nproc) / 2))
+    local core_second=$((core + physical_cores))
+    local core_next=$((core + 1))
+    local core_last=$((core_second + 1))
+
+    # Cross-die pair
+    if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"1"* ]]; then
+        if [[ ",$core_blacklist," != *",$core,"* && ",$core_blacklist," != *",$core_second,"* ]]; then
+            return 0
+        fi
+    fi
+
+    # Adjacent pair on first die
+    if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
+        if [[ $core_next -le $physical_cores ]]; then
+            if [[ ",$core_blacklist," != *",$core,"* && ",$core_blacklist," != *",$core_next,"* ]]; then
+                return 0
+            fi
+        fi
+    fi
+
+    # Adjacent pair on second die
+    if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
+        if [[ $core_last -le $(nproc) ]]; then
+            if [[ ",$core_blacklist," != *",$core_second,"* && ",$core_blacklist," != *",$core_last,"* ]]; then
+                return 0
+            fi
+        fi
+    fi
+
+    return 1
+}

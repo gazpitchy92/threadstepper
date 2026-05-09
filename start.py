@@ -491,12 +491,14 @@ class StressTestGUI:
             clear_current_test(self)
 
     def stop_stress_test(self):
+        log_message(self, "Stopping stress test, please wait...", "warning")
         if self.process and self.is_running:
             self.process.terminate()
         if self.benchmark_mode:
             log_message(self, "Stopping benchmark...", "warning")
             self.status_bar.config(text="Stopping benchmark...")
         else:
+            self.status_bar.config(text="Stopping stress test...")
             self.stop_timer()
             subprocess.run(["pkill", "-f", "threadstepper"])
             subprocess.run(["pkill", "-f", "logger.sh"])
@@ -504,8 +506,6 @@ class StressTestGUI:
             subprocess.run(["pkill", "-f", "load_test.sh"])
             subprocess.run(["pkill", "-f", "load_worker.sh"])
             subprocess.run(["pkill", "-f", "launch.js"])
-            self.status_bar.config(text="Stress test stopped")
-            log_message(self, f"Test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
             update_error_status(self)
             self.stop_timer()
             self.progress.stop()
@@ -523,7 +523,6 @@ class StressTestGUI:
             self.progress.grid_remove()
         else:
             self.status_bar.config(text="Stress test stopped")
-            log_message(self, f"Test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
             update_error_status(self)
             self.stop_timer()
             self.progress.stop()

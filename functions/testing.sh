@@ -9,9 +9,11 @@ runTests(){
     if (( browsers != 0 )); then
         if compgen -c | grep -q '^electron[0-9]'; then
             update_progress "WebGL Tests" $loop_counter $loops
-            browserTest
-            singleCoreTests $core
-            stopBrowserTest
+            if willRunBrowserTest "$core"; then
+                browserTest
+                singleCoreTests $core
+                stopBrowserTest
+            fi
             check_errors
         else
             echo "$(tput setaf 8)[DEBUG] Skipping WebGL tests: Electron not found$(tput sgr0)" | tee -a "$output_log_file"

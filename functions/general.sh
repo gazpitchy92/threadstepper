@@ -79,7 +79,6 @@ outputOptions(){
 cleanup() {
     if [[ -z "$CLEANED_UP" ]]; then
         CLEANED_UP=1
-        echo "$(tput setaf 5)Stopping tests and cleaning up $(tput sgr0)" | tee -a $output_log_file
         stopLogger
         stop_stressor
         kill_phase
