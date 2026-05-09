@@ -160,7 +160,7 @@ def open_core_picker(self):
             tag = "(P)" if thread_id in physical_threads else "(HT)"
             label = f"T{thread_id}  {tag}"
 
-            style = "success-outline" if is_enabled else "danger-outline"
+            style = "success-outline" if is_enabled else "danger"
             btn = ttk.Button(grid_frame, text=label, width=11, bootstyle=style)
 
             def make_toggle(t_id, b):
@@ -186,7 +186,7 @@ def open_core_picker(self):
     footer.pack(fill="x")
 
     ttk.Button(
-        footer, text="✔ Confirm", bootstyle="success", width=12,
+        footer, text="✔ Confirm", bootstyle="success-outline", width=12,
         command=lambda: [
             self.core_blacklist_var.set(
                 ",".join(str(t) for t in sorted(k for k, v in btn_vars.items() if not v.get()))
@@ -196,6 +196,6 @@ def open_core_picker(self):
     ).pack(side="right", padx=(4, 0))
 
     ttk.Button(
-        footer, text="⊗ Cancel", bootstyle="secondary-outline", width=12,
+        footer, text="⊗ Close", bootstyle="danger-outline", width=12,
         command=win.destroy
     ).pack(side="right")

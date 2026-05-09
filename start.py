@@ -61,7 +61,7 @@ class StressTestGUI:
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (3.4)")
-        self.root.geometry("800x1020")
+        self.root.geometry("800x955")
         
         self.process = None
         self.is_running = False
@@ -154,11 +154,11 @@ class StressTestGUI:
         button_frame.pack(side="right")
 
         # Dark/Night mode button
-        self.dark_mode_btn = ttk.Button(button_frame, text="☾ Dark Mode", bootstyle="primary", command=lambda: toggle_dark_mode(self))
+        self.dark_mode_btn = ttk.Button(button_frame, text="☾ Dark Mode", bootstyle="info", command=lambda: toggle_dark_mode(self))
         self.dark_mode_btn.pack(side="left", padx=(0, 5))
 
         # Install Dependencies button
-        self.install_dep_btn = ttk.Button(button_frame, text="⌂ Install Dependencies", bootstyle="primary", 
+        self.install_dep_btn = ttk.Button(button_frame, text="⌂ Install Dependencies", bootstyle="info", 
             command=lambda: install_dependencies(self))
         self.install_dep_btn.pack(side="left")
 
@@ -258,14 +258,14 @@ class StressTestGUI:
         ttk.Button(
             sys_btn_frame,
             text="◷ Benchmark",
-            style="Uniform.TButton",
+            bootstyle="primary-outline",
             command=lambda: start_benchmark(self)
         ).pack(side="right", padx=2)
 
         ttk.Button(
             sys_btn_frame,
             text="↻ Refresh",
-            bootstyle="success-outline",
+            bootstyle="info-outline",
             command=lambda: refresh_system_info(self)
         ).pack(side="right", padx=20)
 
@@ -320,8 +320,8 @@ class StressTestGUI:
         self.error_indicator.grid(row=0, column=0, sticky="nsew")
         error_btn_frame = ttk.Frame(error_inner)
         error_btn_frame.grid(row=1, column=0, sticky="e", pady=(2, 0))
-        ttk.Button(error_btn_frame, text="↻ Refresh", bootstyle="success-outline", command=lambda: update_error_status(self)).pack(side="right", padx=2)
-        self.toggle_error_btn = ttk.Button(error_btn_frame, text="▶ Error Logs", bootstyle="success-outline", command=lambda: toggle_error_log(self))
+        ttk.Button(error_btn_frame, text="↻ Refresh", bootstyle="info-outline", command=lambda: update_error_status(self)).pack(side="right", padx=2)
+        self.toggle_error_btn = ttk.Button(error_btn_frame, text="▶ Error Logs", bootstyle="primary-outline", command=lambda: toggle_error_log(self))
         self.toggle_error_btn.pack(side="right", padx=2)
 
         # Error Logs
@@ -334,12 +334,12 @@ class StressTestGUI:
         error_log_inner.rowconfigure(0, weight=1)
         error_log_btn_frame = ttk.Frame(error_log_inner)
         error_log_btn_frame.grid(row=1, column=0, sticky="e", pady=(0, 2))
-        ttk.Button(error_log_btn_frame, text="↻ Refresh", bootstyle="success-outline", command=lambda: update_error_log(self)).pack(side="right", padx=2)
-        ttk.Button(error_log_btn_frame, text="⊗ Clear", bootstyle="success-outline", command=lambda: clear_error_log(self)).pack(side="right", padx=2)
+        ttk.Button(error_log_btn_frame, text="↻ Refresh", bootstyle="info-outline", command=lambda: update_error_log(self)).pack(side="right", padx=2)
+        ttk.Button(error_log_btn_frame, text="⇄ Reset", bootstyle="warning-outline", command=lambda: clear_error_log(self)).pack(side="right", padx=2)
 
         # Settings
-        settings_outer, settings_inner = make_section(main_container, "⚙ Settings", padding=10)
-        settings_outer.grid(row=4, column=0, sticky="ew", padx=5, pady=(0, 2))
+        settings_inner = ttk.Frame(main_container, padding=10)
+        settings_inner.grid(row=4, column=0, sticky="ew", padx=5, pady=(0, 2))
         settings_inner.columnconfigure(0, weight=1)
         settings_inner.columnconfigure(1, weight=1)
         settings_inner.columnconfigure(2, weight=1)
@@ -347,12 +347,6 @@ class StressTestGUI:
         def make_entry_row(parent, label, var, row):
             ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w", padx=(0, 0), pady=1)
             ttk.Entry(parent, width=6, textvariable=var).grid(row=row, column=1, sticky="w", pady=1)
-
-        # Test Runs
-        loops_frame = ttk.Frame(settings_inner)
-        loops_frame.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 4))
-        ttk.Label(loops_frame, text="Test Runs", font=("Segoe UI", 10, "bold")).pack(side="left", padx=(0, 8))
-        ttk.Spinbox(loops_frame, from_=1, to=999, width=6, textvariable=self.loops_var).pack(side="left")
 
         # High Load
         high_frame, high_inner = make_section(settings_inner, "▦ High Load", padding=6)
@@ -403,8 +397,8 @@ class StressTestGUI:
 
         cores_frame, cores_inner = make_section(bottom_settings, "∼ Enabled Threads", padding=6)
         cores_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
-        ttk.Button(cores_inner, text="⚙ Select Threads", bootstyle="success-outline",
-           command=lambda: open_core_picker(self)).grid(row=0, column=0, sticky="w")
+        ttk.Button(cores_inner, text="⚙ Select Threads", bootstyle="primary-outline",
+            command=lambda: open_core_picker(self)).grid(row=0, column=0, sticky="w")
 
         # Advanced Options toggle
         def toggle_advanced():
@@ -418,7 +412,7 @@ class StressTestGUI:
                 self.advanced_visible = True
 
         adv_toggle_btn = ttk.Button(settings_inner, text="▶ Advanced Options",
-            bootstyle="link", command=toggle_advanced)
+            bootstyle="primary-outline", command=toggle_advanced)
         adv_toggle_btn.grid(row=3, column=0, columnspan=3, sticky="w", pady=(2, 0))
 
         advanced_frame = ttk.Frame(settings_inner)
@@ -431,7 +425,7 @@ class StressTestGUI:
         save_frame.grid(row=5, column=0, columnspan=3, sticky="e", pady=(2, 0))
         self.unsaved_label = ttk.Label(save_frame, text="", foreground="#e67e00", font=("Segoe UI", 11, "italic"))
         self.unsaved_label.pack(side="left", padx=(0, 10))
-        ttk.Button(save_frame, text="⤓ Save Settings", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
+        ttk.Button(save_frame, text="⤓ Save Settings", bootstyle="success", command=lambda: save_settings(self)).pack(side="right")
 
         # Logging output
         output_frame, output_inner = make_section(main_container, "⩾ Test Output", padding=10)
@@ -444,7 +438,7 @@ class StressTestGUI:
             width=80,
             height=2,
             wrap="word",
-            font=("Segoe UI", 12)
+            font=("Segoe UI", 11)
         )
         self.output_text.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
@@ -473,10 +467,15 @@ class StressTestGUI:
 
         self.timer_label.pack(side="left", padx=(0, 2), fill="y")
 
+        runs_frame = ttk.Frame(control_frame)
+        runs_frame.pack(side="left", padx=(0, 6))
+        ttk.Label(runs_frame, text="Runs", font=("Segoe UI", 9)).pack(side="left", padx=(0, 4))
+        ttk.Spinbox(runs_frame, from_=1, to=999, width=5, textvariable=self.loops_var).pack(side="left")
+
         self.start_button = ttk.Button(
             control_frame,
-            text="▶ Run Test",
-            style="Uniform.TButton",
+            text="▶ Start",
+            bootstyle="success",
             command=self.start_stress_test
         )
 
@@ -495,16 +494,14 @@ class StressTestGUI:
         ttk.Button(
             control_frame,
             text="⇄ Reset",
-            bootstyle="success-outline",
-            style="Uniform.TButton",
+            bootstyle="warning-outline",
             command=lambda: reset_button(self)
         ).pack(side="left", padx=1)
 
         ttk.Button(
             control_frame,
             text="⎘ View Logs",
-            bootstyle="success-outline",
-            style="Uniform.TButton",
+            bootstyle="primary-outline",
             command=lambda: open_output_window(self)
         ).pack(side="left", padx=1)
 
