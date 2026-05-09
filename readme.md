@@ -100,7 +100,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 2. **Install (optional) dependencies:**
 
-   Installs the Electron dependancy
+   Installs the Electron for WebGL Tests
 
    ![installer](https://i.ibb.co/YTKLSpQx/Screenshot-20260508-232724-1.png)
 
