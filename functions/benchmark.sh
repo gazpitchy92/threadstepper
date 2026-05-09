@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Accept an optional core selection argument
+SELECTED_CORE="$1"
 DURATION=5
 RUNS=3
 NCPU=$(nproc)
@@ -65,9 +67,25 @@ median() {
     fi
 }
 
-BEST=$(find_best_core)
-CPPC_VAL=$(cat /sys/devices/system/cpu/cpu$BEST/acpi_cppc/highest_perf 2>/dev/null || echo "N/A")
-echo "$(tput setaf 8)[DEBUG] Single core used for test: ${BEST} (CPPC: ${CPPC_VAL})$(tput sgr0)"
+# Determine which core to use
+if [ -n "$SELECTED_CORE" ] && [ "$SELECTED_CORE" != "Auto" ]; then
+    # User selected core
+    if [ -f "/sys/devices/system/cpu/cpu$SELECTED_CORE/acpi_cppc/highest_perf" ]; then
+        BEST="$SELECTED_CORE"
+        CPPC_VAL=$(cat "/sys/devices/system/cpu/cpu$BEST/acpi_cppc/highest_perf" 2>/dev/null || echo "N/A")
+        echo "$(tput setaf 8)[DEBUG] Using user-selected core: ${BEST} (CPPC: ${CPPC_VAL})$(tput sgr0)"
+    else
+        echo "$(tput setaf 3)[WARNING] Selected core $SELECTED_CORE not found, falling back to auto-selection$(tput sgr0)" >&2
+        BEST=$(find_best_core)
+        CPPC_VAL=$(cat "/sys/devices/system/cpu/cpu$BEST/acpi_cppc/highest_perf" 2>/dev/null || echo "N/A")
+        echo "$(tput setaf 8)[DEBUG] Auto-selected core: ${BEST} (CPPC: ${CPPC_VAL})$(tput sgr0)"
+    fi
+else
+    # Auto cppc best core
+    BEST=$(find_best_core)
+    CPPC_VAL=$(cat "/sys/devices/system/cpu/cpu$BEST/acpi_cppc/highest_perf" 2>/dev/null || echo "N/A")
+    echo "$(tput setaf 8)[DEBUG] Auto mode - best core: ${BEST} (CPPC: ${CPPC_VAL})$(tput sgr0)"
+fi
 
 single_vals=()
 for ((r=0; r<RUNS; r++)); do
