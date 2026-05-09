@@ -493,14 +493,23 @@ class StressTestGUI:
     def stop_stress_test(self):
         if self.process and self.is_running:
             self.process.terminate()
-            if self.benchmark_mode:
-                log_message(self, "Stopping benchmark...", "warning")
-                self.status_bar.config(text="Stopping benchmark...")
-            else:
-                log_message(self, "Stopping test...", "warning")
-                self.status_bar.config(text="Stopping test...")
-                if not self.benchmark_mode:
-                    self.stop_timer()
+        if self.benchmark_mode:
+            log_message(self, "Stopping benchmark...", "warning")
+            self.status_bar.config(text="Stopping benchmark...")
+        else:
+            self.stop_timer()
+            subprocess.run(["pkill", "-f", "threadstepper"])
+            subprocess.run(["pkill", "-f", "logger.sh"])
+            subprocess.run(["pkill", "-f", "bash -c"])
+            subprocess.run(["pkill", "-f", "load_test.sh"])
+            subprocess.run(["pkill", "-f", "load_worker.sh"])
+            subprocess.run(["pkill", "-f", "launch.js"])
+            self.status_bar.config(text="Stress test stopped")
+            log_message(self, f"Test stopped at {datetime.now().strftime('%H:%M:%S')}", "info")
+            update_error_status(self)
+            self.stop_timer()
+            self.progress.stop()
+            self.progress.grid_remove()
 
     def on_process_stop(self):
         self.start_button.config(state=tk.NORMAL)
