@@ -119,11 +119,12 @@ Default settings work for most users.
 - **Rapid Tests**: How many times to run the rapid test, which applies a brief load to each core in sequence. (number)
 - **Rapid Time**: How long the rapid load is applied per core. (seconds)
 - **Rand Tests**: How many times to run the random test, which applies a light load to random threads. (number)
+- **Rand Time**: How long the random load is applied per core. (seconds)
 
 **Single Core**: Tests that cycle through each core individually with varying load levels.
-- **Low Time**: How long to test each core at low load. (seconds)
-- **Medium Time**: How long to test each core at medium load. (seconds)
-- **High Time**: How long to test each core at high load. (seconds)
+- **Low Time**: How long to test each core at low load [10%-20%]. (seconds)
+- **Medium Time**: How long to test each core at medium load [50%-60%]. (seconds)
+- **High Time**: How long to test each core at high load [90%-100%]. (seconds)
 
 **WebGL Tests**: Repeats the single-core tests with a number of WebGL instances running variable CPU loads in the background.
 - **Instances**: How many browser instances to open during each test. (number)
