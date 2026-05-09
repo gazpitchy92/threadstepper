@@ -65,6 +65,8 @@ def light_mode(self):
     self.header_label.configure(bg=bg_light, fg=fg_light)
 
     # Save
+    for lbl in getattr(self, '_section_labels', []):
+        lbl.configure(foreground="#000000")
     save_dark_mode(self, 0)
 
 # Switch to dark Mode
@@ -91,4 +93,6 @@ def dark_mode(self):
     self.header_label.configure(bg=bg_dark, fg=fg_dark)
 
     # Save to settings
+    for lbl in getattr(self, '_section_labels', []):
+        lbl.configure(foreground="#ffffff")
     save_dark_mode(self, 1)

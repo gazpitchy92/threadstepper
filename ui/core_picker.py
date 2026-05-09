@@ -92,7 +92,7 @@ def open_core_picker(self):
     ttk.Label(
         header_frame,
         text="Thread Selection",
-        font=("Segoe UI", 12, "bold"),
+        font=("Segoe UI", 11, "bold"),
     ).pack(anchor="w")
     ttk.Label(
         header_frame,
@@ -144,7 +144,7 @@ def open_core_picker(self):
         ttk.Label(
             sep_frame,
             text=f"  CORE {core_id}",
-            font=("Segoe UI", 8, "bold"),
+            font=("Segoe UI", 11, "bold"),
             foreground="#aaaaaa",
         ).pack(side="left")
         ttk.Separator(sep_frame, orient="horizontal").pack(

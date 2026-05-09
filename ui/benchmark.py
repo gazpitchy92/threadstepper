@@ -69,7 +69,7 @@ class BenchmarkWindow:
 
         self.timer_label = tk.Label(
             ctrl, text="00:00:00",
-            font=("Segoe UI", 12, "bold"),
+            font=("Segoe UI", 11, "bold"),
             fg="#28a745", bg="#f0f0f0",
             relief="sunken", width=9, padx=5,
         )

@@ -61,7 +61,7 @@ class StressTestGUI:
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (3.4)")
-        self.root.geometry("800x980")
+        self.root.geometry("800x1020")
         
         self.process = None
         self.is_running = False
@@ -100,16 +100,20 @@ class StressTestGUI:
             outer = ttk.Frame(parent, **kwargs)
             header = ttk.Frame(outer)
             header.pack(fill="x", pady=(0, 6))
-            ttk.Label(
+            lbl = ttk.Label(
                 header, text=title,
                 font=("Segoe UI", 11, "bold"),
-                foreground="#aaaaaa"
-            ).pack(side="left")
+                foreground="#000000"
+            )
+            lbl.pack(side="left")
             ttk.Separator(header, orient="horizontal").pack(
                 side="left", fill="x", expand=True, padx=(6, 0), pady=1
             )
             inner = ttk.Frame(outer)
             inner.pack(fill="both", expand=True)
+            if not hasattr(self, '_section_labels'):
+                self._section_labels = []
+            self._section_labels.append(lbl)
             return outer, inner
 
         self.loops_var = tk.IntVar(value=1)
@@ -263,7 +267,7 @@ class StressTestGUI:
             text="↻ Refresh",
             bootstyle="success-outline",
             command=lambda: refresh_system_info(self)
-        ).pack(side="right", padx=2)
+        ).pack(side="right", padx=20)
 
         # Frequency
         freq_row = ttk.Frame(cpu_info_frame)
@@ -288,7 +292,7 @@ class StressTestGUI:
         clock_inner_top.columnconfigure(0, weight=1)
         clock_inner_top.rowconfigure(0, weight=1)
         self.clock_label_top = tk.Label(
-            clock_inner_top, text="N/A", font=("Segoe UI", 12, "bold"),
+            clock_inner_top, text="N/A", font=("Segoe UI", 11, "bold"),
             fg="#17a2b8", bg="#e8f4f8", relief="raised", padx=10, pady=4
         )
         self.clock_label_top.grid(row=0, column=0, sticky="nsew")
@@ -299,7 +303,7 @@ class StressTestGUI:
         clock_inner_bottom.columnconfigure(0, weight=1)
         clock_inner_bottom.rowconfigure(0, weight=1)
         self.clock_label_bottom = tk.Label(
-            clock_inner_bottom, text="N/A", font=("Segoe UI", 12, "bold"),
+            clock_inner_bottom, text="N/A", font=("Segoe UI", 11, "bold"),
             fg="#17a2b8", bg="#e8f4f8", relief="raised", padx=10, pady=4,
             justify="center"
         )
@@ -310,7 +314,7 @@ class StressTestGUI:
         error_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=(0, 2))
         error_inner.columnconfigure(0, weight=1)
         self.error_indicator = tk.Label(
-            error_inner, text="NO ERRORS ✔", font=("Segoe UI", 12, "bold"),
+            error_inner, text="NO ERRORS ✔", font=("Segoe UI", 11, "bold"),
             bg="#d4edda", fg="#155724", relief="raised", padx=10, pady=4
         )
         self.error_indicator.grid(row=0, column=0, sticky="nsew")
@@ -347,7 +351,7 @@ class StressTestGUI:
         # Test Runs
         loops_frame = ttk.Frame(settings_inner)
         loops_frame.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 4))
-        ttk.Label(loops_frame, text="Test Runs", font=("Segoe UI", 12, "bold")).pack(side="left", padx=(0, 8))
+        ttk.Label(loops_frame, text="Test Runs", font=("Segoe UI", 10, "bold")).pack(side="left", padx=(0, 8))
         ttk.Spinbox(loops_frame, from_=1, to=999, width=6, textvariable=self.loops_var).pack(side="left")
 
         # High Load
@@ -425,7 +429,7 @@ class StressTestGUI:
         # Save
         save_frame = ttk.Frame(settings_inner)
         save_frame.grid(row=5, column=0, columnspan=3, sticky="e", pady=(2, 0))
-        self.unsaved_label = ttk.Label(save_frame, text="", foreground="#e67e00", font=("Segoe UI", 9, "italic"))
+        self.unsaved_label = ttk.Label(save_frame, text="", foreground="#e67e00", font=("Segoe UI", 11, "italic"))
         self.unsaved_label.pack(side="left", padx=(0, 10))
         ttk.Button(save_frame, text="⤓ Save Settings", bootstyle="success-outline", command=lambda: save_settings(self)).pack(side="right")
 
