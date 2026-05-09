@@ -60,7 +60,7 @@ class BenchmarkWindow:
             log_frame,
             wrap="char",
             font=("Consolas", 10),
-            height=8,
+            height=10,
             state="disabled",
             relief="flat",
             borderwidth=0,
@@ -86,7 +86,7 @@ class BenchmarkWindow:
             hist_frame,
             columns=cols,
             show="headings",
-            height=7,
+            height=4,
             selectmode="none"
         )
 
@@ -142,6 +142,8 @@ class BenchmarkWindow:
         self.output_text.tag_config("success", foreground="green")
         self.output_text.tag_config("warning", foreground="orange")
         self.output_text.tag_config("info", foreground="#17a2b8")
+        self.output_text.tag_config("debug", foreground="#777777")
+        self.output_text.tag_config("blue", foreground="#4da3ff")
 
         # History
         hist_frame = ttk.LabelFrame(body, text="☷ Recent Results", padding=6)
@@ -177,7 +179,7 @@ class BenchmarkWindow:
         )
 
         style = ttk.Style()
-        style.configure("Treeview", rowheight=24, font=("Segoe UI", 9))
+        style.configure("Treeview", rowheight=14, font=("Segoe UI", 9))
         style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
 
         # Controls
@@ -296,8 +298,6 @@ class BenchmarkWindow:
         self.output_text.config(state="normal")
         self.output_text.delete("1.0", "end")
         self.output_text.config(state="disabled")
-        self._log(f"Benchmark started at {datetime.now().strftime('%H:%M:%S')}", "info")
-        self._log(f"This will take 2 minutes", "info")
         threading.Thread(target=self._run, daemon=True).start()
 
     def _run(self):
@@ -323,6 +323,8 @@ class BenchmarkWindow:
             self.win.after(0, self._on_stopped)
 
     def _stop(self):
+        subprocess.run(["pkill", "-f", "launch.js"])
+        subprocess.run(["pkill", "-f", "bash -c bench"])
         if self.process and self.is_running:
             self.process.terminate()
             self._log("Stopping benchmark...", "warning")
@@ -368,6 +370,16 @@ class BenchmarkWindow:
             while True:
                 tag, msg = self.log_queue.get_nowait()
                 msg = self.ANSI_ESCAPE.sub('', msg)
+                lower = msg.lower()
+                if lower.startswith("debug "):
+                    tag = "debug"
+                    msg = msg[6:]
+                elif lower.startswith("info "):
+                    tag = "blue"
+                    msg = msg[5:]
+                elif lower.startswith("error "):
+                    tag = "error"
+                    msg = msg[6:]
                 self.output_text.config(state="normal")
                 self.output_text.insert("end", msg + "\n", tag if tag != "plain" else "")
                 self.output_text.see("end")
