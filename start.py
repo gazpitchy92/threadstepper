@@ -328,7 +328,7 @@ class StressTestGUI:
         # Test Runs
         loops_frame = ttk.Frame(settings_outer)
         loops_frame.grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 4))
-        ttk.Label(loops_frame, text="Test Runs", font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 8))
+        ttk.Label(loops_frame, text="Test Runs", font=("Segoe UI", 12, "bold")).pack(side="left", padx=(0, 8))
         ttk.Spinbox(loops_frame, from_=1, to=999, width=6, textvariable=self.loops_var).pack(side="left")
 
         # High Load
