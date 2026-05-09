@@ -16,8 +16,9 @@ save_results() {
     local single_score=$((single / SINGLE_DURATION / 1000))
     local multi_score=$((multi / MULTI_DURATION / 1000))
     local timestamp=$(date +"%d %b %H:%M")
-    echo "${BASE_CORE},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
-    tail -n 5 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
+    local display_core=$(get_display_core)
+    echo "${display_core},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
+    tail -n 7 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
 }
 
 # Calculate score

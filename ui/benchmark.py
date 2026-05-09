@@ -314,7 +314,6 @@ class BenchmarkWindow:
                 if line:
                     self.log_queue.put(("plain", line.rstrip()))
             self.process.wait()
-            self.log_queue.put(("info", f"Benchmark finished at {datetime.now().strftime('%H:%M:%S')}"))
         except Exception as e:
             self.log_queue.put(("error", f"Error: {e}"))
         finally:
