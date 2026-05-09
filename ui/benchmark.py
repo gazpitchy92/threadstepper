@@ -18,6 +18,7 @@ def start_benchmark(app):
 class BenchmarkWindow:
 
     SCRIPT = "./functions/benchmark.sh"
+    LOG_PATH = "./logs/benchmark.log"
 
     def __init__(self, app):
         self.app = app
@@ -29,13 +30,14 @@ class BenchmarkWindow:
 
         self.win = tk.Toplevel(app.root)
         self.win.title("Benchmark")
-        self.win.geometry("500x300")
+        self.win.geometry("500x480")
         self.win.resizable(False, False)
         self.win.protocol("WM_DELETE_WINDOW", self._close)
         self.win.transient(app.root)
 
         self._build_ui()
         self._drain_log_queue()
+        self._refresh_history()
 
     # UI
     def _build_ui(self):
@@ -54,7 +56,7 @@ class BenchmarkWindow:
         log_frame.rowconfigure(0, weight=1)
 
         self.output_text = scrolledtext.ScrolledText(
-            log_frame, wrap="char", font=("Segoe UI", 11), height=20, state="disabled"
+            log_frame, wrap="char", font=("Segoe UI", 11), height=10, state="disabled"
         )
         self.output_text.grid(row=0, column=0, sticky="nsew")
         self.output_text.tag_config("error",   foreground="red")
@@ -62,9 +64,29 @@ class BenchmarkWindow:
         self.output_text.tag_config("warning", foreground="orange")
         self.output_text.tag_config("info",    foreground="#17a2b8")
 
+        # History table
+        hist_frame = ttk.LabelFrame(body, text="☷ Recent Results", padding=5)
+        hist_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 4))
+        hist_frame.columnconfigure(0, weight=1)
+
+        cols = ("date", "single", "multi")
+        self.history_tree = ttk.Treeview(
+            hist_frame, columns=cols, show="headings", height=5, selectmode="none"
+        )
+        self.history_tree.heading("date",   text="Date")
+        self.history_tree.heading("single", text="Single Core")
+        self.history_tree.heading("multi",  text="Multi Core")
+        self.history_tree.column("date",   width=280, anchor="w")
+        self.history_tree.column("single", width=90,  anchor="center")
+        self.history_tree.column("multi",  width=90,  anchor="center")
+        self.history_tree.grid(row=0, column=0, sticky="ew")
+
+        # Highlight the last (most recent) row
+        self.history_tree.tag_configure("latest", foreground="#28a745")
+
         # Controls row
         ctrl = ttk.Frame(body)
-        ctrl.grid(row=1, column=0, sticky="ew")
+        ctrl.grid(row=2, column=0, sticky="ew")
         ctrl.columnconfigure(0, weight=1)
 
         self.timer_label = tk.Label(
@@ -84,7 +106,31 @@ class BenchmarkWindow:
         self.stop_btn = ttk.Button(btn_frame, text="⊠ Stop", bootstyle="danger", state="disabled", command=self._stop)
         self.stop_btn.pack(side="left", padx=(0, 4))
 
-        ttk.Button(btn_frame, text="⊗ Close", bootstyle="secondary-outline", command=self._close).pack(side="left")
+        ttk.Button(btn_frame, text="⇄ Reset", bootstyle="warning-outline", command=self._reset_log).pack(side="left", padx=(0, 4))
+
+        ttk.Button(btn_frame, text="⊗ Close", bootstyle="danger-outline", command=self._close).pack(side="left")
+    # History
+    def _refresh_history(self):
+        """Read the last 5 lines from the log and populate the history treeview."""
+        for row in self.history_tree.get_children():
+            self.history_tree.delete(row)
+
+        if not os.path.exists(self.LOG_PATH):
+            return
+
+        try:
+            with open(self.LOG_PATH, "r") as f:
+                lines = [l.strip() for l in f.readlines() if l.strip()]
+        except OSError:
+            return
+
+        for i, line in enumerate(lines):
+            parts = line.split(",", 2)
+            if len(parts) != 3:
+                continue
+            single, multi, date = parts
+            tag = ("latest",) if i == len(lines) - 1 else ()
+            self.history_tree.insert("", "end", values=(date, single, multi), tags=tag)
 
     # Benchmark control
     def _start(self):
@@ -133,6 +179,7 @@ class BenchmarkWindow:
         self._stop_timer()
         self.start_btn.config(state="normal")
         self.stop_btn.config(state="disabled")
+        self._refresh_history()
 
     def _close(self):
         if self.is_running and self.process:
@@ -141,6 +188,17 @@ class BenchmarkWindow:
         self.win.destroy()
 
     # Log drain
+
+    def _reset_log(self):
+        if self.is_running:
+            return
+        try:
+            open(self.LOG_PATH, "w").close()
+        except OSError:
+            self._log("Error: could not clear log file.", "error")
+            return
+        self._refresh_history()
+        self._log("Benchmark history cleared.", "warning")
 
     ANSI_ESCAPE = __import__('re').compile(r'\x1b[\[\(][0-9;]*[A-Za-z]|\x1b[^[\(]')
 
