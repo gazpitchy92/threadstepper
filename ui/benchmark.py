@@ -293,6 +293,9 @@ class BenchmarkWindow:
         self.stop_btn.config(state="normal")
         self._reset_timer()
         self._start_timer()
+        self.output_text.config(state="normal")
+        self.output_text.delete("1.0", "end")
+        self.output_text.config(state="disabled")
         self._log(f"Benchmark started at {datetime.now().strftime('%H:%M:%S')}", "info")
         self._log(f"This will take 2 minutes", "info")
         threading.Thread(target=self._run, daemon=True).start()
@@ -340,11 +343,18 @@ class BenchmarkWindow:
     def _reset_log(self):
         if self.is_running:
             return
+
         try:
             open(self.LOG_PATH, "w").close()
         except OSError:
             self._log("Error: could not clear log file.", "error")
             return
+
+        # clear UI output window
+        self.output_text.config(state="normal")
+        self.output_text.delete("1.0", "end")
+        self.output_text.config(state="disabled")
+
         self._refresh_history()
         self._log("Benchmark history cleared.", "warning")
 

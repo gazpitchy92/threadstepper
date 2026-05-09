@@ -2,8 +2,8 @@
 
 # Init
 SELECTED_CORE="$1"
-DURATION=5
-RUNS=3
+DURATION=15
+RUNS=4
 NCPU=$(nproc)
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_LOG="$(dirname "$CURRENT_DIR")/../logs/benchmark.log"
