@@ -79,7 +79,6 @@ outputOptions(){
 cleanup() {
     if [[ -z "$CLEANED_UP" ]]; then
         CLEANED_UP=1
-        echo "$(tput setaf 5)Stopping tests and cleaning up $(tput sgr0)" | tee -a $output_log_file
         stopLogger
         stop_stressor
         kill_phase
@@ -100,7 +99,7 @@ starLogger() {
 }
 stopLogger() {
     if [[ -f "$current_dir/logs/logger.pid" ]]; then
-        kill "$(cat "$current_dir/logs/logger.pid")"
+        kill "$(cat "$current_dir/logs/logger.pid")" 2>/dev/null
         rm -f "$current_dir/logs/logger.pid"
     fi
 }
