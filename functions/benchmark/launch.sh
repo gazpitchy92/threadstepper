@@ -57,6 +57,7 @@ if [ ! -f "$OUTPUT_LOG" ]; then
 fi
 
 # ---------------- MAIN ----------------
+notify-send "Thread Stepper" "Benchmark started at $(date +%H:%M:%S)"
 select_core
 resolve_threads
 print_single_info
@@ -64,3 +65,5 @@ run_single
 print_multi_info
 run_multi
 save_results
+echo "info Benchmark finished at $(date +%H:%M:%S)"
+notify-send "Thread Stepper" "Benchmark finished at $(date +%H:%M:%S)"

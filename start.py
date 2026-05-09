@@ -60,7 +60,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (3.4)")
+        self.root.title("Thread Stepper (3.5)")
         self.root.geometry("800x953")
         
         self.process = None
@@ -581,6 +581,12 @@ class StressTestGUI:
         self.start_timer()
         self.progress.grid()
         self.progress.start(10)
+
+        subprocess.run([
+            "notify-send",
+            "Thread Stepper",
+            f"Tests started at {datetime.now().strftime('%H:%M:%S')}"
+        ])
         
         if not os.path.exists("./threadstepper"):
             log_message(self, "Error: ./threadstepper not found!", "error")
@@ -592,8 +598,8 @@ class StressTestGUI:
         self.start_button.config(state=tk.DISABLED)
         self.stop_button.config(state=tk.NORMAL)
         
-        log_message(self, f"Starting stress test at {datetime.now().strftime('%H:%M:%S')}", "info")
-        self.status_bar.config(text="Stress test running...")
+        log_message(self, f"Starting tests at {datetime.now().strftime('%H:%M:%S')}", "info")
+        self.status_bar.config(text="Tests running...")
         
         threading.Thread(target=self.run_stress_test, daemon=True).start()
 
@@ -616,7 +622,13 @@ class StressTestGUI:
             
             return_code = self.process.wait()
             
-            self.log_queue.put(f"\nTesting has completed")
+            self.log_queue.put(f"\nTesting has completed at {datetime.now().strftime('%H:%M:%S')}")
+            subprocess.run([
+                "notify-send",
+                "Thread Stepper",
+                f"Testing has completed at {datetime.now().strftime('%H:%M:%S')}"
+            ])
+            
             update_error_status(self)
             update_error_log(self)
             
@@ -630,14 +642,19 @@ class StressTestGUI:
             clear_current_test(self)
 
     def stop_stress_test(self):
-        log_message(self, "Stopping stress test, please wait...", "warning")
         if self.process and self.is_running:
             self.process.terminate()
         if self.benchmark_mode:
             log_message(self, "Stopping benchmark...", "warning")
             self.status_bar.config(text="Stopping benchmark...")
+            subprocess.run([
+                "notify-send",
+                "Thread Stepper",
+                f"Benchmark stopping at {datetime.now().strftime('%H:%M:%S')}"
+            ])
         else:
-            self.status_bar.config(text="Stopping stress test...")
+            log_message(self, "Stopping testing, please wait...", "warning")
+            self.status_bar.config(text="Stopping testing...")
             self.stop_timer()
             subprocess.run(["pkill", "-f", "threadstepper"])
             subprocess.run(["pkill", "-f", "logger.sh"])
@@ -645,7 +662,6 @@ class StressTestGUI:
             subprocess.run(["pkill", "-f", "load_test.sh"])
             subprocess.run(["pkill", "-f", "load_worker.sh"])
             subprocess.run(["pkill", "-f", "launch.js"])
-            update_error_status(self)
             self.stop_timer()
             self.progress.stop()
             self.progress.grid_remove()
@@ -656,12 +672,11 @@ class StressTestGUI:
         if self.benchmark_mode:
             self.status_bar.config(text="Benchmark stopped")
             update_error_status(self)
-            log_message(self, f"\033[95mBenchmark finished at {datetime.now().strftime('%H:%M:%S')}\033[0m", "info")
             self.stop_timer()
             self.progress.stop()
             self.progress.grid_remove()
         else:
-            self.status_bar.config(text="Stress test stopped")
+            self.status_bar.config(text="Testing stopped")
             update_error_status(self)
             self.stop_timer()
             self.progress.stop()
@@ -674,7 +689,7 @@ def main():
     
     if not os.path.exists("./settings"):
         with open("./settings", 'w') as f:
-            f.write("#!/bin/bash\n\n# Stress Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n")
+            f.write("#!/bin/bash\n\n# Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n")
     
     detect_cpu_topology()
 
