@@ -35,12 +35,18 @@ Cycles through different load combinations on each core and thread group, with c
 
 ## Screenshots
 
-![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
+![running](https://i.ibb.co/hFKxvVRr/Screenshot-20260509-235857-1.png)
 
 ### Error Detection
-![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
+
+![errors](https://i.ibb.co/7tq4092X/Screenshot-20260509-235922-1.png)
+
+### Benchmarking (all core and individual cores)
+
+![benchmark](https://i.ibb.co/BHXxCB0G/Screenshot-20260509-235622-1.png)
 
 ### WebGL Tests
+
 ![browser](https://i.ibb.co/zTT4LvRG/Screenshot-20260509-003545-1.png)
 
 ### CPU Load examples
