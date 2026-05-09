@@ -61,7 +61,7 @@ class StressTestGUI:
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (3.2)")
-        self.root.geometry("800x1060")
+        self.root.geometry("800x1030")
         
         self.process = None
         self.is_running = False
@@ -148,38 +148,102 @@ class StressTestGUI:
         info_row.columnconfigure(0, weight=1)
         info_row.columnconfigure(1, weight=1)
         info_row.rowconfigure(0, weight=1)
-        info_row.rowconfigure(1, weight=1) 
+        info_row.rowconfigure(1, weight=1)
 
         system_frame = ttk.LabelFrame(info_row, text="⌕ System Information", padding=10)
         system_frame.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(0, 0))
         system_frame.columnconfigure(0, weight=1)
 
-        labels_frame = ttk.Frame(system_frame)
-        labels_frame.grid(row=0, column=0, sticky="nw")
-        self.os_label = ttk.Label(labels_frame, text=f"OS: {platform.system()} {platform.release()}")
-        self.model_label = ttk.Label(labels_frame, text="CPU Model: N/A")
-        self.cores_label = ttk.Label(labels_frame, text="CPU Cores: N/A")
-        self.threads_label = ttk.Label(labels_frame, text="CPU Threads: N/A")
-        self.cpu_freq = ttk.Label(labels_frame, text="CPU Freq.: N/A")
-        self.governor_label = ttk.Label(labels_frame, text="CPU Governor: N/A")
-        for lbl in [self.os_label, self.model_label, self.cores_label, self.threads_label, self.cpu_freq, self.governor_label]:
-            lbl.pack(anchor="w", pady=(0, 2))
-        sys_btn_frame = ttk.Frame(system_frame)
-        sys_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
+        # Kernel 
+        top_info_frame = ttk.Frame(system_frame)
+        top_info_frame.grid(row=0, column=0, sticky="nw")
+        os_row = ttk.Frame(top_info_frame)
+        os_row.pack(anchor="w", fill="x", pady=(0, 3))
 
-        ttk.Button(
-            sys_btn_frame,
-            text="◷ Benchmark",
-            style="Uniform.TButton",
-            command=lambda: start_benchmark(self)
-        ).pack(side="right", padx=2)
+        ttk.Label(
+            os_row,
+            text="Kernel:",
+            style="InfoTitle.TLabel"
+        ).pack(side="left")
+        self.os_label = ttk.Label(
+            os_row,
+            text=f" {platform.system()} {platform.release()}",
+            style="InfoValue.TLabel"
+        )
+        self.os_label.pack(side="left")
 
-        ttk.Button(
-            sys_btn_frame,
-            text="↻ Refresh",
-            bootstyle="success-outline",
-            command=lambda: refresh_system_info(self)
-        ).pack(side="right", padx=2)
+        # Governor
+        gov_row = ttk.Frame(top_info_frame)
+        gov_row.pack(anchor="w", fill="x", pady=(0, 3))
+
+        ttk.Label(
+            gov_row,
+            text="Governor:",
+            style="InfoTitle.TLabel"
+        ).pack(side="left")
+
+        self.governor_label = ttk.Label(
+            gov_row,
+            text=" N/A",
+            style="InfoValue.TLabel"
+        )
+        self.governor_label.pack(side="left")
+
+        # Spacer
+        ttk.Frame(system_frame, height=10).grid(row=1, column=0)
+
+        # CPU
+        cpu_info_frame = ttk.Frame(system_frame)
+        cpu_info_frame.grid(row=2, column=0, sticky="nw")
+        cpu_row = ttk.Frame(cpu_info_frame)
+        cpu_row.pack(anchor="w", fill="x", pady=(0, 3))
+
+        ttk.Label(
+            cpu_row,
+            text="CPU:",
+            style="InfoTitle.TLabel"
+        ).pack(side="left")
+
+        self.model_label = ttk.Label(
+            cpu_row,
+            text=" N/A",
+            style="InfoValue.TLabel"
+        )
+        self.model_label.pack(side="left")
+
+        # Cores / Threads
+        cores_row = ttk.Frame(cpu_info_frame)
+        cores_row.pack(anchor="w", fill="x", pady=(0, 3))
+
+        ttk.Label(
+            cores_row,
+            text="Cores/Threads:",
+            style="InfoTitle.TLabel"
+        ).pack(side="left")
+
+        self.cores_label = ttk.Label(
+            cores_row,
+            text=" N/A",
+            style="InfoValue.TLabel"
+        )
+        self.cores_label.pack(side="left")
+
+        # Frequency
+        freq_row = ttk.Frame(cpu_info_frame)
+        freq_row.pack(anchor="w", fill="x", pady=(0, 3))
+
+        ttk.Label(
+            freq_row,
+            text="Frequency:",
+            style="InfoTitle.TLabel"
+        ).pack(side="left")
+
+        self.cpu_freq = ttk.Label(
+            freq_row,
+            text=" N/A",
+            style="InfoValue.TLabel"
+        )
+        self.cpu_freq.pack(side="left")
 
         # CPU Clock
         clock_frame_top = ttk.LabelFrame(info_row, text="⬆ Highest CPU Clock (GHz)", padding=10)

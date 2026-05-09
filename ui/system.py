@@ -31,7 +31,7 @@ def get_cpu_model():
 def refresh_system_info(self):
     import psutil
 
-    self.os_label.config(text=f"OS: {platform.system()} {platform.release()}")
+    self.os_label.config(text=f" {platform.system()} {platform.release()}")
 
     try:
         freq = psutil.cpu_freq()
@@ -40,16 +40,14 @@ def refresh_system_info(self):
         ram_gb = psutil.virtual_memory().total / 1024**3
         cpu_model = get_cpu_model()
 
-        self.cores_label.config(text=f"CPU Cores: {psutil.cpu_count(logical=False)}")
-        self.threads_label.config(text=f"CPU Threads: {psutil.cpu_count(logical=True)}")
-        self.cpu_freq.config(text=f"CPU Freq.: {min_ghz:.3f}-{max_ghz:.3f} GHz")
-        self.model_label.config(text=f"CPU Model: {cpu_model}")
+        self.cores_label.config(text=f" {psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}")
+        self.cpu_freq.config(text=f" {min_ghz:.3f}-{max_ghz:.3f} GHz")
+        self.model_label.config(text=f" {cpu_model}")
 
     except ImportError:
-        self.cores_label.config(text="CPU Cores: N/A (install psutil)")
-        self.threads_label.config(text="CPU Threads: N/A")
-        self.cpu_freq.config(text="CPU Freq.: N/A")
-        self.model_label.config(text=f"CPU Model: N/A")
+        self.cores_label.config(text=" N/A (install psutil)")
+        self.cpu_freq.config(text=" N/A")
+        self.model_label.config(text=f" N/A")
 
     try:
         with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
@@ -57,7 +55,7 @@ def refresh_system_info(self):
     except:
         governor = "N/A"
 
-    self.governor_label.config(text=f"CPU Governor: {governor}")
+    self.governor_label.config(text=f" {governor}")
 
 def full_reset(self):
     try:
