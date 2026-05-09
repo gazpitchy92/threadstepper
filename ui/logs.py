@@ -143,7 +143,7 @@ def log_message(self, message, tag="info"):
 def open_output_window(self):
     window = tk.Toplevel(self.root)
     window.title("Test Output")
-    window.geometry("1000x700")
+    window.geometry("775x675")
     window.resizable(True, True)
 
     container = ttk.Frame(window, padding=10)
