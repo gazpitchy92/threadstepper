@@ -3,18 +3,18 @@
 # Print single-core config
 print_single_info() {
     DISPLAY_CORE=$(get_display_core)
-    echo "◫ Testing Single Core $DISPLAY_CORE [$CORE_GROUP]"
+    echo "error ◫ Testing Single Core $DISPLAY_CORE [$CORE_GROUP] for ${SINGLE_DURATION_PRINT}"
 }
 
 # Print multi-core config
 print_multi_info() {
-    echo "▦ Testing All Cores"
+    echo "error ▦ Testing All Cores for ${MULTI_DURATION_PRINT}"
 }
 
 # Save results
 save_results() {
-    local single_score=$((single / DURATION / 1000))
-    local multi_score=$((multi / DURATION / 1000))
+    local single_score=$((single / SINGLE_DURATION / 1000))
+    local multi_score=$((multi / MULTI_DURATION / 1000))
     local timestamp=$(date +"%d %b %H:%M")
     echo "${BASE_CORE},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
     tail -n 5 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
@@ -35,4 +35,12 @@ median() {
 # Parse core number from threads
 get_display_core() {
     echo "$CORE_GROUP" | tr ' ' '\n' | sort -n | head -n 1
+}
+
+# format printing time
+format_time() {
+  local t=$1
+  local m=$((t / 60))
+  local s=$((t % 60))
+  printf "%02d:%02d" "$m" "$s"
 }
