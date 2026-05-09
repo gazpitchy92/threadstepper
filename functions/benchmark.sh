@@ -86,5 +86,5 @@ timestamp=$(date +"%d %b %H:%M")
 echo "$(tput setaf 4)Single Core: $((single / DURATION / 1000))$(tput sgr0)"
 echo "$(tput setaf 4)Multi Core: $((multi / DURATION / 1000))$(tput sgr0)"
 
-echo "$((single / DURATION / 1000)),$((multi / DURATION / 1000)),${timestamp}" >> "$OUTPUT_LOG"
+echo "${BEST},$((single / DURATION / 1000)),$((multi / DURATION / 1000)),${timestamp}" >> "$OUTPUT_LOG"
 tail -n 5 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
