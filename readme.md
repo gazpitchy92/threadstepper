@@ -5,15 +5,14 @@ A stability and stress testing tool for AMD Curve Optimizer and PBO on Linux. De
 
 Most stress tests (mprime, systester, y-cruncher, etc.) apply a continuous, predictable load across all cores at the same time. This works well for thermal testing, but it can miss instability that appears during normal use, especially when undervolting.
 
-## Latest Updates - Version 3.5
+## Latest Updates - Version 3.6
 
 - Replaced 7z and Stress-ng with our own testing engine
 - Browser (WebGL) tests no longer require ungoogled-chromium
 - Improved UI and simplified settings
-- Improved error detection accuracy (show failed cores)
-- Added CPU topology detection
+- Improved core failure and error detection
 - Simplified core/thread selection
-- Added a new benchmarking tool
+- New benchmarking tool
 
 ### To-Do List
 
@@ -46,8 +45,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 ### CPU Load examples
 
-#### High Load
-- **All Core Test**
+#### All Cores
 
 ![full](https://i.ibb.co/cKCKc3wh/Screenshot-20260501-223547.png)
 
@@ -111,9 +109,9 @@ Default settings work for most users.
 
 **Test Runs**: How many times to run the entire test suite.
 
-**High Load**: Tests that apply an all-core load.
-- **All Core Time**: How long each CPU load level is sustained.
-- **All Core Tests**: How many times to repeat the all-core tests.
+**All Cores**: Tests that apply an all-core load.
+- **Time**: How long each CPU load level is sustained.
+- **Tests**: How many times to repeat the all-core tests.
 
 **Low Load**: Tests that apply a reduced load across cores.
 - **Rapid Tests**: How many times to run the rapid test, which applies a brief load to each core in sequence.
@@ -122,7 +120,7 @@ Default settings work for most users.
 - **Rand Time**: How long the random load is applied per core.
 
 **Single Core**: Tests that cycle through each core individually with varying load levels.
-- **Low Time**: How long to test each core at low load [20%-40%]. 
+- **Low Time**: How long to test each core at low load [10%-40%]. 
 - **Medium Time**: How long to test each core at medium load [50%-70%].
 - **High Time**: How long to test each core at high load [80%-100%].
 

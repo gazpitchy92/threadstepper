@@ -167,7 +167,7 @@ def open_core_picker(self):
                 def toggle():
                     new_state = not btn_vars[t_id].get()
                     btn_vars[t_id].set(new_state)
-                    b.config(bootstyle="success-outline" if new_state else "danger-outline")
+                    b.config(bootstyle="success-outline" if new_state else "danger")
                 return toggle
 
             btn.config(command=make_toggle(thread_id, btn))
