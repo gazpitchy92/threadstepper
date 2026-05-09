@@ -45,29 +45,41 @@ Tests individual cores and thread groups in sequence rather than loading all cor
 Uses 3D WebGL browser tests to generate unpredictable background activity during testing. Mimics real usage patterns where undervolts typically fail.
 
 **Test Patterns**  
-Cycles through different load combinations on each core and thread group, with configurable durations for low/medium/high workloads and rest periods between tests.
+Cycles through different load combinations on each core and thread group, with configurable durations for low/medium/high workloads.
 
 ## Screenshots
 
 ![running](https://i.ibb.co/wrNJdVxK/Screenshot-20260508-232048.png)
+
+### Error Detection
 ![errors](https://i.ibb.co/5hmdxBVb/Screenshot-20260508-232333-1.png)
+
+### WebGL Tests
 ![browser](https://i.ibb.co/zTT4LvRG/Screenshot-20260509-003545-1.png)
 
 ### CPU Load examples
 
-- Full core test
+#### High Load
+- **All Core Test**
 
 ![full](https://i.ibb.co/cKCKc3wh/Screenshot-20260501-223547.png)
 
-- Single core test (both threads)
+#### Single Core
+- **Low**
 
-![pairs](https://i.ibb.co/BKsNJBNY/Screenshot-20260501-223108.png)
+![low](https://i.ibb.co/JWKq5XbL/s-low.png)
+- **Medium**
 
-- Random test
+![medium](https://i.ibb.co/N6byGwNH/Screenshot-20260509-024326.png)
+- **High**
+
+![high](https://i.ibb.co/4R57V25Z/s-high.png)
+
+#### Low Load
+- **Rand Test**
 
 ![random](https://i.ibb.co/3th93hd/random.png)
-
-- Rapid load test
+- **Rapid Test**
 
 ![rapid](https://i.ibb.co/2YL2hKf0/rapid.png)
 
@@ -76,6 +88,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 - python 3
 - electron41 (or above)
+- journalctl
 
 ## Installation
 
