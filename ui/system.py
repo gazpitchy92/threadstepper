@@ -82,14 +82,23 @@ def full_reset(self):
     update_error_status(self)
 
 def on_close(self):
-    if self.is_running and self.process:
-        self.process.terminate()
-        self.process = None
-    full_reset(self)
-    clear_current_test(self)
-    self.stop_stress_test()
-    self.root.destroy()
-
+    try:
+        subprocess.run(["pkill", "-f", "threadstepper"])
+        subprocess.run(["pkill", "-f", "logger.sh"])
+        subprocess.run(["pkill", "-f", "bash -c"])
+        subprocess.run(["pkill", "-f", "load_test.sh"])
+        subprocess.run(["pkill", "-f", "load_worker.sh"])
+        subprocess.run(["pkill", "-f", "launch.js"])
+        if self.is_running and self.process:
+            self.process.terminate()
+            self.process = None
+        full_reset(self)
+        clear_current_test(self)
+        self.stop_stress_test()
+        self.root.destroy()
+    except Exception as e:
+        log_message(self, f"Error stop_stress_test: {str(e)}", "error")
+    
 def detect_cpu_topology(settings_path="./settings"):
     import re
 

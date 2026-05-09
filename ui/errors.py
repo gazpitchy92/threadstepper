@@ -128,8 +128,12 @@ def update_error_status(self):
                 try:
                     subprocess.run(["pkill", "-f", "threadstepper"])
                     subprocess.run(["pkill", "-f", "logger.sh"])
+                    subprocess.run(["pkill", "-f", "bash -c"])
+                    subprocess.run(["pkill", "-f", "load_test.sh"])
+                    subprocess.run(["pkill", "-f", "load_worker.sh"])
+                    subprocess.run(["pkill", "-f", "launch.js"])
                 except Exception as e:
-                    log_message(self, f"Error killing logger.sh: {str(e)}", "error")
+                    log_message(self, f"Error stop_stress_test: {str(e)}", "error")
 
             if not self.error_log_visible:
                 show_error_log(self)
