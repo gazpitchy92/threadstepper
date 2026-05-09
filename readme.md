@@ -1,17 +1,11 @@
 # Thread Stepper 
 ![icon](https://i.ibb.co/9kmwL1p1/favicon.png)
 
-A stability and stress tester for AMD Curve Optimizer and PBO on Linux.
+A stability and stress testing tool for AMD Curve Optimizer and PBO on Linux. Designed for testing undervolting and boost stability, where conventional stress tests can miss instability.
 
-Designed specifically for testing undervolting and boost stability, where conventional stress tests often fail.
+Most stress tests (mprime, systester, y-cruncher, etc.) apply a continuous, predictable load across all cores at the same time. This works well for thermal testing, but it can miss instability that appears during normal use, especially when undervolting.
 
 ## Latest Updates - Version 3.4
-
-Recent updates have focused on removing most third-party dependencies.
-
-Instead of relying on 7-Zip and stress-ng, we have written our own stress engine, giving us much more control. In principle, this allows us to load a single thread anywhere between 10% and 100%.
-
-The entire UI has also been reworked with significantly more functionality, making it easier for everyone to use while still providing the flexibility experienced overclockers expect.
 
 - Replaced 7z and Stress-ng with our own testing engine
 - Browser (WebGL) tests no longer require ungoogled-chromium
@@ -27,25 +21,19 @@ The entire UI has also been reworked with significantly more functionality, maki
 - Add installer for Flatpak
 - Add benchmark UI to show score history
 
-## Methodology
-
-### Problem with Traditional Stress Tests
-
-Most stress tests (mprime, systester, y-cruncher etc.) apply continuous, predictable load across all cores simultaneously. This is good for thermal testing but misses instabilities that appear during normal use, particularly with undervolting.
-
-### How Thread Stepper Works
+## How Thread Stepper Works
 
 **Variable Load Patterns**  
-Applies low, medium, and high loads in varying durations and rapid transitions. This forces voltage/frequency changes where instability typically occurs.
+Applies low, medium, and high loads with varying durations and rapid transitions. This forces voltage and frequency changes, where instability commonly appears.
 
 **Sequential Core Testing**  
-Tests individual cores and thread groups in sequence rather than loading all cores uniformly. Isolates per-core curve optimizer issues.
+Tests individual cores and thread groups in sequence instead of applying the same load across all cores. This helps isolate per-core Curve Optimizer instability.
 
 **Randomized Background Load**  
-Uses 3D WebGL browser tests to generate unpredictable background activity during testing. Mimics real usage patterns where undervolts typically fail.
+Uses 3D WebGL browser tests to generate unpredictable background activity during testing. This better reflects normal usage patterns, where undervolts are more likely to fail.
 
 **Test Patterns**  
-Cycles through different load combinations on each core and thread group, with configurable durations for low/medium/high workloads.
+Cycles through different load combinations on each core and thread group, with configurable durations for low, medium, and high workloads.
 
 ## Screenshots
 
