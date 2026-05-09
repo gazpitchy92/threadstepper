@@ -91,7 +91,7 @@ class BenchmarkWindow:
         )
 
         self.history_tree.heading("date", text="@ Run Date")
-        self.history_tree.heading("single", text="◫ Single Thread")
+        self.history_tree.heading("single", text="◫ Single Core")
         self.history_tree.heading("multi", text="▦ All Core")
 
         self.history_tree.column("date", width=150, anchor="center", stretch=False)
@@ -161,7 +161,7 @@ class BenchmarkWindow:
         )
 
         self.history_tree.heading("date", text="@ Run Date")
-        self.history_tree.heading("single", text="◫ Single Thread")
+        self.history_tree.heading("single", text="◫ Single Core")
         self.history_tree.heading("multi", text="▦ All Core")
 
         self.history_tree.column("date", width=150, anchor="center", stretch=False)
@@ -187,7 +187,7 @@ class BenchmarkWindow:
         ctrl.columnconfigure(0, weight=1)
         ctrl.columnconfigure(1, weight=1)
 
-        # TOP ROW: Timer only
+        # Timer
         top = ttk.Frame(ctrl)
         top.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 6))
         top.columnconfigure(0, weight=1)
@@ -204,14 +204,14 @@ class BenchmarkWindow:
         )
         self.timer_label.pack(side="right")
 
-        # BOTTOM LEFT: core selector
+        # Core selector
         left = ttk.Frame(ctrl)
         left.grid(row=1, column=0, sticky="w")
 
-        ttk.Label(left, font=("Segoe UI", 8), text="Single Thread:").pack(side="left", padx=(0, 5))
+        ttk.Label(left, font=("Segoe UI", 8), text="Single Core:").pack(side="left", padx=(0, 5))
 
         self.core_var = tk.StringVar(value="Auto")
-        core_options = ["Auto"] + [str(i) for i in range(os.cpu_count())]
+        core_options = ["Auto"] + [str(i) for i in range(max(1, os.cpu_count() // 2))]
 
         self.core_select = ttk.Combobox(
             left,
@@ -222,7 +222,7 @@ class BenchmarkWindow:
         )
         self.core_select.pack(side="left")
 
-        # BOTTOM RIGHT: buttons
+        # Buttons
         right = ttk.Frame(ctrl)
         right.grid(row=1, column=1, sticky="e")
 
@@ -259,7 +259,6 @@ class BenchmarkWindow:
 
     # History
     def _refresh_history(self):
-        """Read the last 5 lines from the log and populate the history treeview."""
         for row in self.history_tree.get_children():
             self.history_tree.delete(row)
 
@@ -273,11 +272,10 @@ class BenchmarkWindow:
             return
 
         for i, line in enumerate(lines):
-            parts = line.split(",", 3)  # Split into 4 parts
+            parts = line.split(",", 3)
             if len(parts) != 4:
                 continue
             core_used, single_score, multi_score, date = parts
-            # Format Single Thread score with core info
             single_display = f"Core {core_used}: {single_score}"
             tag = ("latest",) if i == len(lines) - 1 else ()
             self.history_tree.insert("", "end", values=(date, single_display, multi_score), tags=tag)
@@ -338,8 +336,7 @@ class BenchmarkWindow:
             self.process.wait()
         self.win.destroy()
 
-    # Log drain
-
+    # Logs
     def _reset_log(self):
         if self.is_running:
             return
@@ -372,8 +369,7 @@ class BenchmarkWindow:
         except tk.TclError:
             pass
 
-    # Timer
-
+    # Timers
     def _start_timer(self):
         self.timer_running = True
         self.timer_label.config(fg="#28a745")
