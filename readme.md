@@ -126,7 +126,7 @@ Default settings work for most users.
 - **Medium Time**: How long to test each core at medium load [50%-60%]. (seconds)
 - **High Time**: How long to test each core at high load [90%-100%]. (seconds)
 
-**WebGL Tests**: Repeats the single-core tests with a number of WebGL instances running variable CPU loads in the background.
+**WebGL Tests**: Repeats the single-core tests with a number of WebGL instances running variable CPU loads.
 - **Instances**: How many browser instances to open during each test. (number)
 
 **Advanced Options**
