@@ -60,7 +60,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (3.5)")
+        self.root.title("Thread Stepper (3.6)")
         self.root.geometry("800x953")
         
         self.process = None
@@ -348,11 +348,11 @@ class StressTestGUI:
             ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w", padx=(0, 0), pady=1)
             ttk.Entry(parent, width=6, textvariable=var).grid(row=row, column=1, sticky="w", pady=1)
 
-        # High Load
-        high_frame, high_inner = make_section(settings_inner, "▦ High Load", padding=6)
+        # All Cores
+        high_frame, high_inner = make_section(settings_inner, "▦ All Cores", padding=6)
         high_frame.grid(row=1, column=0, sticky="nsew", padx=(0, 0), pady=(0, 2))
-        make_entry_row(high_inner, "All Core Time", self.all_core_time_var, 0)
-        make_entry_row(high_inner, "All Core Tests", self.all_core_tests_var, 1)
+        make_entry_row(high_inner, "Time", self.all_core_time_var, 0)
+        make_entry_row(high_inner, "Tests", self.all_core_tests_var, 1)
 
         # Low Load
         low_frame, low_inner = make_section(settings_inner, "≡ Low Load", padding=6)
