@@ -48,67 +48,215 @@ class BenchmarkWindow:
         body.grid(row=0, column=0, sticky="nsew")
         body.columnconfigure(0, weight=1)
         body.rowconfigure(0, weight=1)
+        body.rowconfigure(1, weight=1)
 
         # Output log
-        log_frame = ttk.LabelFrame(body, text="◷ Benchmark Output", padding=5)
+        log_frame = ttk.LabelFrame(body, text="◷ Benchmark Output", padding=6)
         log_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 4))
         log_frame.columnconfigure(0, weight=1)
         log_frame.rowconfigure(0, weight=1)
 
         self.output_text = scrolledtext.ScrolledText(
-            log_frame, wrap="char", font=("Segoe UI", 11), height=10, state="disabled"
+            log_frame,
+            wrap="char",
+            font=("Consolas", 10),
+            height=8,
+            state="disabled",
+            relief="flat",
+            borderwidth=0,
         )
+
         self.output_text.grid(row=0, column=0, sticky="nsew")
-        self.output_text.tag_config("error",   foreground="red")
+
+        self.output_text.tag_config("error", foreground="red")
         self.output_text.tag_config("success", foreground="green")
         self.output_text.tag_config("warning", foreground="orange")
-        self.output_text.tag_config("info",    foreground="#17a2b8")
+        self.output_text.tag_config("info", foreground="#17a2b8")
 
         # History table
-        hist_frame = ttk.LabelFrame(body, text="☷ Recent Results", padding=5)
+        hist_frame = ttk.LabelFrame(body, text="☷ Recent Results", padding=6)
         hist_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 4))
+
         hist_frame.columnconfigure(0, weight=1)
+        hist_frame.rowconfigure(0, weight=1)
 
         cols = ("date", "single", "multi")
+
         self.history_tree = ttk.Treeview(
-            hist_frame, columns=cols, show="headings", height=5, selectmode="none"
+            hist_frame,
+            columns=cols,
+            show="headings",
+            height=7,
+            selectmode="none"
         )
-        self.history_tree.heading("date",   text="Date")
-        self.history_tree.heading("single", text="Single Core")
-        self.history_tree.heading("multi",  text="Multi Core")
-        self.history_tree.column("date",   width=280, anchor="w")
-        self.history_tree.column("single", width=90,  anchor="center")
-        self.history_tree.column("multi",  width=90,  anchor="center")
-        self.history_tree.grid(row=0, column=0, sticky="ew")
 
-        # Highlight the last (most recent) row
-        self.history_tree.tag_configure("latest", foreground="#28a745")
+        self.history_tree.heading("date", text="@ Run Date")
+        self.history_tree.heading("single", text="◫ Single Thread")
+        self.history_tree.heading("multi", text="▦ All Core")
 
-        # Controls row
+        self.history_tree.column("date", width=150, anchor="center", stretch=False)
+        self.history_tree.column("single", width=160, anchor="center", stretch=False)
+        self.history_tree.column("multi", width=150, anchor="center", stretch=False)
+
+        self.history_tree.grid(row=0, column=0, sticky="nsew")
+
+        self.history_tree.tag_configure(
+            "latest",
+            foreground="#28a745",
+            font=("Segoe UI", 9, "bold")
+        )
+
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=24, font=("Segoe UI", 9))
+        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+
+    def _build_ui(self):
+        self.win.columnconfigure(0, weight=1)
+        self.win.rowconfigure(0, weight=1)
+
+        body = ttk.Frame(self.win, padding=10)
+        body.grid(row=0, column=0, sticky="nsew")
+
+        body.columnconfigure(0, weight=1)
+        body.rowconfigure(0, weight=1)
+        body.rowconfigure(1, weight=1)
+
+        # Output log
+        log_frame = ttk.LabelFrame(body, text="◷ Benchmark Output", padding=6)
+        log_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 6))
+        log_frame.columnconfigure(0, weight=1)
+        log_frame.rowconfigure(0, weight=1)
+
+        self.output_text = scrolledtext.ScrolledText(
+            log_frame,
+            wrap="char",
+            font=("Consolas", 10),
+            height=8,
+            state="disabled",
+            relief="flat",
+            borderwidth=0,
+        )
+        self.output_text.grid(row=0, column=0, sticky="nsew")
+
+        self.output_text.tag_config("error", foreground="red")
+        self.output_text.tag_config("success", foreground="green")
+        self.output_text.tag_config("warning", foreground="orange")
+        self.output_text.tag_config("info", foreground="#17a2b8")
+
+        # History
+        hist_frame = ttk.LabelFrame(body, text="☷ Recent Results", padding=6)
+        hist_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 6))
+
+        hist_frame.columnconfigure(0, weight=1)
+        hist_frame.rowconfigure(0, weight=1)
+
+        cols = ("date", "single", "multi")
+
+        self.history_tree = ttk.Treeview(
+            hist_frame,
+            columns=cols,
+            show="headings",
+            height=7,
+            selectmode="none"
+        )
+
+        self.history_tree.heading("date", text="@ Run Date")
+        self.history_tree.heading("single", text="◫ Single Thread")
+        self.history_tree.heading("multi", text="▦ All Core")
+
+        self.history_tree.column("date", width=150, anchor="center", stretch=False)
+        self.history_tree.column("single", width=160, anchor="center", stretch=False)
+        self.history_tree.column("multi", width=150, anchor="center", stretch=False)
+
+        self.history_tree.grid(row=0, column=0, sticky="nsew")
+
+        self.history_tree.tag_configure(
+            "latest",
+            foreground="#28a745",
+            font=("Segoe UI", 9, "bold")
+        )
+
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=24, font=("Segoe UI", 9))
+        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+
+        # Controls
         ctrl = ttk.Frame(body)
         ctrl.grid(row=2, column=0, sticky="ew")
+
         ctrl.columnconfigure(0, weight=1)
+        ctrl.columnconfigure(1, weight=1)
+
+        # TOP ROW: Timer only
+        top = ttk.Frame(ctrl)
+        top.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 6))
+        top.columnconfigure(0, weight=1)
 
         self.timer_label = tk.Label(
-            ctrl, text="00:00:00",
+            top,
+            text="00:00:00",
             font=("Segoe UI", 11, "bold"),
-            fg="#28a745", bg="#f0f0f0",
-            relief="sunken", width=9, padx=5,
+            fg="#28a745",
+            bg=self.win.cget("bg"),
+            relief="sunken",
+            width=9,
+            padx=5,
         )
-        self.timer_label.grid(row=0, column=0, sticky="w")
+        self.timer_label.pack(side="right")
 
-        btn_frame = ttk.Frame(ctrl)
-        btn_frame.grid(row=0, column=1, sticky="e")
+        # BOTTOM LEFT: core selector
+        left = ttk.Frame(ctrl)
+        left.grid(row=1, column=0, sticky="w")
 
-        self.start_btn = ttk.Button(btn_frame, text="▶ Start", bootstyle="success", command=self._start)
+        ttk.Label(left, font=("Segoe UI", 8), text="Single Thread:").pack(side="left", padx=(0, 5))
+
+        self.core_var = tk.StringVar(value="Auto")
+        core_options = ["Auto"] + [str(i) for i in range(os.cpu_count())]
+
+        self.core_select = ttk.Combobox(
+            left,
+            textvariable=self.core_var,
+            values=core_options,
+            width=8,
+            state="readonly"
+        )
+        self.core_select.pack(side="left")
+
+        # BOTTOM RIGHT: buttons
+        right = ttk.Frame(ctrl)
+        right.grid(row=1, column=1, sticky="e")
+
+        self.start_btn = ttk.Button(
+            right,
+            text="▶ Start",
+            bootstyle="success",
+            command=self._start
+        )
         self.start_btn.pack(side="left", padx=(0, 4))
 
-        self.stop_btn = ttk.Button(btn_frame, text="⊠ Stop", bootstyle="danger", state="disabled", command=self._stop)
+        self.stop_btn = ttk.Button(
+            right,
+            text="⊠ Stop",
+            bootstyle="danger",
+            state="disabled",
+            command=self._stop
+        )
         self.stop_btn.pack(side="left", padx=(0, 4))
 
-        ttk.Button(btn_frame, text="⇄ Reset", bootstyle="warning-outline", command=self._reset_log).pack(side="left", padx=(0, 4))
+        ttk.Button(
+            right,
+            text="⇄ Reset",
+            bootstyle="warning-outline",
+            command=self._reset_log
+        ).pack(side="left", padx=(0, 4))
 
-        ttk.Button(btn_frame, text="⊗ Close", bootstyle="danger-outline", command=self._close).pack(side="left")
+        ttk.Button(
+            right,
+            text="⊗ Close",
+            bootstyle="danger-outline",
+            command=self._close
+        ).pack(side="left")
+
     # History
     def _refresh_history(self):
         """Read the last 5 lines from the log and populate the history treeview."""
@@ -125,12 +273,14 @@ class BenchmarkWindow:
             return
 
         for i, line in enumerate(lines):
-            parts = line.split(",", 2)
-            if len(parts) != 3:
+            parts = line.split(",", 3)  # Split into 4 parts
+            if len(parts) != 4:
                 continue
-            single, multi, date = parts
+            core_used, single_score, multi_score, date = parts
+            # Format Single Thread score with core info
+            single_display = f"Core {core_used}: {single_score}"
             tag = ("latest",) if i == len(lines) - 1 else ()
-            self.history_tree.insert("", "end", values=(date, single, multi), tags=tag)
+            self.history_tree.insert("", "end", values=(date, single_display, multi_score), tags=tag)
 
     # Benchmark control
     def _start(self):
@@ -152,8 +302,9 @@ class BenchmarkWindow:
     def _run(self):
         try:
             os.chmod(self.SCRIPT, 0o755)
+            core_value = self.core_var.get()
             self.process = subprocess.Popen(
-                [self.SCRIPT],
+                [self.SCRIPT, core_value],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True, bufsize=1,
