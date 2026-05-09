@@ -17,7 +17,7 @@ def start_benchmark(app):
 
 class BenchmarkWindow:
 
-    SCRIPT = "./functions/benchmark.sh"
+    SCRIPT = "./functions/benchmark/launch.sh"
     LOG_PATH = "./logs/benchmark.log"
 
     def __init__(self, app):
