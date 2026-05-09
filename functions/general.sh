@@ -100,7 +100,7 @@ starLogger() {
 }
 stopLogger() {
     if [[ -f "$current_dir/logs/logger.pid" ]]; then
-        kill "$(cat "$current_dir/logs/logger.pid")"
+        kill "$(cat "$current_dir/logs/logger.pid")" 2>/dev/null
         rm -f "$current_dir/logs/logger.pid"
     fi
 }
