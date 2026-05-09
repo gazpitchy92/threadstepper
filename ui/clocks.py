@@ -3,17 +3,12 @@ import time
 import tkinter as tk
 from tkinter import messagebox
 
-from ui.logs import log_message
-
 def reset_clock_speed(self):
     try:
         with open("./logs/clock.log", 'w') as f:
             f.write("0")
         update_clock_speed(self)
-        log_message(self, "Clock speed reset to 0", "info")
-        self.status_bar.config(text="Clock speed reset to 0")
     except Exception as e:
-        log_message(self, f"Error resetting clock speed: {str(e)}", "error")
         messagebox.showerror("Error", f"Failed to reset clock speed: {str(e)}")
 
 def monitor_clock_speed(self):

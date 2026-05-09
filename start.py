@@ -17,7 +17,8 @@ from ui.system import (
     refresh_system_info,
     full_reset,
     on_close,
-    detect_cpu_topology
+    detect_cpu_topology,
+    reset_button
 )
 from ui.options import (
     parse_settings_options,
@@ -59,7 +60,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (3.0)")
+        self.root.title("Thread Stepper (3.1)")
         self.root.geometry("800x1060")
         
         self.process = None
@@ -156,12 +157,12 @@ class StressTestGUI:
         labels_frame = ttk.Frame(system_frame)
         labels_frame.grid(row=0, column=0, sticky="nw")
         self.os_label = ttk.Label(labels_frame, text=f"OS: {platform.system()} {platform.release()}")
+        self.model_label = ttk.Label(labels_frame, text="CPU Model: N/A")
         self.cores_label = ttk.Label(labels_frame, text="CPU Cores: N/A")
         self.threads_label = ttk.Label(labels_frame, text="CPU Threads: N/A")
         self.cpu_freq = ttk.Label(labels_frame, text="CPU Freq.: N/A")
-        self.ram_label = ttk.Label(labels_frame, text="Total RAM: N/A")
         self.governor_label = ttk.Label(labels_frame, text="CPU Governor: N/A")
-        for lbl in [self.os_label, self.cores_label, self.threads_label, self.cpu_freq, self.ram_label, self.governor_label]:
+        for lbl in [self.os_label, self.model_label, self.cores_label, self.threads_label, self.cpu_freq, self.governor_label]:
             lbl.pack(anchor="w", pady=(0, 2))
         sys_btn_frame = ttk.Frame(system_frame)
         sys_btn_frame.grid(row=1, column=0, sticky="e", pady=(5, 0))
@@ -357,7 +358,7 @@ class StressTestGUI:
         self.start_button.pack(side="left", padx=2)
         self.stop_button = ttk.Button(control_frame, text="⊠ Stop", state="disabled", style="Uniform.TButton", command=self.stop_stress_test)
         self.stop_button.pack(side="left", padx=2)
-        ttk.Button(control_frame, text="⇄ Reset", bootstyle="success-outline", command=lambda: clear_output(self)).pack(side="left", padx=2)
+        ttk.Button(control_frame, text="⇄ Reset", bootstyle="success-outline", command=lambda: reset_button(self)).pack(side="left", padx=2)
         ttk.Button(
             control_frame,
             text="⎘ View Logs",

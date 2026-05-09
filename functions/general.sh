@@ -83,9 +83,11 @@ cleanup() {
         stopLogger
         stop_stressor
         kill_phase
-        pkill load_worker.sh
         stopBrowserTest
         pkill -f "launch.js"
+        pkill -f "bash -c"
+        pkill -f "load_test.sh"
+        pkill -f "load_worker.sh"
         exit
     fi
 }
