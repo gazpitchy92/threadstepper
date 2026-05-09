@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 _STRESS_PIDS=()
 
 _calc_prng() {
@@ -9,7 +8,6 @@ _calc_prng() {
     done
     echo $x
 }
-
 _calc_sum() {
     local x=0
     for ((i=1; i<=100000; i++)); do
@@ -17,7 +15,6 @@ _calc_sum() {
     done
     echo $x
 }
-
 _calc_div() {
     local x=2147483647
     for ((i=1; i<=100000; i++)); do
@@ -26,12 +23,11 @@ _calc_div() {
     done
     echo $x
 }
-
-export -f _calc_prng _calc_sum _calc_bitwise _calc_div
+export -f _calc_prng _calc_sum _calc_div
 
 _stress_worker() {
     local worker_index=$1
-
+    local mode=${2:-high}
     local calcs=(
         "prng:1866790773"
         "sum:1864924624"
@@ -43,24 +39,49 @@ _stress_worker() {
     local cpu
     cpu=$(taskset -cp $$ 2>/dev/null | awk -F': ' '{print $2}')
 
-    while true; do
+    _do_work() {
         local result
         result=$(bash -c "_calc_${name}")
         if [[ "$result" -ne "$expected" ]]; then
             logger -p err "Thread Stepper: arithmetic error [$name] on CPU $cpu — expected $expected, got $result"
         fi
-    done
+    }
+
+    case $mode in
+        low)
+            while true; do
+                local busy_until=$(( $(date +%s%3N) + 200 ))
+                while (( $(date +%s%3N) < busy_until )); do
+                    _do_work
+                done
+                sleep 0.80
+            done
+            ;;
+        medium)
+            while true; do
+                local busy_until=$(( $(date +%s%3N) + 550 ))
+                while (( $(date +%s%3N) < busy_until )); do
+                    _do_work
+                done
+                sleep 0.45
+            done
+            ;;
+        high)
+            while true; do
+                _do_work
+            done
+            ;;
+    esac
 }
 export -f _stress_worker
 
-
 start_stressor() {
     local cores_list=$1
+    local mode=${2:-high}
     local thread_count
     thread_count=$(echo "$cores_list" | tr ',' '\n' | wc -l)
-
     for ((c=0; c<thread_count; c++)); do
-        taskset -c "$cores_list" bash -c "_stress_worker $c" &
+        taskset -c "$cores_list" bash -c "_stress_worker $c $mode" &
         _STRESS_PIDS+=($!)
     done
 }

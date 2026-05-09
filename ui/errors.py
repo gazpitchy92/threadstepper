@@ -1,6 +1,8 @@
 import os
 import time
+import subprocess
 import tkinter as tk
+from datetime import datetime
 
 from ui.logs import log_message, clear_current_test, set_current_test
 
@@ -115,6 +117,12 @@ def update_error_status(self):
         self.error_status = status
 
         if self.error_status:
+            subprocess.run([
+                "notify-send",
+                "Thread Stepper",
+                "-u", "critical",
+                f"Errors detected at {datetime.now().strftime('%H:%M:%S')}"
+            ])
             self.error_indicator.config(
                 text="ERRORS DETECTED ✘",
                 bg='#f8d7da',
