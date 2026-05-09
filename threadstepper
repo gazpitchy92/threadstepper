@@ -51,32 +51,32 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         echo "$(tput setaf 5)Starting loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
     fi
 
-    # # ------ High Load tests ------
-    # # All core test
-    # for ((all_core_counter=1; all_core_counter<=all_core_tests; all_core_counter++)); do
-    #     update_progress "All Core ${all_core_counter}/${all_core_tests}" $loop_counter $loops 
-    #     allCoreTest
-    #     check_errors
-    #     rest
-    # done
+    # ------ High Load tests ------
+    # All core test
+    for ((all_core_counter=1; all_core_counter<=all_core_tests; all_core_counter++)); do
+        update_progress "All Core ${all_core_counter}/${all_core_tests}" $loop_counter $loops 
+        allCoreTest
+        check_errors
+        rest
+    done
 
-    # # ------ Low Load tests ------
-    # # Rapid tests
-    # for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
-    #     echo "$(tput setaf 4)Running rapid test "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
-    #     update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
-    #     rapidTest
-    #     check_errors
-    #     rest
-    # done
-    # # Random core tests
-    # for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
-    #     echo "$(tput setaf 4)Running random test "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
-    #     update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
-    #     randomStress
-    #     check_errors
-    #     rest
-    # done
+    # ------ Low Load tests ------
+    # Rapid tests
+    for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
+        echo "$(tput setaf 4)Running rapid test "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
+        rapidTest
+        check_errors
+        rest
+    done
+    # Random core tests
+    for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
+        echo "$(tput setaf 4)Running random test "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
+        randomStress
+        check_errors
+        rest
+    done
 
     # ------ Signle Core tests ------
     for ((core=start_core; core<=END_CORE; core++)); do
