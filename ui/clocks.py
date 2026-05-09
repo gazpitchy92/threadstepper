@@ -8,7 +8,6 @@ def reset_clock_speed(self):
         with open("./logs/clock.log", 'w') as f:
             f.write("0")
         update_clock_speed(self)
-        self.status_bar.config(text="Clock speed reset to 0")
     except Exception as e:
         messagebox.showerror("Error", f"Failed to reset clock speed: {str(e)}")
 
