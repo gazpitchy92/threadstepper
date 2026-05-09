@@ -60,10 +60,7 @@ def light_mode(self):
     
     self.root.configure(bg=bg_light)
     self.output_text.configure(bg=entry_bg, fg=fg_light, insertbackground=fg_light)
-    self.error_text.configure(bg=entry_bg, fg=fg_light, insertbackground=fg_light)
     self.clock_label_top.configure(bg="#e8f4f8", fg="#17a2b8")
-    self.clock_label_bottom.configure(bg="#e8f4f8", fg="#17a2b8")
-    self.error_indicator.configure(bg="#d4edda", fg="#155724")
     self.timer_label.configure(bg="#f0f0f0", fg="#28a745")
     self.header_label.configure(bg=bg_light, fg=fg_light)
 
