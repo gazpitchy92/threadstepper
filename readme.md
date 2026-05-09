@@ -125,22 +125,22 @@ Default settings work for most users.
 **Test Runs**: How many times to run the entire test suite.
 
 **High Load**: Tests that apply an all-core load.
-- **All Core Time**: How long each CPU load level is sustained. (seconds)
-- **All Core Tests**: How many times to repeat the all-core tests. (number)
+- **All Core Time**: How long each CPU load level is sustained.
+- **All Core Tests**: How many times to repeat the all-core tests.
 
 **Low Load**: Tests that apply a reduced load across cores.
-- **Rapid Tests**: How many times to run the rapid test, which applies a brief load to each core in sequence. (number)
-- **Rapid Time**: How long the rapid load is applied per core. (seconds)
-- **Rand Tests**: How many times to run the random test, which applies a light load to random threads. (number)
-- **Rand Time**: How long the random load is applied per core. (seconds)
+- **Rapid Tests**: How many times to run the rapid test, which applies a brief load to each core in sequence.
+- **Rapid Time**: How long the rapid load is applied per core.
+- **Rand Tests**: How many times to run the random test, which applies a light load to random threads.
+- **Rand Time**: How long the random load is applied per core.
 
 **Single Core**: Tests that cycle through each core individually with varying load levels.
-- **Low Time**: How long to test each core at low load [10%-20%]. (seconds)
-- **Medium Time**: How long to test each core at medium load [50%-60%]. (seconds)
-- **High Time**: How long to test each core at high load [90%-100%]. (seconds)
+- **Low Time**: How long to test each core at low load [20%-40%]. 
+- **Medium Time**: How long to test each core at medium load [50%-70%].
+- **High Time**: How long to test each core at high load [80%-100%].
 
 **WebGL Tests**: Repeats the single-core tests with a number of WebGL instances running variable CPU loads.
-- **Instances**: How many browser instances to open during each test. (number)
+- **Instances**: How many browser instances to open during each test.
 
 **Advanced Options**
-- **Rest Time**: How long to pause between test types. (seconds)
+- **Rest Time**: How long to pause between test types.
