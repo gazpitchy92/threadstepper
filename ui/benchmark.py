@@ -295,6 +295,8 @@ class BenchmarkWindow:
         if self.is_running and self.process:
             self.process.terminate()
             self.process.wait()
+
+        self.app.benchmark_window_open = False
         self.win.destroy()
 
     # Logs

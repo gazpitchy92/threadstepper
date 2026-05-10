@@ -69,13 +69,11 @@ class StressTestGUI:
         self.process = None
         self.is_running = False
         self.benchmark_mode = False
+        self.benchmark_window_open = False
         self.log_queue = queue.Queue()
-
         self.output_windows = []
-        
         self.error_status = False
         self.error_log_visible = False
-        
         self.timer_running = False
         self.timer_seconds = 0
         self.timer_thread = None
@@ -95,8 +93,17 @@ class StressTestGUI:
         )
         return bool(result.stdout.strip())
 
+    def open_benchmark_window(self):
+        if self.benchmark_window_open:
+            return
 
-        
+        if self.is_running:
+            log_message(self, "Cannot open benchmark while tests are running", "warning")
+            return
+
+        self.benchmark_window_open = True
+        start_benchmark(self)
+            
     def setup_ui(self):
 
         def make_section(parent, title, **kwargs):
@@ -154,8 +161,8 @@ class StressTestGUI:
         button_frame = ttk.Frame(header_frame)
         button_frame.pack(side="right")
 
-        self.dark_mode_btn = ttk.Button(button_frame, text="☾ Dark Mode", bootstyle="info", command=lambda: toggle_dark_mode(self))
-        self.dark_mode_btn.pack(side="left", padx=(0, 5))
+        self.dark_mode_btn = ttk.Button(button_frame, text="☾ Dark Mode", bootstyle="info-outline", command=lambda: toggle_dark_mode(self))
+        self.dark_mode_btn.pack(side="left", padx=(0, 10))
 
         self.install_dep_btn = ttk.Button(button_frame, text="⌂ Install Dependencies", bootstyle="info", 
             command=lambda: install_dependencies(self))
@@ -221,7 +228,7 @@ class StressTestGUI:
             sys_btn_frame,
             text="◷ Benchmark",
             bootstyle="primary-outline",
-            command=lambda: start_benchmark(self)
+            command=self.open_benchmark_window
         ).grid(row=0, column=0, sticky="ew", padx=(0, 2))
 
         ttk.Button(
@@ -547,6 +554,8 @@ class StressTestGUI:
             time.sleep(0.5)
 
     def start_stress_test(self):
+        if self.benchmark_window_open:
+            return
         if self.is_running:
             return
             
