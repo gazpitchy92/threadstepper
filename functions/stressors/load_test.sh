@@ -1,9 +1,8 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKER="$SCRIPT_DIR/load_worker.sh"
+WORKER="$(dirname "$CURRENT_DIR")/functions/stressors/load_worker.sh"
 chmod +x "$WORKER"
-
 PHASE_PIDS=()
 
 run_phase() {

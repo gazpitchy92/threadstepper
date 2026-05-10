@@ -20,9 +20,9 @@ source "$(dirname "$CURRENT_DIR")/benchmark/cpu.sh"
 source "$(dirname "$CURRENT_DIR")/benchmark/output.sh"
 source "$(dirname "$CURRENT_DIR")/benchmark/tests.sh"
 
+# ------ Calculate Times
 # Rest time
 REST_DURATION=$(( bm_rest_duration ))
-
 # All Core
 MULTI_DURATION=$(( bm_all_duration ))
 MULTI_RUNS=$(( bm_all_tests ))
@@ -32,7 +32,6 @@ MULTI_DURATION_ESTIMATE=$(( (TOTAL_MULTI_DURATION + MULTI_REST_DURATION) ))
 MULTI_DURATION_PRINT=$(printf "%dm %02ds" \
   "$(( MULTI_DURATION_ESTIMATE / 60 ))" \
   "$(( MULTI_DURATION_ESTIMATE % 60 ))")
-
 # Single Core
 SINGLE_DURATION=$(( bm_single_duration ))
 SINGLE_RUNS=$(( bm_single_tests ))
@@ -42,19 +41,18 @@ SINGLE_DURATION_ESTIMATE=$(( (TOTAL_SINGLE_DURATION + SINGLE_REST_DURATION) ))
 SINGLE_DURATION_PRINT=$(printf "%dm %02ds" \
   "$(( SINGLE_DURATION_ESTIMATE / 60 ))" \
   "$(( SINGLE_DURATION_ESTIMATE % 60 ))")
-
 # Time calculations
 TOTAL_RUNS=$(( SINGLE_RUNS + MULTI_RUNS ))
 TOTAL_REST_DURATION=$(( TOTAL_RUNS * REST_DURATION ))
 TOTAL_DURATION_SECONDS=$(( TOTAL_REST_DURATION + TOTAL_SINGLE_DURATION + TOTAL_MULTI_DURATION ))
-
 # Total time output
 mins=$(( TOTAL_DURATION_SECONDS / 60 ))
 secs=$(( (TOTAL_DURATION_SECONDS % 60) - (1) ))
 echo "info Benchmark started at $(date +%H:%M:%S)"
 echo "info This will take approx. ${mins}m ${secs}s"
+# ------------
 
-# ---------------- MAIN ----------------
+# ------ Main
 notify-send "Thread Stepper" "Benchmark started at $(date +%H:%M:%S)"
 select_core
 resolve_threads
@@ -65,3 +63,4 @@ run_multi
 save_results
 echo "info Benchmark finished at $(date +%H:%M:%S)"
 notify-send "Thread Stepper" "Benchmark finished at $(date +%H:%M:%S)"
+# ------------
