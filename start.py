@@ -13,7 +13,7 @@ from tkinter import PhotoImage, filedialog, messagebox, scrolledtext, ttk
 import ttkbootstrap as tb
 from PIL import Image, ImageTk
 from ttkbootstrap.constants import *
-from ui.benchmark import start_benchmark
+from ui.benchmark.main_window import start_benchmark
 from ui.clocks import monitor_clock_speed, update_clock_speed
 from ui.core_picker import open_core_picker
 from ui.dependencies import install_dependencies
@@ -92,13 +92,11 @@ class StressTestGUI:
     def open_benchmark_window(self):
         if self.benchmark_window_open:
             return
-
         if self.is_running:
             log_message(
                 self, "Cannot open benchmark while tests are running", "warning"
             )
             return
-
         self.benchmark_window_open = True
         start_benchmark(self)
 
@@ -746,6 +744,23 @@ class StressTestGUI:
         threading.Thread(target=self.monitor_process_status, daemon=True).start()
         threading.Thread(target=monitor_current_test, args=(self,), daemon=True).start()
         threading.Thread(target=monitor_temperature, args=(self,), daemon=True).start()
+        threading.Thread(target=self.periodic_rank_killer, daemon=True).start()
+    
+    def periodic_rank_killer(self):
+        while True:
+            if not self.benchmark_window_open:
+                result = subprocess.run(
+                    ["pgrep", "-f", "rank.sh"],
+                    capture_output=True
+                )
+                if result.returncode == 0:
+                    subprocess.run(["pkill", "-9", "-f", "rank.sh"], stderr=subprocess.DEVNULL)
+            time.sleep(1)
+
+    def kill_rank_processes(self):
+        while not self.benchmark_window_open:
+            subprocess.run(["pkill", "-9", "-f", "./functions/benchmark/rank.sh"], stderr=subprocess.DEVNULL)
+            time.sleep(0.1)
 
     def monitor_process_status(self):
         while True:

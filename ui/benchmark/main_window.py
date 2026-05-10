@@ -6,9 +6,10 @@ import time
 import tkinter as tk
 from datetime import datetime
 from tkinter import scrolledtext, ttk
-
 import ttkbootstrap as tb
 
+from ui.benchmark.testing import build_benchmark_tab
+from ui.benchmark.ranking import build_core_ranks_tab
 
 def start_benchmark(app):
     BenchmarkWindow(app)
@@ -43,149 +44,25 @@ class BenchmarkWindow:
         self.win.columnconfigure(0, weight=1)
         self.win.rowconfigure(0, weight=1)
 
-        body = ttk.Frame(self.win, padding=10)
-        body.grid(row=0, column=0, sticky="nsew")
+        self.notebook = ttk.Notebook(self.win)
+        self.notebook.grid(row=0, column=0, sticky="nsew")
+        self.notebook.bind("<<NotebookTabChanged>>", self._on_tab_change)
 
-        body.columnconfigure(0, weight=1)
-        body.rowconfigure(0, weight=1)
-        body.rowconfigure(1, weight=1)
+        self.benchmark_tab = ttk.Frame(self.notebook)
+        self.core_ranks_tab = ttk.Frame(self.notebook)
 
-        # Output log
-        log_frame = ttk.LabelFrame(body, text="◷ Benchmark Output", padding=6)
-        log_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 6))
-        log_frame.columnconfigure(0, weight=1)
-        log_frame.rowconfigure(0, weight=1)
+        self.notebook.add(self.benchmark_tab, text="◷ Benchmark")
+        self.notebook.add(self.core_ranks_tab, text="⚃ Core Rankings")
 
-        self.output_text = scrolledtext.ScrolledText(
-            log_frame,
-            wrap="char",
-            font=("Consolas", 10),
-            height=8,
-            state="disabled",
-            relief="flat",
-            borderwidth=0,
-        )
-        self.output_text.grid(row=0, column=0, sticky="nsew")
+        build_benchmark_tab(self)
+        build_core_ranks_tab(self)
 
-        self.output_text.tag_config("error", foreground="red")
-        self.output_text.tag_config("success", foreground="green")
-        self.output_text.tag_config("warning", foreground="orange")
-        self.output_text.tag_config("info", foreground="#17a2b8")
-        self.output_text.tag_config("debug", foreground="#777777")
-        self.output_text.tag_config("blue", foreground="#4da3ff")
-
-        # History
-        hist_frame = ttk.LabelFrame(body, text="☷ Benchmark History", padding=6)
-        hist_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 6))
-
-        hist_frame.columnconfigure(0, weight=1)
-        hist_frame.rowconfigure(0, weight=1)
-
-        cols = ("date", "single", "multi", "peak", "temp")
-
-        self.history_tree = ttk.Treeview(
-            hist_frame, columns=cols, show="headings", height=7, selectmode="none"
-        )
-
-        self.history_tree.heading("date", text="@ Run Date")
-        self.history_tree.heading("single", text="◫ Single Core")
-        self.history_tree.heading("multi", text="▦ All Core")
-        self.history_tree.heading("peak", text="⬆ Peak Clock")
-        self.history_tree.heading("temp", text="❈ Peak Temp")
-
-        self.history_tree.column("date", width=150, anchor="center", stretch=False)
-        self.history_tree.column("single", width=125, anchor="center", stretch=False)
-        self.history_tree.column("multi", width=125, anchor="center", stretch=False)
-        self.history_tree.column("peak", width=110, anchor="center", stretch=False)
-        self.history_tree.column("temp", width=110, anchor="center", stretch=False)
-
-        scrollbar = ttk.Scrollbar(
-            hist_frame, orient="vertical", command=self.history_tree.yview
-        )
-        self.history_tree.configure(yscrollcommand=scrollbar.set)
-
-        self.history_tree.grid(row=0, column=0, sticky="nsew")
-        scrollbar.grid(row=0, column=1, sticky="ns")
-
-        hist_frame.columnconfigure(1, weight=0)
-
-        self.history_tree.tag_configure(
-            "latest", foreground="#28a745", font=("Segoe UI", 9, "bold")
-        )
-
-        style = ttk.Style()
-        style.configure("Treeview", rowheight=14, font=("Segoe UI", 9))
-        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
-
-        # Controls
-        ctrl = ttk.Frame(body)
-        ctrl.grid(row=2, column=0, sticky="ew")
-
-        ctrl.columnconfigure(0, weight=1)
-        ctrl.columnconfigure(1, weight=1)
-
-        # Timer
-        top = ttk.Frame(ctrl)
-        top.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 6))
-        top.columnconfigure(0, weight=1)
-
-        self.timer_label = tk.Label(
-            top,
-            text="00:00:00",
-            font=("Segoe UI", 11, "bold"),
-            fg="#28a745",
-            bg=self.win.cget("bg"),
-            relief="sunken",
-            width=9,
-            padx=5,
-        )
-        self.timer_label.pack(side="right")
-
-        # Core selector
-        left = ttk.Frame(ctrl)
-        left.grid(row=1, column=0, sticky="w")
-
-        ttk.Label(left, font=("Segoe UI", 8), text="Single Core:").pack(
-            side="left", padx=(0, 5)
-        )
-
-        self.core_var = tk.StringVar(value="Auto")
-        core_options = ["Auto"] + [str(i) for i in range(max(1, os.cpu_count() // 2))]
-
-        self.core_select = ttk.Combobox(
-            left,
-            textvariable=self.core_var,
-            values=core_options,
-            width=8,
-            state="readonly",
-        )
-        self.core_select.pack(side="left")
-
-        # Buttons
-        right = ttk.Frame(ctrl)
-        right.grid(row=1, column=1, sticky="e")
-
-        self.start_btn = ttk.Button(
-            right, text="▶ Start", bootstyle="success", command=self._start
-        )
-        self.start_btn.pack(side="left", padx=(0, 4))
-
-        self.stop_btn = ttk.Button(
-            right,
-            text="⊠ Stop",
-            bootstyle="danger",
-            state="disabled",
-            command=self._stop,
-        )
-        self.stop_btn.pack(side="left", padx=(0, 4))
-
-        ttk.Button(
-            right, text="⇄ Reset", bootstyle="warning-outline", command=self._reset_log
-        ).pack(side="left", padx=(0, 4))
-
-        ttk.Button(
-            right, text="⊗ Close", bootstyle="danger-outline", command=self._close
-        ).pack(side="left")
+    def _on_tab_change(self, event):
+        if self.is_running:
+            self.win.after(0, lambda: self.notebook.select(self.benchmark_tab))
+            return
+        if getattr(self, "_cr_running", False):
+            self.win.after(0, lambda: self.notebook.select(self.core_ranks_tab))
 
     # History
     def _refresh_history(self):
@@ -280,18 +157,28 @@ class BenchmarkWindow:
 
     def _stop(self):
         subprocess.run(["pkill", "-f", "launch.js"])
-        subprocess.run(["pkill", "-f", "bash -c bench"])
+        subprocess.run(["pkill", "-f", "rank.js"])
+        subprocess.run(["pkill", "-f", "bash -c"])
+        subprocess.run(["pkill", "-9", "-f", r"rank\.sh"], check=False)
         if self.process and self.is_running:
             self.process.terminate()
             self._log("Stopping benchmark...", "warning")
 
     def _on_stopped(self):
+        subprocess.run(["pkill", "-f", "launch.js"])
+        subprocess.run(["pkill", "-f", "rank.sh"])
+        subprocess.run(["pkill", "-f", "bash -c"])
+        subprocess.run(["pkill", "-9", "-f", r"rank\.sh"], check=False)
         self._stop_timer()
         self.start_btn.config(state="normal")
         self.stop_btn.config(state="disabled")
         self._refresh_history()
 
     def _close(self):
+        subprocess.run(["pkill", "-f", "launch.js"])
+        subprocess.run(["pkill", "-f", "rank.sh"])
+        subprocess.run(["pkill", "-f", "bash -c"])
+        subprocess.run(["pkill", "-f", "bash.*rank.sh"])
         if self.is_running and self.process:
             self.process.terminate()
             self.process.wait()
