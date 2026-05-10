@@ -29,7 +29,14 @@ log_cpu_temperature() {
     hwmon=$(grep -rl "k10temp" /sys/class/hwmon/hwmon*/name 2>/dev/null | head -n1 | xargs dirname)
     raw=$(<"${hwmon}/temp1_input")
     temperature=$(awk "BEGIN {printf \"%.1f\", $raw / 1000}")
-    echo "$temperature" > "$TEMPERATURE_LOG"
+    if [[ -f "$TEMPERATURE_LOG" ]]; then
+        stored=$(<"$TEMPERATURE_LOG")
+        if awk "BEGIN {exit !($temperature > $stored)}"; then
+            echo "$temperature" > "$TEMPERATURE_LOG"
+        fi
+    else
+        echo "$temperature" > "$TEMPERATURE_LOG"
+    fi
 }
 
 check_for_errors() {
