@@ -35,7 +35,7 @@ def update_clock_speed(self):
 
             if clock_speed:
                 self.clock_label_top.config(
-                    text=clock_speed, fg="#17a2b8", bg="#e8f4f8"
+                    text=f"{clock_speed} GHz", fg="#17a2b8", bg="#e8f4f8"
                 )
             else:
                 self.clock_label_top.config(text="No data", fg="#6c757d", bg="#f8f9fa")
