@@ -30,7 +30,7 @@ class BenchmarkWindow:
 
         self.win = tk.Toplevel(app.root)
         self.win.title("Benchmark")
-        self.win.geometry("700x500")
+        self.win.geometry("720x600")
         self.win.resizable(False, False)
         self.win.protocol("WM_DELETE_WINDOW", self._close)
         self.win.transient(app.root)
@@ -76,7 +76,7 @@ class BenchmarkWindow:
         self.output_text.tag_config("blue", foreground="#4da3ff")
 
         # History
-        hist_frame = ttk.LabelFrame(body, text="☷ Recent Results", padding=6)
+        hist_frame = ttk.LabelFrame(body, text="☷ Benchmark History", padding=6)
         hist_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 6))
 
         hist_frame.columnconfigure(0, weight=1)
@@ -223,15 +223,19 @@ class BenchmarkWindow:
 
         best_single = max((int(p[3]) for p in parsed), default=0)
         best_multi = max((int(p[4]) for p in parsed), default=0)
+        best_clock = max((float(p[1]) for p in parsed), default=0)
+        best_temp = max((float(p[0]) for p in parsed), default=0)
 
         for i, parts in enumerate(parsed):
             peak_temp, peak_ghz, core_used, single_score, multi_score, date = parts
             single_star = "➤ " if int(single_score) == best_single else ""
             multi_star = "➤ " if int(multi_score) == best_multi else ""
+            clock_star = "➤ " if float(peak_ghz) == best_clock else ""
+            temp_star = "➤ " if float(peak_temp) == best_temp else ""
             single_display = f"{single_star}Core {core_used}: {single_score}"
             multi_display = f"{multi_star}{multi_score}"
-            peak_display = f"{peak_ghz} GHz"
-            temp_display = f"{peak_temp}°C"
+            peak_display = f"{clock_star}{peak_ghz} GHz"
+            temp_display = f"{temp_star}{peak_temp}°C"
             tag = ("latest",) if i == 0 else ()
             self.history_tree.insert("", "end", values=(date, single_display, multi_display, peak_display, temp_display), tags=tag)
 

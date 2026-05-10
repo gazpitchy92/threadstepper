@@ -19,6 +19,8 @@ save_results() {
     local display_core=$(get_display_core)
     local peak_ghz=$(awk "BEGIN {printf \"%.2f\", $PEAK_MHZ / 1000000}")
     local peak_c=$(awk "BEGIN {printf \"%.1f\", $PEAK_TEMP / 1000}")
+    echo "Peak Clock was ${peak_ghz}GHz"
+    echo "Peak Temperature was ${peak_ghz}GHz"
     echo "${peak_c},${peak_ghz},${display_core},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
     tail -n 100 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
 }
