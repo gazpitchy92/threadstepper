@@ -7,10 +7,12 @@ import psutil
 from ui.logs import log_message, clear_output, clear_current_test
 from ui.errors import clear_error_log, update_error_log, update_error_status
 from ui.clocks import update_clock_speed, reset_clock_speed
+from ui.temperature import reset_temperature
 
 def reset_button(self):
     clear_output(self)
     reset_clock_speed(self)
+    reset_temperature(self)
     clear_error_log(self)
     refresh_system_info(self)
     log_message(self, "Logs, Clocks and Errors have been reset", "info")
@@ -63,14 +65,14 @@ def full_reset(self):
         subprocess.run(["pkill", "-f", "logger.sh"])
     except Exception as e:
         log_message(self, f"Error killing logger.sh: {str(e)}", "error")
-        
     with open("./logs/errors.log", "w") as f:
         f.write("false")
     with open("./logs/clock.log", "w") as f:
-        f.write("0")
+        f.write("0.0")
+    with open("./logs/temperature.log", "w") as f:
+        f.write("0.0")
     with open("./logs/output.log", "w") as f:
         f.write("-- STARTUP --")
-
     clear_current_test(self)
     clear_error_log(self)
     clear_output(self)

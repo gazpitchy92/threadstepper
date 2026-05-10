@@ -6,8 +6,6 @@ import tkinter as tk
 from tkinter import ttk, filedialog, scrolledtext
 from datetime import datetime
 
-from ui.clocks import reset_clock_speed
-
 def export_log(self, text_widget=None):
     try:
         filename = filedialog.asksaveasfilename(

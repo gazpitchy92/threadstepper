@@ -35,7 +35,6 @@ from ui.errors import (
     update_error_status
 )
 from ui.clocks import (
-    reset_clock_speed,
     monitor_clock_speed,
     update_clock_speed
 )
@@ -48,6 +47,10 @@ from ui.logs import (
     set_current_test,
     process_log_queue,
     open_output_window
+)
+from ui.temperature import (
+    monitor_temperature,
+    update_temperature
 )
 from ui.dependencies import install_dependencies
 from ui.styling import toggle_dark_mode, apply_theme_on_load
@@ -287,7 +290,8 @@ class StressTestGUI:
         self.cpu_freq.pack(side="left")
 
         # CPU Clock
-        clock_frame_top, clock_inner_top = make_section(info_row, "⬆ Highest CPU Clock (GHz)", padding=10)
+        info_row.columnconfigure(2, weight=1)
+        clock_frame_top, clock_inner_top = make_section(info_row, "⬆ Peak Clock", padding=10)
         clock_frame_top.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
         clock_inner_top.columnconfigure(0, weight=1)
         clock_inner_top.rowconfigure(0, weight=1)
@@ -297,9 +301,20 @@ class StressTestGUI:
         )
         self.clock_label_top.grid(row=0, column=0, sticky="nsew")
 
-        # Current Test
+        # Peak Temp
+        temp_frame_top, temp_inner_top = make_section(info_row, "❈ Peak Temp", padding=10)
+        temp_frame_top.grid(row=0, column=2, sticky="nsew", padx=(5, 0))
+        temp_inner_top.columnconfigure(0, weight=1)
+        temp_inner_top.rowconfigure(0, weight=1)
+        self.temp_label_top = tk.Label(
+            temp_inner_top, text="N/A", font=("Segoe UI", 11, "bold"),
+            fg="#17a2b8", bg="#e8f4f8", relief="raised", padx=10, pady=4
+        )
+        self.temp_label_top.grid(row=0, column=0, sticky="nsew")
+
+        # Current Action — spans columns 1 and 2
         clock_frame_bottom, clock_inner_bottom = make_section(info_row, "◇ Current Action", padding=10)
-        clock_frame_bottom.grid(row=1, column=1, sticky="nsew", padx=(5, 0))
+        clock_frame_bottom.grid(row=1, column=1, columnspan=2, sticky="nsew", padx=(5, 0))
         clock_inner_bottom.columnconfigure(0, weight=1)
         clock_inner_bottom.rowconfigure(0, weight=1)
         self.clock_label_bottom = tk.Label(
@@ -397,7 +412,7 @@ class StressTestGUI:
 
         cores_frame, cores_inner = make_section(bottom_settings, "∼ Enabled Threads", padding=6)
         cores_frame.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
-        ttk.Button(cores_inner, text="⚙ Select Threads", bootstyle="primary-outline",
+        ttk.Button(cores_inner, text="⚙ Configure", bootstyle="primary-outline",
             command=lambda: open_core_picker(self)).grid(row=0, column=0, sticky="w")
 
         # Advanced Options toggle
@@ -563,6 +578,7 @@ class StressTestGUI:
         threading.Thread(target=process_log_queue, args=(self,), daemon=True).start()
         threading.Thread(target=self.monitor_process_status, daemon=True).start()
         threading.Thread(target=monitor_current_test, args=(self,), daemon=True).start()
+        threading.Thread(target=monitor_temperature, args=(self,), daemon=True).start() 
 
     def monitor_process_status(self):
         while True:
