@@ -35,11 +35,11 @@ Cycles through different load combinations on each core and thread group, with c
 
 ## Screenshots
 
-![running](https://i.ibb.co/hFKxvVRr/Screenshot-20260509-235857-1.png)
+![running](https://i.ibb.co/kgNmWwp7/Screenshot-20260510-065718-1.png)
 
 ### Error Detection
 
-![errors](https://i.ibb.co/7tq4092X/Screenshot-20260509-235922-1.png)
+![errors](https://i.ibb.co/vFzz9LF/Screenshot-20260510-065850-1.png)
 
 ### Benchmarking (all core and individual cores)
 
