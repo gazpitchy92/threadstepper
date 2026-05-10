@@ -61,7 +61,7 @@ class StressTestGUI:
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (3.8)")
-        self.root.geometry("800x953")
+        self.root.geometry("800x952")
         
         self.process = None
         self.is_running = False
@@ -444,7 +444,7 @@ class StressTestGUI:
 
         # Buttons
         control_frame = ttk.Frame(main_container)
-        control_frame.grid(row=6, column=0, sticky="e", pady=(0, 4))
+        control_frame.grid(row=6, column=0, sticky="ew", pady=(0, 4))
         style = ttk.Style()
         style.configure(
             "Uniform.TButton",
@@ -465,11 +465,11 @@ class StressTestGUI:
             pady=0
         )
 
-        self.timer_label.pack(side="left", padx=(0, 2), fill="y")
-
+        self.timer_label.pack(side="left", padx=(20, 2), fill="y")
+        ttk.Frame(control_frame).pack(side="left", fill="x", expand=True)
         runs_frame = ttk.Frame(control_frame)
         runs_frame.pack(side="left", padx=(0, 6))
-        ttk.Label(runs_frame, text="Runs", font=("Segoe UI", 9)).pack(side="left", padx=(0, 4))
+        ttk.Label(runs_frame, text="Test Runs", font=("Segoe UI", 9)).pack(side="left", padx=(0, 4))
         ttk.Spinbox(runs_frame, from_=1, to=999, width=5, textvariable=self.loops_var).pack(side="left")
 
         self.start_button = ttk.Button(
@@ -479,7 +479,7 @@ class StressTestGUI:
             command=self.start_stress_test
         )
 
-        self.start_button.pack(side="left", padx=1)
+        self.start_button.pack(side="left", padx=(5,0))
 
         self.stop_button = ttk.Button(
             control_frame,
@@ -489,21 +489,21 @@ class StressTestGUI:
             command=self.stop_stress_test
         )
 
-        self.stop_button.pack(side="left", padx=1)
+        self.stop_button.pack(side="left", padx=(5,0))
 
         ttk.Button(
             control_frame,
             text="⇄ Reset",
             bootstyle="warning-outline",
             command=lambda: reset_button(self)
-        ).pack(side="left", padx=1)
+        ).pack(side="left", padx=(5,0))
 
         ttk.Button(
             control_frame,
             text="⎘ View Logs",
             bootstyle="primary-outline",
             command=lambda: open_output_window(self)
-        ).pack(side="left", padx=1)
+        ).pack(side="left", padx=(5,20))
 
         # Status bar
         status_frame = ttk.Frame(main_container)
@@ -511,11 +511,11 @@ class StressTestGUI:
         status_frame.columnconfigure(0, weight=1)
         status_frame.columnconfigure(1, weight=0)
         self.status_bar = ttk.Label(status_frame, text="Ready", relief="sunken")
-        self.status_bar.grid(row=0, column=0, sticky="ew", padx=(0, 0))
+        self.status_bar.grid(row=0, column=0, sticky="ew", padx=(20, 20))
         style.configure("Green.Horizontal.TProgressbar", troughcolor="#e0e0e0", background="#28a745")
         style.map("Green.Horizontal.TProgressbar", background=[("active", "#28a745"), ("!active", "#28a745")])
         self.progress = ttk.Progressbar(status_frame, style="Green.Horizontal.TProgressbar", mode="determinate", length=419)
-        self.progress.grid(row=0, column=1, sticky="ew")
+        self.progress.grid(row=0, column=1, sticky="ew", padx=(5, 20))
         self.progress.grid_remove()
 
         self.setup_styles()
