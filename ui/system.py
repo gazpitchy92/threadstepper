@@ -1,19 +1,23 @@
 import os
 import platform
-import subprocess
 import re
-import psutil
+import subprocess
 
-from ui.logs import log_message, clear_output, clear_current_test
+import psutil
+from ui.clocks import reset_clock_speed, update_clock_speed
 from ui.errors import clear_error_log, update_error_log, update_error_status
-from ui.clocks import update_clock_speed, reset_clock_speed
+from ui.logs import clear_current_test, clear_output, log_message
+from ui.temperature import reset_temperature
+
 
 def reset_button(self):
     clear_output(self)
     reset_clock_speed(self)
+    reset_temperature(self)
     clear_error_log(self)
     refresh_system_info(self)
     log_message(self, "Logs, Clocks and Errors have been reset", "info")
+
 
 def get_cpu_model():
     with open("/proc/cpuinfo") as f:
@@ -28,6 +32,7 @@ def get_cpu_model():
                 return name.strip()
     return "Unknown"
 
+
 def refresh_system_info(self):
     import psutil
 
@@ -40,7 +45,9 @@ def refresh_system_info(self):
         ram_gb = psutil.virtual_memory().total / 1024**3
         cpu_model = get_cpu_model()
 
-        self.cores_label.config(text=f" {psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}")
+        self.cores_label.config(
+            text=f" {psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}"
+        )
         self.cpu_freq.config(text=f" {min_ghz:.3f}-{max_ghz:.3f} GHz")
         self.model_label.config(text=f" {cpu_model}")
 
@@ -57,20 +64,21 @@ def refresh_system_info(self):
 
     self.governor_label.config(text=f" {governor}")
 
+
 def full_reset(self):
     try:
         subprocess.run(["pkill", "-f", "threadstepper"])
         subprocess.run(["pkill", "-f", "logger.sh"])
     except Exception as e:
         log_message(self, f"Error killing logger.sh: {str(e)}", "error")
-        
     with open("./logs/errors.log", "w") as f:
         f.write("false")
     with open("./logs/clock.log", "w") as f:
-        f.write("0")
+        f.write("0.0")
+    with open("./logs/temperature.log", "w") as f:
+        f.write("0.0")
     with open("./logs/output.log", "w") as f:
         f.write("-- STARTUP --")
-
     clear_current_test(self)
     clear_error_log(self)
     clear_output(self)
@@ -78,6 +86,7 @@ def full_reset(self):
     update_clock_speed(self)
     update_error_log(self)
     update_error_status(self)
+
 
 def on_close(self):
     try:
@@ -96,7 +105,8 @@ def on_close(self):
         self.root.destroy()
     except Exception as e:
         log_message(self, f"Error stop_stress_test: {str(e)}", "error")
-    
+
+
 def detect_cpu_topology(settings_path="./settings"):
     import re
 
@@ -134,8 +144,12 @@ def detect_cpu_topology(settings_path="./settings"):
         for i in range(half_cores):
             core_a, core_b = sorted_cores[i], sorted_cores[i + half_cores]
             cpu_a, cpu_b = core_to_first_cpu[core_a], core_to_first_cpu[core_b]
-            sib_path_a = f"/sys/devices/system/cpu/cpu{cpu_a}/topology/thread_siblings_list"
-            sib_path_b = f"/sys/devices/system/cpu/cpu{cpu_b}/topology/thread_siblings_list"
+            sib_path_a = (
+                f"/sys/devices/system/cpu/cpu{cpu_a}/topology/thread_siblings_list"
+            )
+            sib_path_b = (
+                f"/sys/devices/system/cpu/cpu{cpu_b}/topology/thread_siblings_list"
+            )
             try:
                 with open(sib_path_a) as f:
                     sib_a = set()
@@ -179,7 +193,7 @@ def detect_cpu_topology(settings_path="./settings"):
                     adj_matches += 1
 
         cross_ratio = (cross_matches * 100 // cross_checks) if cross_checks else 0
-        adj_ratio   = (adj_matches * 100 // adj_checks)   if adj_checks   else 0
+        adj_ratio = (adj_matches * 100 // adj_checks) if adj_checks else 0
 
         if cross_ratio >= 80:
             topology = 1
@@ -194,7 +208,12 @@ def detect_cpu_topology(settings_path="./settings"):
             with open(settings_path, "r") as f:
                 content = f.read()
             if re.search(r"^cpu_topology=", content, re.MULTILINE):
-                content = re.sub(r"^cpu_topology=.*", f"cpu_topology={topology}", content, flags=re.MULTILINE)
+                content = re.sub(
+                    r"^cpu_topology=.*",
+                    f"cpu_topology={topology}",
+                    content,
+                    flags=re.MULTILINE,
+                )
             else:
                 content += f"\ncpu_topology={topology}"
             with open(settings_path, "w") as f:

@@ -5,14 +5,14 @@ A stability and stress testing tool for AMD Curve Optimizer and PBO on Linux. De
 
 Most stress tests (mprime, systester, y-cruncher, etc.) apply a continuous, predictable load across all cores at the same time. This works well for thermal testing, but it can miss instability that appears during normal use, especially when undervolting.
 
-## Latest Updates - Version 3.6
+## Latest Updates - Version 3.8
 
 - Replaced 7z and Stress-ng with our own testing engine
 - Browser (WebGL) tests no longer require ungoogled-chromium
 - Improved UI and simplified settings
 - Improved core failure and error detection
 - Simplified core/thread selection
-- New benchmarking tool
+- New benchmarking and core ranking tool
 
 ### To-Do List
 
@@ -35,15 +35,15 @@ Cycles through different load combinations on each core and thread group, with c
 
 ## Screenshots
 
-![running](https://i.ibb.co/hFKxvVRr/Screenshot-20260509-235857-1.png)
+![running](https://i.ibb.co/kgNmWwp7/Screenshot-20260510-065718-1.png)
 
 ### Error Detection
 
-![errors](https://i.ibb.co/7tq4092X/Screenshot-20260509-235922-1.png)
+![errors](https://i.ibb.co/vFzz9LF/Screenshot-20260510-065850-1.png)
 
-### Benchmarking (all core and individual cores)
+### Benchmarking and Core Ranking
 
-![benchmark](https://i.ibb.co/BHXxCB0G/Screenshot-20260509-235622-1.png)
+![benchmark](https://i.ibb.co/wNdLrDCY/benchy.png)
 
 ### WebGL Tests
 

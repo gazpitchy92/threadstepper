@@ -10,9 +10,9 @@ def open_core_picker(self):
     # Find CPU topology
     try:
         import subprocess
+
         result = subprocess.run(
-            ["lscpu", "--parse=CPU,CORE"],
-            capture_output=True, text=True
+            ["lscpu", "--parse=CPU,CORE"], capture_output=True, text=True
         )
         for line in result.stdout.splitlines():
             if line.startswith("#") or not line.strip():
@@ -36,7 +36,11 @@ def open_core_picker(self):
                         current_processor = int(line.split(":")[1].strip())
                     elif line.startswith("core id"):
                         current_core = int(line.split(":")[1].strip())
-                    elif line == "" and current_processor is not None and current_core is not None:
+                    elif (
+                        line == ""
+                        and current_processor is not None
+                        and current_core is not None
+                    ):
                         topology.setdefault(current_core, []).append(current_processor)
                         current_processor = None
                         current_core = None
@@ -75,7 +79,9 @@ def open_core_picker(self):
     # Parse existing blacklist
     current = self.core_blacklist_var.get()
     try:
-        blacklisted = {int(x.strip()) for x in current.split(",") if x.strip().isdigit()}
+        blacklisted = {
+            int(x.strip()) for x in current.split(",") if x.strip().isdigit()
+        }
     except ValueError:
         blacklisted = set()
 
@@ -122,8 +128,7 @@ def open_core_picker(self):
     grid_frame = ttk.Frame(canvas, padding=(2, 0))
 
     grid_frame.bind(
-        "<Configure>",
-        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
     )
     canvas.create_window((0, 0), window=grid_frame, anchor="nw")
     canvas.configure(yscrollcommand=scrollbar.set)
@@ -135,17 +140,21 @@ def open_core_picker(self):
     btn_vars = {}
 
     for grid_row, (core_id, threads) in enumerate(sorted(topology.items())):
-        # Core separator row
+        # Core row
         sep_frame = ttk.Frame(grid_frame)
         sep_frame.grid(
-            row=grid_row * 2, column=0, columnspan=THREAD_COLS,
-            sticky="ew", padx=4, pady=(10 if grid_row > 0 else 4, 3)
+            row=grid_row * 2,
+            column=0,
+            columnspan=THREAD_COLS,
+            sticky="ew",
+            padx=4,
+            pady=(10 if grid_row > 0 else 4, 3),
         )
         ttk.Label(
             sep_frame,
             text=f"  CORE {core_id}",
-            font=("Segoe UI", 11, "bold"),
-            foreground="#aaaaaa",
+            font=("Segoe UI", 10, "bold"),
+            foreground="#000000",
         ).pack(side="left")
         ttk.Separator(sep_frame, orient="horizontal").pack(
             side="left", fill="x", expand=True, padx=(6, 0), pady=1
@@ -168,6 +177,7 @@ def open_core_picker(self):
                     new_state = not btn_vars[t_id].get()
                     btn_vars[t_id].set(new_state)
                     b.config(bootstyle="success-outline" if new_state else "danger")
+
                 return toggle
 
             btn.config(command=make_toggle(thread_id, btn))
@@ -186,16 +196,25 @@ def open_core_picker(self):
     footer.pack(fill="x")
 
     ttk.Button(
-        footer, text="✔ Confirm", bootstyle="success-outline", width=12,
+        footer,
+        text="✔ Confirm",
+        bootstyle="success-outline",
+        width=12,
         command=lambda: [
             self.core_blacklist_var.set(
-                ",".join(str(t) for t in sorted(k for k, v in btn_vars.items() if not v.get()))
+                ",".join(
+                    str(t)
+                    for t in sorted(k for k, v in btn_vars.items() if not v.get())
+                )
             ),
-            win.destroy()
-        ]
+            win.destroy(),
+        ],
     ).pack(side="right", padx=(4, 0))
 
     ttk.Button(
-        footer, text="⊗ Close", bootstyle="danger-outline", width=12,
-        command=win.destroy
+        footer,
+        text="⊗ Close",
+        bootstyle="danger-outline",
+        width=12,
+        command=win.destroy,
     ).pack(side="right")

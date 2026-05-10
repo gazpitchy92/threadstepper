@@ -4,13 +4,15 @@
 CURRENT_DIR=$(pwd)
 ERROR_LOG="$CURRENT_DIR/logs/errors.log"
 CLOCK_LOG="$CURRENT_DIR/logs/clock.log"
+TEMPERATURE_LOG="$CURRENT_DIR/logs/temperature.log"
 START_TIME=$(date +%s)
 
 mkdir -p "$CURRENT_DIR/logs"
-echo "0" > "$CLOCK_LOG"
+echo "0.0" > "$CLOCK_LOG"
+echo "0.0" > "$TEMPERATURE_LOG"
 echo "false" > "$ERROR_LOG"
 
-loggerCpuClock() {
+log_cpu_clock() {
   max=0
   for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; do
     v=$(<"$f")
@@ -23,7 +25,14 @@ loggerCpuClock() {
   }
 }
 
-loggerErrorCheck() {
+log_cpu_temperature() {
+    hwmon=$(grep -rl "k10temp" /sys/class/hwmon/hwmon*/name 2>/dev/null | head -n1 | xargs dirname)
+    raw=$(<"${hwmon}/temp1_input")
+    temperature=$(awk "BEGIN {printf \"%.1f\", $raw / 1000}")
+    echo "$temperature" > "$TEMPERATURE_LOG"
+}
+
+check_for_errors() {
   LOG_PRIORITY="err"
   EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave" "electron" "udev")
 
@@ -64,7 +73,8 @@ loggerErrorCheck() {
 }
 
 while :; do
-  loggerCpuClock
-  loggerErrorCheck
+  log_cpu_clock
+  log_cpu_temperature
+  check_for_errors
   sleep 2
 done
