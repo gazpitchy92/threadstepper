@@ -17,7 +17,9 @@ save_results() {
     local multi_score=$((multi / MULTI_DURATION / 1000))
     local timestamp=$(date +"%d %b %H:%M")
     local display_core=$(get_display_core)
-    echo "${display_core},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
+    local peak_ghz=$(awk "BEGIN {printf \"%.2f\", $PEAK_MHZ / 1000000}")
+    local peak_c=$(awk "BEGIN {printf \"%.1f\", $PEAK_TEMP / 100}")
+    echo "${peak_c},${peak_ghz},${display_core},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
     tail -n 7 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
 }
 
@@ -33,15 +35,15 @@ median() {
     fi
 }
 
-# Parse core number from threads
+# Get core from threads
 get_display_core() {
     echo "$CORE_GROUP" | tr ' ' '\n' | sort -n | head -n 1
 }
 
 # format printing time
 format_time() {
-  local t=$1
-  local m=$((t / 60))
-  local s=$((t % 60))
-  printf "%02d:%02d" "$m" "$s"
+    local t=$1
+    local m=$((t / 60))
+    local s=$((t % 60))
+    printf "%02d:%02d" "$m" "$s"
 }
