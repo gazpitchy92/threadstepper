@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
+
 # Init vars
+source "$(dirname "$CURRENT_DIR")/settings"
 NCPU=$(nproc)
 CORES_COUNT=$(( NCPU / 2 ))
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,34 +21,27 @@ source "$(dirname "$CURRENT_DIR")/benchmark/output.sh"
 source "$(dirname "$CURRENT_DIR")/benchmark/tests.sh"
 
 # Rest time
-REST_DURATION=2
+REST_DURATION=$(( bm_rest_duration ))
 
 # All Core
-# MULTI_DURATION=$(( 15 ))
-MULTI_DURATION=$(( 10 ))
-# MULTI_RUNS=$(( CORES_COUNT ))
-MULTI_RUNS=$(( 2 ))
+MULTI_DURATION=$(( bm_all_duration ))
+MULTI_RUNS=$(( bm_all_tests ))
 MULTI_REST_DURATION=$(( MULTI_RUNS * REST_DURATION ))
 TOTAL_MULTI_DURATION=$(( MULTI_DURATION * MULTI_RUNS ))
 MULTI_DURATION_ESTIMATE=$(( (TOTAL_MULTI_DURATION + MULTI_REST_DURATION) ))
 MULTI_DURATION_PRINT=$(printf "%dm %02ds" \
   "$(( MULTI_DURATION_ESTIMATE / 60 ))" \
   "$(( MULTI_DURATION_ESTIMATE % 60 ))")
-echo "debug All core duration: ${MULTI_DURATION}$(tput sgr0)"
-echo "debug All core tests: ${MULTI_RUNS}$(tput sgr0)"
 
 # Single Core
-SINGLE_DURATION=$(( TOTAL_MULTI_DURATION / ((CORES_COUNT +1) * (2)) ))
-# SINGLE_RUNS=$(( CORES_COUNT * 2 ))
-SINGLE_RUNS=$(( 2 ))
+SINGLE_DURATION=$(( bm_single_duration ))
+SINGLE_RUNS=$(( bm_single_tests ))
 SINGLE_REST_DURATION=$(( SINGLE_RUNS * REST_DURATION ))
 TOTAL_SINGLE_DURATION=$(( SINGLE_DURATION * SINGLE_RUNS ))
 SINGLE_DURATION_ESTIMATE=$(( (TOTAL_SINGLE_DURATION + SINGLE_REST_DURATION) ))
 SINGLE_DURATION_PRINT=$(printf "%dm %02ds" \
   "$(( SINGLE_DURATION_ESTIMATE / 60 ))" \
   "$(( SINGLE_DURATION_ESTIMATE % 60 ))")
-echo "debug Single core duration:  ${SINGLE_DURATION}"
-echo "debug Single core tests: ${SINGLE_RUNS}"
 
 # Time calculations
 TOTAL_RUNS=$(( SINGLE_RUNS + MULTI_RUNS ))
@@ -55,7 +50,7 @@ TOTAL_DURATION_SECONDS=$(( TOTAL_REST_DURATION + TOTAL_SINGLE_DURATION + TOTAL_M
 
 # Total time output
 mins=$(( TOTAL_DURATION_SECONDS / 60 ))
-secs=$(( TOTAL_DURATION_SECONDS % 60 ))
+secs=$(( (TOTAL_DURATION_SECONDS % 60) - (1) ))
 echo "info Benchmark started at $(date +%H:%M:%S)"
 echo "info This will take approx. ${mins}m ${secs}s"
 
