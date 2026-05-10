@@ -63,3 +63,21 @@ resolve_threads() {
     CPUS=$(to_taskset "$CORE_GROUP")
     CORE_COUNT=$(echo $CORE_GROUP | wc -w)
 }
+
+# Sample cpu clock
+get_clock_mhz() {
+    local max=0
+    for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq; do
+        local v=$(<"$f")
+        (( v > max )) && max=$v
+    done
+    echo "$max"
+}
+
+# Sample cpu temp
+get_cpu_temp() {
+    local hwmon
+    hwmon=$(grep -rl "k10temp" /sys/class/hwmon/hwmon*/name 2>/dev/null | head -n1 | xargs dirname)
+    local raw=$(<"${hwmon}/temp1_input")
+    echo "$raw"
+}

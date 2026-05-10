@@ -21,6 +21,79 @@ runTests(){
     fi
 }
 
+# All core test
+all_core_tests() {
+    for ((all_core_counter=1; all_core_counter<=all_core_tests; all_core_counter++)); do
+        update_progress "All Core ${all_core_counter}/${all_core_tests}" $loop_counter $loops 
+        allCoreTest
+        check_errors
+        rest
+    done
+}
+
+# Rapid tests
+rapid_tests() {
+    for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
+        echo "$(tput setaf 4)Running rapid test "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
+        rapidTest
+        check_errors
+        rest
+    done
+}
+
+# Rand tests
+rand_tests() {
+    for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
+        echo "$(tput setaf 4)Running random test "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
+        update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
+        randomStress
+        check_errors
+        rest
+    done
+}
+
+single_core_tests() {
+    for ((core=start_core; core<=END_CORE; core++)); do
+        ELAPSED=$((SECONDS - START_TIME))
+        ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
+        core_second=$((core + PHYSICAL_CORES))
+        core_next=$((core + 1))
+        core_last=$((core_second + 1))
+
+        if [[ ",$cpu_topology," == *"0"* ]]; then
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next + $core_second + $core_last] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"1"* ]]; then
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_second] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"2"* ]]; then
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+
+        rest
+        runTests "$core"
+
+        ELAPSED=$((SECONDS - START_TIME))
+        ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
+        HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
+
+        if [[ ",$cpu_topology," == *"0"* ]]; then
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next + $core_second + $core_last] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"1"* ]]; then
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_second] of [core $core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        if [[ ",$cpu_topology," == *"2"* ]]; then
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+        fi
+        
+        echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
+        check_errors
+        rest
+    done
+}
+
 # Updates progress file for UI
 update_progress(){ 
     local test=$1

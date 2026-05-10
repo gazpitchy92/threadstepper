@@ -94,7 +94,7 @@ cleanup() {
 # keep a log of the highest CPU clock
 starLogger() {
     current_dir=$(pwd)
-    bash "$current_dir/logs/logger.sh" &
+    bash "$current_dir/functions/logger.sh" &
     echo $! > "$current_dir/logs/logger.pid"
 }
 stopLogger() {

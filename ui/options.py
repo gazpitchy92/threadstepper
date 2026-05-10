@@ -5,6 +5,7 @@ from tkinter import ttk
 
 from ui.logs import log_message
 
+
 def parse_settings_options(self, content):
     for line in content.splitlines():
         if line.startswith("loops="):
@@ -37,23 +38,28 @@ def parse_settings_options(self, content):
         elif line.startswith("max_ram="):
             self.max_ram_var.set(int(line.split("=")[1]))
 
+
 def validate_core_blacklist(self, value):
     if value == "":
         return True
     return bool(re.fullmatch(r"\d+(,\d+)*", value))
 
+
 def update_settings_content(self):
     try:
         if os.path.exists("./settings"):
-            with open("./settings", 'r') as f:
+            with open("./settings", "r") as f:
                 content = f.read()
                 parse_settings_options(self, content)
                 self.root.update_idletasks()  # Force UI refresh
             self.status_bar.config(text="Settings loaded successfully")
         else:
-            self.status_bar.config(text="settings not found - create it to configure your test")
+            self.status_bar.config(
+                text="settings not found - create it to configure your test"
+            )
     except Exception as e:
         log_message(self, f"Error loading settings: {str(e)}", "error")
+
 
 def save_settings(self):
     try:
@@ -107,6 +113,7 @@ def save_settings(self):
     except Exception as e:
         log_message(self, f"Error saving settings: {str(e)}", "error")
 
+
 def register_settings_traces(self):
     self.settings_dirty = False
 
@@ -116,9 +123,19 @@ def register_settings_traces(self):
             self.unsaved_label.config(text="⚠ Unsaved changes")
 
     for var in [
-        self.loops_var, self.browsers_var, self.light_time_var, self.medium_time_var,
-        self.heavy_time_var, self.all_core_time_var, self.all_core_tests_var, self.rapid_tests_var, self.rapid_time_var,
-        self.random_tests_var, self.random_time_var, self.rest_time_var, self.max_ram_var,
-        self.core_blacklist_var
+        self.loops_var,
+        self.browsers_var,
+        self.light_time_var,
+        self.medium_time_var,
+        self.heavy_time_var,
+        self.all_core_time_var,
+        self.all_core_tests_var,
+        self.rapid_tests_var,
+        self.rapid_time_var,
+        self.random_tests_var,
+        self.random_time_var,
+        self.rest_time_var,
+        self.max_ram_var,
+        self.core_blacklist_var,
     ]:
         var.trace_add("write", on_setting_changed)
