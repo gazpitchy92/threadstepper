@@ -1,14 +1,13 @@
 import os
+import queue
 import subprocess
 import threading
-import tkinter as tk
-from tkinter import scrolledtext
-import queue
 import time
+import tkinter as tk
 from datetime import datetime
+from tkinter import scrolledtext, ttk
 
 import ttkbootstrap as tb
-from tkinter import ttk
 
 
 def start_benchmark(app):
@@ -85,11 +84,7 @@ class BenchmarkWindow:
         cols = ("date", "single", "multi", "peak", "temp")
 
         self.history_tree = ttk.Treeview(
-            hist_frame,
-            columns=cols,
-            show="headings",
-            height=7,
-            selectmode="none"
+            hist_frame, columns=cols, show="headings", height=7, selectmode="none"
         )
 
         self.history_tree.heading("date", text="@ Run Date")
@@ -104,7 +99,9 @@ class BenchmarkWindow:
         self.history_tree.column("peak", width=110, anchor="center", stretch=False)
         self.history_tree.column("temp", width=110, anchor="center", stretch=False)
 
-        scrollbar = ttk.Scrollbar(hist_frame, orient="vertical", command=self.history_tree.yview)
+        scrollbar = ttk.Scrollbar(
+            hist_frame, orient="vertical", command=self.history_tree.yview
+        )
         self.history_tree.configure(yscrollcommand=scrollbar.set)
 
         self.history_tree.grid(row=0, column=0, sticky="nsew")
@@ -113,9 +110,7 @@ class BenchmarkWindow:
         hist_frame.columnconfigure(1, weight=0)
 
         self.history_tree.tag_configure(
-            "latest",
-            foreground="#28a745",
-            font=("Segoe UI", 9, "bold")
+            "latest", foreground="#28a745", font=("Segoe UI", 9, "bold")
         )
 
         style = ttk.Style()
@@ -150,7 +145,9 @@ class BenchmarkWindow:
         left = ttk.Frame(ctrl)
         left.grid(row=1, column=0, sticky="w")
 
-        ttk.Label(left, font=("Segoe UI", 8), text="Single Core:").pack(side="left", padx=(0, 5))
+        ttk.Label(left, font=("Segoe UI", 8), text="Single Core:").pack(
+            side="left", padx=(0, 5)
+        )
 
         self.core_var = tk.StringVar(value="Auto")
         core_options = ["Auto"] + [str(i) for i in range(max(1, os.cpu_count() // 2))]
@@ -160,7 +157,7 @@ class BenchmarkWindow:
             textvariable=self.core_var,
             values=core_options,
             width=8,
-            state="readonly"
+            state="readonly",
         )
         self.core_select.pack(side="left")
 
@@ -169,10 +166,7 @@ class BenchmarkWindow:
         right.grid(row=1, column=1, sticky="e")
 
         self.start_btn = ttk.Button(
-            right,
-            text="▶ Start",
-            bootstyle="success",
-            command=self._start
+            right, text="▶ Start", bootstyle="success", command=self._start
         )
         self.start_btn.pack(side="left", padx=(0, 4))
 
@@ -181,22 +175,16 @@ class BenchmarkWindow:
             text="⊠ Stop",
             bootstyle="danger",
             state="disabled",
-            command=self._stop
+            command=self._stop,
         )
         self.stop_btn.pack(side="left", padx=(0, 4))
 
         ttk.Button(
-            right,
-            text="⇄ Reset",
-            bootstyle="warning-outline",
-            command=self._reset_log
+            right, text="⇄ Reset", bootstyle="warning-outline", command=self._reset_log
         ).pack(side="left", padx=(0, 4))
 
         ttk.Button(
-            right,
-            text="⊗ Close",
-            bootstyle="danger-outline",
-            command=self._close
+            right, text="⊗ Close", bootstyle="danger-outline", command=self._close
         ).pack(side="left")
 
     # History
@@ -237,7 +225,18 @@ class BenchmarkWindow:
             peak_display = f"{clock_star}{peak_ghz} GHz"
             temp_display = f"{temp_star}{peak_temp}°C"
             tag = ("latest",) if i == 0 else ()
-            self.history_tree.insert("", "end", values=(date, single_display, multi_display, peak_display, temp_display), tags=tag)
+            self.history_tree.insert(
+                "",
+                "end",
+                values=(
+                    date,
+                    single_display,
+                    multi_display,
+                    peak_display,
+                    temp_display,
+                ),
+                tags=tag,
+            )
 
     # Benchmark control
     def _start(self):
@@ -265,7 +264,8 @@ class BenchmarkWindow:
                 [self.SCRIPT, core_value],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                text=True, bufsize=1,
+                text=True,
+                bufsize=1,
             )
             for line in self.process.stdout:
                 if line:
@@ -317,7 +317,7 @@ class BenchmarkWindow:
         self._refresh_history()
         self._log("Benchmark history cleared.", "warning")
 
-    ANSI_ESCAPE = __import__('re').compile(r'\x1b[\[\(][0-9;]*[A-Za-z]|\x1b[^[\(]')
+    ANSI_ESCAPE = __import__("re").compile(r"\x1b[\[\(][0-9;]*[A-Za-z]|\x1b[^[\(]")
 
     def _log(self, message, tag="plain"):
         self.log_queue.put((tag, message))
@@ -326,7 +326,7 @@ class BenchmarkWindow:
         try:
             while True:
                 tag, msg = self.log_queue.get_nowait()
-                msg = self.ANSI_ESCAPE.sub('', msg)
+                msg = self.ANSI_ESCAPE.sub("", msg)
                 lower = msg.lower()
                 if lower.startswith("debug "):
                     tag = "debug"
@@ -338,7 +338,9 @@ class BenchmarkWindow:
                     tag = "error"
                     msg = msg[6:]
                 self.output_text.config(state="normal")
-                self.output_text.insert("end", msg + "\n", tag if tag != "plain" else "")
+                self.output_text.insert(
+                    "end", msg + "\n", tag if tag != "plain" else ""
+                )
                 self.output_text.see("end")
                 self.output_text.config(state="disabled")
         except queue.Empty:

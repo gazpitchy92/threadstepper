@@ -3,6 +3,7 @@ import time
 TEMP_LOG = "./logs/temperature.log"
 POLL_INTERVAL = 2
 
+
 def read_temperature():
     try:
         with open(TEMP_LOG, "r") as f:
@@ -13,6 +14,7 @@ def read_temperature():
         return f"{val:.0f}°C"
     except (FileNotFoundError, ValueError):
         return "N/A"
+
 
 def update_temperature(app):
     temp_str = read_temperature()
@@ -25,22 +27,22 @@ def update_temperature(app):
         elif val >= 80:
             fg, bg = "#ffffff", "#e67e00"
         elif val >= 65:
-            fg, bg = "#856404", "#fff3cd" 
+            fg, bg = "#856404", "#fff3cd"
         else:
             fg, bg = "#155724", "#d4edda"
 
-    app.root.after(0, lambda: app.temp_label_top.config(
-        text=temp_str, fg=fg, bg=bg
-    ))
+    app.root.after(0, lambda: app.temp_label_top.config(text=temp_str, fg=fg, bg=bg))
+
 
 def monitor_temperature(app):
     while True:
         update_temperature(app)
         time.sleep(POLL_INTERVAL)
 
+
 def reset_temperature(self):
     try:
-        with open(TEMP_LOG, 'w') as f:
+        with open(TEMP_LOG, "w") as f:
             f.write("0.0")
         update_clock_speed(self)
     except Exception as e:
