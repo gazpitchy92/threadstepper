@@ -47,7 +47,7 @@ TOTAL_REST_DURATION=$(( TOTAL_RUNS * REST_DURATION ))
 TOTAL_DURATION_SECONDS=$(( TOTAL_REST_DURATION + TOTAL_SINGLE_DURATION + TOTAL_MULTI_DURATION ))
 # Total time output
 mins=$(( TOTAL_DURATION_SECONDS / 60 ))
-secs=$(( (TOTAL_DURATION_SECONDS % 60) - (1) ))
+secs=$(( TOTAL_DURATION_SECONDS % 60 ))
 echo "info Benchmark started at $(date +%H:%M:%S)"
 echo "info This will take approx. ${mins}m ${secs}s"
 # ------------
