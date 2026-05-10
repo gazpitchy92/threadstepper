@@ -60,7 +60,7 @@ class StressTestGUI:
         
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (3.7)")
+        self.root.title("Thread Stepper (3.8)")
         self.root.geometry("800x953")
         
         self.process = None
@@ -253,21 +253,21 @@ class StressTestGUI:
 
         # Buttons
         sys_btn_frame = ttk.Frame(system_inner)
-        sys_btn_frame.grid(row=3, column=0, sticky="e", pady=(2, 0))
+        sys_btn_frame.grid(row=3, column=0, sticky="w", pady=(2, 0))
 
         ttk.Button(
             sys_btn_frame,
             text="◷ Benchmark",
             bootstyle="primary-outline",
             command=lambda: start_benchmark(self)
-        ).pack(side="right", padx=2)
+        ).pack(side="left", padx=(0,5))
 
         ttk.Button(
             sys_btn_frame,
             text="↻ Refresh",
             bootstyle="info-outline",
             command=lambda: refresh_system_info(self)
-        ).pack(side="right", padx=20)
+        ).pack(side="left", padx=(0, 20))
 
         # Frequency
         freq_row = ttk.Frame(cpu_info_frame)

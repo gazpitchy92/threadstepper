@@ -135,7 +135,7 @@ def open_core_picker(self):
     btn_vars = {}
 
     for grid_row, (core_id, threads) in enumerate(sorted(topology.items())):
-        # Core separator row
+        # Core row
         sep_frame = ttk.Frame(grid_frame)
         sep_frame.grid(
             row=grid_row * 2, column=0, columnspan=THREAD_COLS,
@@ -144,8 +144,8 @@ def open_core_picker(self):
         ttk.Label(
             sep_frame,
             text=f"  CORE {core_id}",
-            font=("Segoe UI", 11, "bold"),
-            foreground="#aaaaaa",
+            font=("Segoe UI", 10, "bold"),
+            foreground="#000000",
         ).pack(side="left")
         ttk.Separator(sep_frame, orient="horizontal").pack(
             side="left", fill="x", expand=True, padx=(6, 0), pady=1
