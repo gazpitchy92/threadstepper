@@ -101,8 +101,8 @@ class BenchmarkWindow:
         self.history_tree.column("date", width=150, anchor="center", stretch=False)
         self.history_tree.column("single", width=125, anchor="center", stretch=False)
         self.history_tree.column("multi", width=125, anchor="center", stretch=False)
-        self.history_tree.column("peak", width=125, anchor="center", stretch=False)
-        self.history_tree.column("temp", width=125, anchor="center", stretch=False)
+        self.history_tree.column("peak", width=110, anchor="center", stretch=False)
+        self.history_tree.column("temp", width=110, anchor="center", stretch=False)
 
         scrollbar = ttk.Scrollbar(hist_frame, orient="vertical", command=self.history_tree.yview)
         self.history_tree.configure(yscrollcommand=scrollbar.set)
@@ -214,17 +214,27 @@ class BenchmarkWindow:
             return
 
         lines = list(reversed(lines))
-        for i, line in enumerate(lines):
+        parsed = []
+        for line in lines:
             parts = line.split(",", 5)
             if len(parts) != 6:
                 continue
+            parsed.append(parts)
+
+        best_single = max((int(p[3]) for p in parsed), default=0)
+        best_multi = max((int(p[4]) for p in parsed), default=0)
+
+        for i, parts in enumerate(parsed):
             peak_temp, peak_ghz, core_used, single_score, multi_score, date = parts
-            single_display = f"Core {core_used}: {single_score}"
+            single_star = "➤ " if int(single_score) == best_single else ""
+            multi_star = "➤ " if int(multi_score) == best_multi else ""
+            single_display = f"{single_star}Core {core_used}: {single_score}"
+            multi_display = f"{multi_star}{multi_score}"
             peak_display = f"{peak_ghz} GHz"
             temp_display = f"{peak_temp}°C"
             tag = ("latest",) if i == 0 else ()
-            self.history_tree.insert("", "end", values=(date, single_display, multi_score, peak_display, temp_display), tags=tag)
-    
+            self.history_tree.insert("", "end", values=(date, single_display, multi_display, peak_display, temp_display), tags=tag)
+
     # Benchmark control
     def _start(self):
         if self.is_running:
