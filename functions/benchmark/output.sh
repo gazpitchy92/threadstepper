@@ -20,7 +20,7 @@ save_results() {
     local peak_ghz=$(awk "BEGIN {printf \"%.2f\", $PEAK_MHZ / 1000000}")
     local peak_c=$(awk "BEGIN {printf \"%.1f\", $PEAK_TEMP / 1000}")
     echo "${peak_c},${peak_ghz},${display_core},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
-    tail -n 7 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
+    tail -n 100 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
 }
 
 # Calculate score

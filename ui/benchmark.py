@@ -104,7 +104,13 @@ class BenchmarkWindow:
         self.history_tree.column("peak", width=125, anchor="center", stretch=False)
         self.history_tree.column("temp", width=125, anchor="center", stretch=False)
 
+        scrollbar = ttk.Scrollbar(hist_frame, orient="vertical", command=self.history_tree.yview)
+        self.history_tree.configure(yscrollcommand=scrollbar.set)
+
         self.history_tree.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+
+        hist_frame.columnconfigure(1, weight=0)
 
         self.history_tree.tag_configure(
             "latest",
@@ -207,6 +213,7 @@ class BenchmarkWindow:
         except OSError:
             return
 
+        lines = list(reversed(lines))
         for i, line in enumerate(lines):
             parts = line.split(",", 5)
             if len(parts) != 6:
@@ -215,7 +222,7 @@ class BenchmarkWindow:
             single_display = f"Core {core_used}: {single_score}"
             peak_display = f"{peak_ghz} GHz"
             temp_display = f"{peak_temp}°C"
-            tag = ("latest",) if i == len(lines) - 1 else ()
+            tag = ("latest",) if i == 0 else ()
             self.history_tree.insert("", "end", values=(date, single_display, multi_score, peak_display, temp_display), tags=tag)
     
     # Benchmark control
