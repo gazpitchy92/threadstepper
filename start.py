@@ -64,7 +64,7 @@ class StressTestGUI:
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (3.8)")
-        self.root.geometry("800x952")
+        self.root.geometry("700x915")
         
         self.process = None
         self.is_running = False
@@ -173,7 +173,7 @@ class StressTestGUI:
 
         system_frame, system_inner = make_section(info_row, "⌕ System Information", padding=10)
         system_frame.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(0, 0))
-        system_frame.columnconfigure(0, weight=1)
+        system_inner.columnconfigure(0, weight=1)
 
         top_info_frame = ttk.Frame(system_inner)
         top_info_frame.grid(row=0, column=0, sticky="nw")
@@ -212,13 +212,24 @@ class StressTestGUI:
         self.cores_label.pack(side="left")
 
         sys_btn_frame = ttk.Frame(system_inner)
-        sys_btn_frame.grid(row=3, column=0, sticky="w", pady=(2, 0))
+        sys_btn_frame.grid(row=3, column=0, sticky="ew", pady=(2, 0))
 
-        ttk.Button(sys_btn_frame, text="◷ Benchmark", bootstyle="primary-outline",
-            command=lambda: start_benchmark(self)).pack(side="left", padx=(0,5))
+        sys_btn_frame.columnconfigure(0, weight=1)
+        sys_btn_frame.columnconfigure(1, weight=1)
 
-        ttk.Button(sys_btn_frame, text="↻ Refresh", bootstyle="info-outline",
-            command=lambda: refresh_system_info(self)).pack(side="left", padx=(0, 20))
+        ttk.Button(
+            sys_btn_frame,
+            text="◷ Benchmark",
+            bootstyle="primary-outline",
+            command=lambda: start_benchmark(self)
+        ).grid(row=0, column=0, sticky="ew", padx=(0, 2))
+
+        ttk.Button(
+            sys_btn_frame,
+            text="↻ Refresh",
+            bootstyle="info-outline",
+            command=lambda: refresh_system_info(self)
+        ).grid(row=0, column=1, sticky="ew", padx=(2, 0))
 
         freq_row = ttk.Frame(cpu_info_frame)
         freq_row.pack(anchor="w", fill="x", pady=(0, 3))
