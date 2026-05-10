@@ -12,7 +12,7 @@ Most stress tests (mprime, systester, y-cruncher, etc.) apply a continuous, pred
 - Improved UI and simplified settings
 - Improved core failure and error detection
 - Simplified core/thread selection
-- New benchmarking tool
+- New benchmarking and core ranking tool
 
 ### To-Do List
 
@@ -41,9 +41,9 @@ Cycles through different load combinations on each core and thread group, with c
 
 ![errors](https://i.ibb.co/vFzz9LF/Screenshot-20260510-065850-1.png)
 
-### Benchmarking (all core and individual cores)
+### Benchmarking and Core Ranking
 
-![benchmark](https://i.ibb.co/BHXxCB0G/Screenshot-20260509-235622-1.png)
+![benchmark](https://i.ibb.co/wNdLrDCY/benchy.png)
 
 ### WebGL Tests
 
