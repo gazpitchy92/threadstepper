@@ -125,6 +125,10 @@ class StressTestGUI:
         self.core_blacklist_var = tk.StringVar()
         self.max_ram_var = tk.IntVar(value=1)
         self.advanced_visible = False
+        self.all_cores_enabled_var = tk.BooleanVar(value=True)
+        self.low_load_enabled_var = tk.BooleanVar(value=True)
+        self.single_core_enabled_var = tk.BooleanVar(value=True)
+        self.webgl_enabled_var = tk.BooleanVar(value=True)
         # Layout
         main_container = ttk.Frame(self.root, padding=10)
         main_container.grid(row=0, column=0, sticky="nsew")
