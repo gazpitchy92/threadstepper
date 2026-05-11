@@ -10,7 +10,7 @@ if [[ "$response" =~ ^[Nn]$ ]]; then
     exit 0
 fi
 
-installElectron(){
+install_electron() {
     echo "$(tput setaf 4)Checking for existing Electron installation...$(tput sgr0)"
     existing=$(compgen -c | grep '^electron[0-9]' | sort -V | tail -1)
     if [ -n "$existing" ]; then
@@ -75,7 +75,7 @@ installElectron(){
 chmod +x ./threadstepper
 
 # Install dependencies
-installElectron
+install_electron
 
 
 echo "Please restart Thread Stepper!"

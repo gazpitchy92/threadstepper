@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
 _STRESS_PIDS=()
 
-_calc_prng() {
+# Stress algo methods
+calc_prng() {
     local x=123456789
     for ((i=0; i<100000; i++)); do
         x=$(( (x * 1103515245 + 12345) & 0x7fffffff ))
     done
     echo $x
 }
-_calc_sum() {
+calc_sum() {
     local x=0
     for ((i=1; i<=100000; i++)); do
         x=$(( (x + i * 31337) & 0x7fffffff ))
     done
     echo $x
 }
-_calc_div() {
+calc_div() {
     local x=2147483647
     for ((i=1; i<=100000; i++)); do
         x=$(( ((x * 1664525) & 0x7fffffff) / (i % 97 + 1) ))
@@ -23,9 +24,10 @@ _calc_div() {
     done
     echo $x
 }
-export -f _calc_prng _calc_sum _calc_div
+export -f calc_prng calc_sum calc_div
 
-_stress_worker() {
+# Main stress algo
+stress_worker() {
     local worker_index=$1
     local mode=${2:-high}
     local calcs=(
@@ -38,21 +40,19 @@ _stress_worker() {
     local expected="${entry##*:}"
     local cpu
     cpu=$(taskset -cp $$ 2>/dev/null | awk -F': ' '{print $2}')
-
-    _do_work() {
+    do_work() {
         local result
         result=$(bash -c "_calc_${name}")
         if [[ "$result" -ne "$expected" ]]; then
             logger -p err "Thread Stepper: arithmetic error [$name] on CPU $cpu — expected $expected, got $result"
         fi
     }
-
     case $mode in
         low)
             while true; do
                 local busy_until=$(( $(date +%s%3N) + 200 ))
                 while (( $(date +%s%3N) < busy_until )); do
-                    _do_work
+                    do_work
                 done
                 sleep 0.80
             done
@@ -61,31 +61,33 @@ _stress_worker() {
             while true; do
                 local busy_until=$(( $(date +%s%3N) + 550 ))
                 while (( $(date +%s%3N) < busy_until )); do
-                    _do_work
+                    do_work
                 done
                 sleep 0.45
             done
             ;;
         high)
             while true; do
-                _do_work
+                do_work
             done
             ;;
     esac
 }
-export -f _stress_worker
+export -f stress_worker
 
+# Start stressor in bg
 start_stressor() {
     local cores_list=$1
     local mode=${2:-high}
     local thread_count
     thread_count=$(echo "$cores_list" | tr ',' '\n' | wc -l)
     for ((c=0; c<thread_count; c++)); do
-        taskset -c "$cores_list" bash -c "_stress_worker $c $mode" &
+        taskset -c "$cores_list" bash -c "stress_worker $c $mode" &
         _STRESS_PIDS+=($!)
     done
 }
 
+# Kill bg stressors
 stop_stressor() {
     for pid in "${_STRESS_PIDS[@]}"; do
         kill "$pid" 2>/dev/null

@@ -1,21 +1,17 @@
 #!/bin/bash
 browser_pids=()
 
-browserTest() {
-    current_dir=$(pwd)
-    rm -rf "${current_dir}/tests/browser/tmp"
-    rm -rf "${current_dir}/tests/browser/tmpfile:"
-    mkdir -p "${current_dir}/tests/browser/tmp"
+browser_test() {
     echo "$(tput setaf 4)Launching $browsers browsers on all cores$(tput sgr0)" | tee -a $output_log_file
     echo "$(tput setaf 8)[DEBUG] Using electron: $(which $ELECTRON_BIN)"
-
+    # For each webgl instance
     for ((i = 0; i < browsers; i++)); do
         random_page=$((RANDOM % 10 + 1))
         file_path="$current_dir/tests/browser/pages/$random_page.html"
         num_cores=$(nproc)
         half_cores=$((num_cores / 2))
-
         if (( browsers > 1 )); then
+            # Divide browsers between threads
             if (( i % 2 == 0 )); then
                 echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 update_threads "0-$((half_cores - 1))"
@@ -28,6 +24,7 @@ browserTest() {
                 browser_pids+=($!)
             fi
         else
+            # All core
             echo "$(tput setaf 8)[DEBUG] taskset --cpu-list 0-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
             update_threads "0-$((num_cores - 1))"
             taskset --cpu-list 0-$((num_cores - 1)) "$ELECTRON_BIN" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
@@ -37,7 +34,8 @@ browserTest() {
     done
 }
 
-stopBrowserTest() {
+# Kill webgl instances
+stop_browser_test() {
     for pid in "${browser_pids[@]}"; do
         kill "$pid" &>/dev/null
     done
@@ -49,20 +47,19 @@ stopBrowserTest() {
     browser_pids=()
 }
 
-willRunBrowserTest() {
+# Check blaclist
+willRunbrowser_test() {
     local core=$1
     local physical_cores=$(($(nproc) / 2))
     local core_second=$((core + physical_cores))
     local core_next=$((core + 1))
     local core_last=$((core_second + 1))
-
     # Cross-die pair
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"1"* ]]; then
         if [[ ",$core_blacklist," != *",$core,"* && ",$core_blacklist," != *",$core_second,"* ]]; then
             return 0
         fi
     fi
-
     # Adjacent pair on first die
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
         if [[ $core_next -le $physical_cores ]]; then
@@ -71,7 +68,6 @@ willRunBrowserTest() {
             fi
         fi
     fi
-
     # Adjacent pair on second die
     if [[ ",$cpu_topology," == *"0"* || ",$cpu_topology," == *"2"* ]]; then
         if [[ $core_last -le $(nproc) ]]; then
@@ -80,6 +76,5 @@ willRunBrowserTest() {
             fi
         fi
     fi
-
     return 1
 }

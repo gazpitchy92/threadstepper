@@ -1,14 +1,15 @@
 #!/bin/bash
 
+# Init vars
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKER="$(dirname "$CURRENT_DIR")/functions/stressors/load_worker.sh"
 chmod +x "$WORKER"
 PHASE_PIDS=()
 
+# Start a stressor in bg
 run_phase() {
     local cores=$1
     local mode=$2
-
     IFS=',' read -ra core_list <<< "$cores"
     for cpu in "${core_list[@]}"; do
         taskset -c "$cpu" bash "$WORKER" "$mode" "$cpu" 99999 &
@@ -16,6 +17,7 @@ run_phase() {
     done
 }
 
+# Kill bg stressor
 kill_phase() {
     if (( ${#PHASE_PIDS[@]} == 0 )); then
         return
@@ -27,6 +29,7 @@ kill_phase() {
     PHASE_PIDS=()
 }
 
+# Idle workers
 wait_phase() {
     if (( ${#PHASE_PIDS[@]} == 0 )); then
         return
