@@ -35,7 +35,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 ## Screenshots
 
-![running](https://i.ibb.co/kgNmWwp7/Screenshot-20260510-065718-1.png)
+![running](./screenshots/main.png)
 
 ### Error Detection
 
@@ -43,7 +43,7 @@ Cycles through different load combinations on each core and thread group, with c
 
 ### Benchmarking and Core Ranking
 
-![benchmark](https://i.ibb.co/wNdLrDCY/benchy.png)
+![benchmark](./screenshots/benchmark.png)
 
 ### WebGL Tests
 
