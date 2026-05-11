@@ -49,29 +49,29 @@ from python.system import (
     on_close,
     refresh_system_info,
     reset_button,
-    check_browser_dependency
+    check_browser_dependency,
 )
 from python.ui import (
-    make_section, 
-    configure_numeric_spinbox, 
+    make_section,
+    configure_numeric_spinbox,
     setup_styles,
     build_header,
     build_info_row,
     build_error_section,
     build_settings,
-    build_controls
+    build_controls,
 )
 from python.timers import (
     start_timer,
     stop_timer,
     reset_timer,
-    monitor_process_status
+    monitor_process_status,
 )
 from python.testing import (
     run_stress_test,
     start_stress_test,
     stop_stress_test,
-    on_process_stop
+    on_process_stop,
 )
 
 class StressTestGUI:
@@ -103,14 +103,13 @@ class StressTestGUI:
         if self.benchmark_window_open:
             return
         if self.is_running:
-            log_message(
-                self, "Cannot open benchmark while tests are running", "warning"
-            )
+            log_message(self, "Cannot open benchmark while tests are running", "warning")
             return
         self.benchmark_window_open = True
         start_benchmark(self)
 
     def setup_ui(self):
+        # Vars
         self.loops_var = tk.IntVar(value=1)
         self.browsers_var = tk.IntVar(value=1)
         self.light_time_var = tk.IntVar(value=1)
@@ -126,6 +125,7 @@ class StressTestGUI:
         self.core_blacklist_var = tk.StringVar()
         self.max_ram_var = tk.IntVar(value=1)
         self.advanced_visible = False
+        # Layout
         main_container = ttk.Frame(self.root, padding=10)
         main_container.grid(row=0, column=0, sticky="nsew")
         self.root.columnconfigure(0, weight=1)
@@ -149,14 +149,11 @@ class StressTestGUI:
         threading.Thread(target=monitor_current_test, args=(self,), daemon=True).start()
         threading.Thread(target=monitor_temperature, args=(self,), daemon=True).start()
         threading.Thread(target=self.periodic_rank_killer, daemon=True).start()
-    
+
     def periodic_rank_killer(self):
         while True:
             if not self.benchmark_window_open:
-                result = subprocess.run(
-                    ["pgrep", "-f", "rank.sh"],
-                    capture_output=True
-                )
+                result = subprocess.run(["pgrep", "-f", "rank.sh"], capture_output=True)
                 if result.returncode == 0:
                     subprocess.run(["pkill", "-9", "-f", "rank.sh"], stderr=subprocess.DEVNULL)
             time.sleep(1)
@@ -166,13 +163,12 @@ class StressTestGUI:
             subprocess.run(["pkill", "-9", "-f", "./functions/benchmark/rank.sh"], stderr=subprocess.DEVNULL)
             time.sleep(0.1)
 
+# Entry point
 def main():
     os.makedirs("./logs", exist_ok=True)
     if not os.path.exists("./settings"):
         with open("./settings", "w") as f:
-            f.write(
-                "#!/bin/bash\n\n# Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n"
-            )
+            f.write("#!/bin/bash\n\n# Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n")
     detect_cpu_topology()
     if not os.path.exists("./logs/clock.log"):
         with open("./logs/clock.log", "w") as f:
