@@ -2,7 +2,6 @@
 
 trap cleanup SIGINT SIGTERM
 
-# ------ Includes
 # Settings
 source ./config/user.settings
 # Operation
@@ -19,28 +18,23 @@ source ./functions/tests/single/cores.sh
 source ./functions/tests/low/rapid.sh
 source ./functions/tests/low/random.sh
 source ./functions/tests/all_core/cumulative.sh
-# ------------
-
 # Setup
 electon_bin=$(compgen -c | grep '^electron[0-9]' | sort -V | tail -1)
 initial_output
-
 # Clear ram cache
 echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null 2>&1
-
 # Calculate cores
 num_cores=$(nproc)
 num_cores=${num_cores:-1}
 physical_cores=$((num_cores / 2))
-
 # Get run vars
 loops=${loops:-1}
 rapid_tests=${rapid_tests:-0}
 start_core=${start_core:-0}
 rest_time=${rest_time:-1}
-update_progress "Startup" $loop_counter $loops 
 
-# main loop
+# Main
+update_progress "Startup" $loop_counter $loops 
 start_time=$seconds
 for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     # Init vars
@@ -88,9 +82,7 @@ done
 # Fin
 highest_clock="$(<"$current_dir/logs/clock.log") Ghz"
 elapsed=$((seconds - start_time))
-elapsed_formatted=$(printf "%02d:%02d:%02d" $((elapsed/3600)) $(((elapsed/60)%60)) $((elapsed%60)))
-
+elapsed_formatted=$(printf "%02d:%02d:%02d" $((elapsed/3600)) $(((elapsed/60)%60)) $((elapsed%60))
 echo "$(tput setaf 3)Loops $finished_loops/$loops completed! ($elapsed_formatted)$(tput sgr0)" | tee -a "$output_log_file"
 echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $highest_clock" | tee -a "$output_log_file"
-
 cleanup
