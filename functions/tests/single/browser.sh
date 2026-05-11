@@ -13,19 +13,16 @@ browser_test() {
         if (( browsers > 1 )); then
             # Divide browsers between threads
             if (( i % 2 == 0 )); then
-                echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 update_threads "0-$((half_cores - 1))"
                 taskset --cpu-list 0-$((half_cores - 1)) "$electon_bin" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
                 browser_pids+=($!)
             else
-                echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list $half_cores-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 update_threads "$half_cores-$((num_cores - 1))"
                 taskset --cpu-list $half_cores-$((num_cores - 1)) "$electon_bin" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
                 browser_pids+=($!)
             fi
         else
             # All core
-            echo "$(tput setaf 8)[DEBUG] taskset --cpu-list 0-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
             update_threads "0-$((num_cores - 1))"
             taskset --cpu-list 0-$((num_cores - 1)) "$electon_bin" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
             browser_pids+=($!)
