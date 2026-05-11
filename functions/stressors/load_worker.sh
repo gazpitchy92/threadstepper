@@ -1,9 +1,10 @@
 #!/bin/bash
 
-MODE=$1
-CPU=$(echo "$cpu" | tr -d ' ') DURATION=$3
-ERROR_COUNT=0
-ITERATION=0
+mode=$1
+cpu=$(echo "$cpu" | tr -d ' ') 
+duration=$3
+error_count=0
+iteration=0
 
 # Validate test result
 cpu_validate() {
@@ -14,9 +15,9 @@ cpu_validate() {
         (( actual += i ))
     done
     if (( actual != expected )); then
-        logger -p err "Thread Stepper: CPU $CPU arithmetic mismatch on iteration $ITERATION: expected $expected, got $actual"
-        echo "[ERROR] CPU $CPU arithmetic mismatch on iteration $ITERATION: expected $expected, got $actual"
-        (( ERROR_COUNT++ ))
+        logger -p err "Thread Stepper: CPU $cpu arithmetic mismatch on iteration $iteration: expected $expected, got $actual"
+        echo "[ERROR] cpu $cpu arithmetic mismatch on iteration $iteration: expected $expected, got $actual"
+        (( error_count++ ))
     fi
 }
 
@@ -33,14 +34,14 @@ busy_work() {
 
 # Run test iteration
 run_iteration() {
-    (( ITERATION++ ))
+    (( iteration++ ))
     busy_work
     cpu_validate
 }
 
 # Main
-end=$(( $(date +%s) + DURATION ))
-case $MODE in
+end=$(( $(date +%s) + duration ))
+case $mode in
     low)
         while (( $(date +%s) < end )); do
             busy_until=$(( $(date +%s%3N) + 200 ))
@@ -65,6 +66,6 @@ case $MODE in
         done
         ;;
 esac
-if (( ERROR_COUNT != 0 )); then
-    logger -p err "Thread Stepper: [CPU $CPU] Iterations: $ITERATION | Errors: $ERROR_COUNT | FAIL"
+if (( error_count != 0 )); then
+    logger -p err "Thread Stepper: [cpu $cpu] Iterations: $iteration | Errors: $error_count | FAIL"
 fi

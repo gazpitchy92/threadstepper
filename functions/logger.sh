@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Init vars
-CURRENT_DIR=$(pwd)
-ERROR_LOG="$CURRENT_DIR/logs/errors.log"
-CLOCK_LOG="$CURRENT_DIR/logs/clock.log"
-TEMPERATURE_LOG="$CURRENT_DIR/logs/temperature.log"
+current_dir=$(pwd)
+error_log="$current_dir/logs/errors.log"
+clock_log="$current_dir/logs/clock.log"
+temperature_log="$current_dir/logs/temperature.log"
 start_time=$(date +%s)
 
 # Check files
-mkdir -p "$CURRENT_DIR/logs"
-echo "0.0" > "$CLOCK_LOG"
-echo "0.0" > "$TEMPERATURE_LOG"
-echo "false" > "$ERROR_LOG"
+mkdir -p "$current_dir/logs"
+echo "0.0" > "$clock_log"
+echo "0.0" > "$temperature_log"
+echo "false" > "$error_log"
 
 # Log peak cpu
 log_cpu_clock() {
@@ -21,9 +21,9 @@ log_cpu_clock() {
         (( v > max )) && max=$v
     done
     ghz=$(awk "BEGIN { printf \"%.3f\", $max / 1000000 }")
-    last=$(<"$CLOCK_LOG")
+    last=$(<"$clock_log")
     awk -v cur="$ghz" -v last="$last" 'BEGIN { exit !(cur > last) }' && {
-        printf "%s\n" "$ghz" > "$CLOCK_LOG"
+        printf "%s\n" "$ghz" > "$clock_log"
     }
 }
 
@@ -32,13 +32,13 @@ log_cpu_temperature() {
     hwmon=$(grep -rl "k10temp" /sys/class/hwmon/hwmon*/name 2>/dev/null | head -n1 | xargs dirname)
     raw=$(<"${hwmon}/temp1_input")
     temperature=$(awk "BEGIN {printf \"%.1f\", $raw / 1000}")
-    if [[ -f "$TEMPERATURE_LOG" ]]; then
-        stored=$(<"$TEMPERATURE_LOG")
+    if [[ -f "$temperature_log" ]]; then
+        stored=$(<"$temperature_log")
         if awk "BEGIN {exit !($temperature > $stored)}"; then
-            echo "$temperature" > "$TEMPERATURE_LOG"
+            echo "$temperature" > "$temperature_log"
         fi
     else
-        echo "$temperature" > "$TEMPERATURE_LOG"
+        echo "$temperature" > "$temperature_log"
     fi
 }
 
@@ -76,7 +76,7 @@ check_for_errors() {
             [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
             [ -n "$COREDUMPS" ] && echo "=== Coredumps ===" && echo "$COREDUMPS"
             echo "========================================"
-        } > "$ERROR_LOG"
+        } > "$error_log"
         exit 1
     fi
 }

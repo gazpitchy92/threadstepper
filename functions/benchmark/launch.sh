@@ -2,11 +2,11 @@
 
 
 # Init vars
-source "$(dirname "$CURRENT_DIR")/config/user.settings"
+source "$(dirname "$current_dir")/config/user.settings"
 NCPU=$(nproc)
 CORES_COUNT=$(( NCPU / 2 ))
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUTPUT_LOG="$(dirname "$CURRENT_DIR")/../logs/benchmark.log"
+current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OUTPUT_LOG="$(dirname "$current_dir")/../logs/benchmark.log"
 SELECTED_CORE="$1"
 
 # Setup
@@ -16,9 +16,9 @@ if [ ! -f "$OUTPUT_LOG" ]; then
 fi
 
 # Functions
-source "$(dirname "$CURRENT_DIR")/benchmark/cpu.sh"
-source "$(dirname "$CURRENT_DIR")/benchmark/output.sh"
-source "$(dirname "$CURRENT_DIR")/benchmark/tests.sh"
+source "$(dirname "$current_dir")/benchmark/cpu.sh"
+source "$(dirname "$current_dir")/benchmark/output.sh"
+source "$(dirname "$current_dir")/benchmark/tests.sh"
 
 # ------ Calculate Times
 # Rest time
