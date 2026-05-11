@@ -43,7 +43,7 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
     end_core=$((physical_cores - 2))
     # Startup
     if [[ "$loop_counter" -gt 1 ]]; then
-        echo "$(tput setaf 5)Running loop $loop_counter of $loops ($elapsed_formatted)$(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 5)Running loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
     else
         echo "$(tput setaf 5)Starting loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
     fi
@@ -66,17 +66,13 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
         rand_runner
     fi
     # Single core tests
-    if [ "$light_time" -eq 0 ] && [ "$medium_time" -eq 0 ] && [ "heavy_time" -eq 0 ]; then
+    if [ "$light_time" -eq 0 ] && [ "$medium_time" -eq 0 ] && [ "$heavy_time" -eq 0 ]; then
         echo "$(tput setaf 4)Single Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
     else
         single_core_runner "$start_core" "$end_core"
     fi
     # Finish loop
-    highest_clock="$(<"$current_dir/logs/clock.log") Ghz"
-    higest_temp="$(<"$current_dir/logs/temperature.log") C"
     finished_loops=$loop_counter
-    echo "$(tput setaf 8)Highest CPU Clock: $highest_clock" | tee -a "$output_log_file"
-    echo "$(tput setaf 8)Highest CPU Temperature: $highest_clock" | tee -a "$output_log_file"
 done
 
 # Fin
