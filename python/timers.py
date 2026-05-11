@@ -30,3 +30,11 @@ def update_timer(self):
             self.root.after(0, lambda t=time_str: self.timer_label.config(text=t))
             self.timer_seconds += 1
         time.sleep(1)
+
+def monitor_process_status(self):
+    from python.testing import on_process_stop
+    while True:
+        if self.is_running and self.process is not None:
+            if self.process.poll() is not None:
+                self.root.after(0, lambda: on_process_stop(self))
+        time.sleep(0.5)

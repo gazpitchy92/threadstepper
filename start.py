@@ -52,7 +52,7 @@ from python.system import (
 )
 from python.temperature import monitor_temperature, update_temperature
 from python.ui import make_section, configure_numeric_spinbox, setup_styles
-from python.timers import start_timer, stop_timer, reset_timer
+from python.timers import start_timer, stop_timer, reset_timer, monitor_process_status
 from python.testing import run_stress_test, start_stress_test, stop_stress_test, on_process_stop
 
 class StressTestGUI:
@@ -657,7 +657,7 @@ class StressTestGUI:
         threading.Thread(target=monitor_error_status, args=(self,), daemon=True).start()
         threading.Thread(target=monitor_clock_speed, args=(self,), daemon=True).start()
         threading.Thread(target=process_log_queue, args=(self,), daemon=True).start()
-        threading.Thread(target=self.monitor_process_status, daemon=True).start()
+        threading.Thread(target=monitor_process_status, args=(self,), daemon=True).start()
         threading.Thread(target=monitor_current_test, args=(self,), daemon=True).start()
         threading.Thread(target=monitor_temperature, args=(self,), daemon=True).start()
         threading.Thread(target=self.periodic_rank_killer, daemon=True).start()
@@ -677,13 +677,6 @@ class StressTestGUI:
         while not self.benchmark_window_open:
             subprocess.run(["pkill", "-9", "-f", "./functions/benchmark/rank.sh"], stderr=subprocess.DEVNULL)
             time.sleep(0.1)
-
-    def monitor_process_status(self):
-        while True:
-            if self.is_running and self.process is not None:
-                if self.process.poll() is not None:
-                    self.root.after(0, self.stop_timer)
-            time.sleep(0.5)
 
 def main():
     os.makedirs("./logs", exist_ok=True)

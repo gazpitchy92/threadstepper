@@ -87,7 +87,6 @@ def full_reset(self):
     update_error_log(self)
     update_error_status(self)
 
-
 def on_close(self):
     try:
         subprocess.run(["pkill", "-f", "threadstepper"])
@@ -101,11 +100,9 @@ def on_close(self):
             self.process = None
         full_reset(self)
         clear_current_test(self)
-        self.stop_stress_test()
         self.root.destroy()
     except Exception as e:
-        log_message(self, f"Error stop_stress_test: {str(e)}", "error")
-
+        log_message(self, f"Error on close: {str(e)}", "error")
 
 def detect_cpu_topology(settings_path="./settings"):
     import re
