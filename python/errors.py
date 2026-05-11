@@ -4,7 +4,7 @@ import time
 import tkinter as tk
 from datetime import datetime
 
-from ui.logs import clear_current_test, log_message, set_current_test
+from python.logs import clear_current_test, log_message, set_current_test
 
 
 def clear_error_log(self):

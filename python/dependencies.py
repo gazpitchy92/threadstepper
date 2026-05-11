@@ -4,7 +4,7 @@ import subprocess
 import tkinter as tk
 from tkinter import messagebox
 
-from ui.logs import clear_output, export_log, log_message
+from python.logs import clear_output, export_log, log_message
 
 
 def install_dependencies(self):

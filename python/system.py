@@ -4,10 +4,10 @@ import re
 import subprocess
 
 import psutil
-from ui.clocks import reset_clock_speed, update_clock_speed
-from ui.errors import clear_error_log, update_error_log, update_error_status
-from ui.logs import clear_current_test, clear_output, log_message
-from ui.temperature import reset_temperature
+from python.clocks import reset_clock_speed, update_clock_speed
+from python.errors import clear_error_log, update_error_log, update_error_status
+from python.logs import clear_current_test, clear_output, log_message
+from python.temperature import reset_temperature
 
 
 def reset_button(self):

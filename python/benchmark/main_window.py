@@ -8,8 +8,8 @@ from datetime import datetime
 from tkinter import scrolledtext, ttk
 import ttkbootstrap as tb
 
-from ui.benchmark.testing import build_benchmark_tab
-from ui.benchmark.ranking import build_core_ranks_tab
+from python.benchmark.testing import build_benchmark_tab
+from python.benchmark.ranking import build_core_ranks_tab
 
 def start_benchmark(app):
     BenchmarkWindow(app)

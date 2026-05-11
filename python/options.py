@@ -3,7 +3,7 @@ import re
 import tkinter as tk
 from tkinter import ttk
 
-from ui.logs import log_message
+from python.logs import log_message
 
 
 def parse_settings_options(self, content):

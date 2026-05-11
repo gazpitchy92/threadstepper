@@ -13,11 +13,11 @@ from tkinter import PhotoImage, filedialog, messagebox, scrolledtext, ttk
 import ttkbootstrap as tb
 from PIL import Image, ImageTk
 from ttkbootstrap.constants import *
-from ui.benchmark.main_window import start_benchmark
-from ui.clocks import monitor_clock_speed, update_clock_speed
-from ui.core_picker import open_core_picker
-from ui.dependencies import install_dependencies
-from ui.errors import (
+from python.benchmark.main_window import start_benchmark
+from python.clocks import monitor_clock_speed, update_clock_speed
+from python.core_picker import open_core_picker
+from python.dependencies import install_dependencies
+from python.errors import (
     clear_error_log,
     monitor_error_status,
     show_error_log,
@@ -25,7 +25,7 @@ from ui.errors import (
     update_error_log,
     update_error_status,
 )
-from ui.logs import (
+from python.logs import (
     clear_current_test,
     clear_output,
     export_log,
@@ -35,21 +35,21 @@ from ui.logs import (
     process_log_queue,
     set_current_test,
 )
-from ui.options import (
+from python.options import (
     parse_settings_options,
     register_settings_traces,
     save_settings,
     update_settings_content,
 )
-from ui.styling import apply_theme_on_load, toggle_dark_mode
-from ui.system import (
+from python.styling import apply_theme_on_load, toggle_dark_mode
+from python.system import (
     detect_cpu_topology,
     full_reset,
     on_close,
     refresh_system_info,
     reset_button,
 )
-from ui.temperature import monitor_temperature, update_temperature
+from python.temperature import monitor_temperature, update_temperature
 
 
 class StressTestGUI:

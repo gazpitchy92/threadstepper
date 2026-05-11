@@ -1,6 +1,6 @@
 import time
 from tkinter import messagebox
-from ui.clocks import update_clock_speed
+from python.clocks import update_clock_speed
 
 TEMP_LOG = "./logs/temperature.log"
 POLL_INTERVAL = 2
