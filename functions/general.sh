@@ -13,27 +13,10 @@ initial_output() {
     output_options
     print_topology
     check_deps
-    echo "STARTING TESTS IN ${rest_time} SECONDS..."
+    echo "STARTING TESTS IN ${rest_time} seconds..."
     sleep $rest_time
     setup_logs
     start_logger
-}
-
-# output help
-helpText() {
-    echo ""
-    usage_text
-    echo ""
-    echo "-l                number of Test Runs to perform (default: 1)"
-    echo "-t                'cores' tests all cores"
-    echo "                  'threads' tests all threads (default: cores)"
-    echo "-b                number of browsers to launch (default: 2) (0 to skip test)"
-    echo "--first-half      tests the first half of the cores/threads"
-    echo "--second-half     tests the second half of the cores/threads"
-    echo "--help            show this help menu"
-    echo ""
-    echo "Additional test settings can be found in settings"
-    echo ""
 }
 
 # output usage help
@@ -45,6 +28,7 @@ usage_text() {
 check_deps() {
     if command -v $(compgen -c | grep '^electron[0-9]' | sort -V | tail -1) &>/dev/null; then
         echo "$(tput setaf 2)Electron Found - WebGL Tests Enabled$(tput sgr0)"
+        echo "$(tput setaf 2)Using version: $(which $electon_bin)"
     else
         echo "$(tput setaf 1)!!!!! Electron not found !!!!!$(tput sgr0)"
         echo "$(tput setaf 1)!!!!! WebGL Tests are Disabled !!!!!$(tput sgr0)"

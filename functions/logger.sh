@@ -5,7 +5,7 @@ CURRENT_DIR=$(pwd)
 ERROR_LOG="$CURRENT_DIR/logs/errors.log"
 CLOCK_LOG="$CURRENT_DIR/logs/clock.log"
 TEMPERATURE_LOG="$CURRENT_DIR/logs/temperature.log"
-START_TIME=$(date +%s)
+start_time=$(date +%s)
 
 # Check files
 mkdir -p "$CURRENT_DIR/logs"
@@ -46,11 +46,11 @@ check_for_errors() {
     # Fetch errors
     LOG_PRIORITY="err"
     EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave" "electron" "udev")
-    ERRORS_HARDWARE=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
-    ERRORS_FLAG=$(journalctl --since="@${START_TIME}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)
-    ERRORS_DUMPED=$(journalctl --since="@${START_TIME}" --no-pager | grep -i "dumped core")
-    ERRORS_SEGFAULT=$(journalctl --since="@${START_TIME}" --no-pager | grep -i "segfault")
-    COREDUMPS=$(coredumpctl --since "@${START_TIME}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
+    ERRORS_HARDWARE=$(journalctl --since="@${start_time}" -p "$LOG_PRIORITY" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
+    ERRORS_FLAG=$(journalctl --since="@${start_time}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)
+    ERRORS_DUMPED=$(journalctl --since="@${start_time}" --no-pager | grep -i "dumped core")
+    ERRORS_SEGFAULT=$(journalctl --since="@${start_time}" --no-pager | grep -i "segfault")
+    COREDUMPS=$(coredumpctl --since "@${start_time}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
     [ -z "$COREDUMPS" ] && COREDUMPS=""
     # Check for excluded
     for word in "${EXCLUDE[@]}"; do

@@ -9,7 +9,7 @@ run_tests() {
     if (( browsers != 0 )); then
         if compgen -c | grep -q '^electron[0-9]'; then
             update_progress "WebGL Tests" $loop_counter $loops
-            if willRunbrowser_test "$core"; then
+            if will_run_browser_test "$core"; then
                 browser_test
                 single_core_tests $core
                 stop_browser_test
@@ -22,7 +22,7 @@ run_tests() {
 }
 
 # All core test
-all_core_tests() {
+all_core_runner() {
     for ((all_core_counter=1; all_core_counter<=all_core_tests; all_core_counter++)); do
         update_progress "All Core ${all_core_counter}/${all_core_tests}" $loop_counter $loops 
         alkl_core_test
@@ -32,7 +32,7 @@ all_core_tests() {
 }
 
 # Rapid tests
-rapid_tests() {
+rapid_runner() {
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
@@ -43,7 +43,7 @@ rapid_tests() {
 }
 
 # Rand tests
-rand_tests() {
+rand_runner() {
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
         echo "$(tput setaf 4)Running random test "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
@@ -53,42 +53,40 @@ rand_tests() {
     done
 }
 
-single_core_tests() {
-    for ((core=start_core; core<=END_CORE; core++)); do
-        ELAPSED=$((SECONDS - START_TIME))
-        ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-        core_second=$((core + PHYSICAL_CORES))
-        core_next=$((core + 1))
-        core_last=$((core_second + 1))
-
+single_core_runner() {
+    local start_core=$1
+    local end_core=$2
+    for ((core=start_core; core<=end_core; core++)); do
+        # Vars
+        local core_second=$((core + physical_cores))
+        local core_next=$((core + 1))
+        local core_last=$((core_second + 1))
+        # Start output
         if [[ ",$cpu_topology," == *"0"* ]]; then
-            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next + $core_second + $core_last] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next + $core_second + $core_last] of core [$core]$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"1"* ]]; then
-            echo "$(tput setaf 3)Starting tests for threads [$core + $core_second] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_second] of core [$core]$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"2"* ]]; then
-            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Starting tests for threads [$core + $core_next] of core [$core]$(tput sgr0)" | tee -a "$output_log_file"
         fi
-
+        # Start on core
         rest
         run_tests "$core"
-
-        ELAPSED=$((SECONDS - START_TIME))
-        ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
-        HIGHEST_CLOCK="$(<"$current_dir/logs/clock.log") Ghz"
-
+        highest_clock="$(<"$current_dir/logs/clock.log") Ghz"
+        # End output
         if [[ ",$cpu_topology," == *"0"* ]]; then
-            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next + $core_second + $core_last] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next + $core_second + $core_last] of core [$core]$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"1"* ]]; then
-            echo "$(tput setaf 3)Finished tests for threads [$core + $core_second] of [core $core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_second] of [core $core]$(tput sgr0)" | tee -a "$output_log_file"
         fi
         if [[ ",$cpu_topology," == *"2"* ]]; then
-            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next] of core [$core] ($ELAPSED_FORMATTED)$(tput sgr0)" | tee -a "$output_log_file"
+            echo "$(tput setaf 3)Finished tests for threads [$core + $core_next] of core [$core]$(tput sgr0)" | tee -a "$output_log_file"
         fi
-        
-        echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $HIGHEST_CLOCK" | tee -a "$output_log_file"
+        # Finish with core
+        echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $highest_clock" | tee -a "$output_log_file"
         check_errors
         rest
     done

@@ -3,31 +3,27 @@ browser_pids=()
 
 browser_test() {
     echo "$(tput setaf 4)Launching $browsers browsers on all cores$(tput sgr0)" | tee -a $output_log_file
-    echo "$(tput setaf 8)[DEBUG] Using electron: $(which $ELECTRON_BIN)"
     # For each webgl instance
     for ((i = 0; i < browsers; i++)); do
         random_page=$((RANDOM % 10 + 1))
-        file_path="$current_dir/tests/browser/pages/$random_page.html"
+        file_path="$current_dir/functions/tests/html/pages/$random_page.html"
         num_cores=$(nproc)
         half_cores=$((num_cores / 2))
         if (( browsers > 1 )); then
             # Divide browsers between threads
             if (( i % 2 == 0 )); then
-                echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list 0-$((half_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 update_threads "0-$((half_cores - 1))"
-                taskset --cpu-list 0-$((half_cores - 1)) "$ELECTRON_BIN" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
+                taskset --cpu-list 0-$((half_cores - 1)) "$electon_bin" "$current_dir/functions/tests/html/launch.js" "$file_path" > /dev/null 2>&1 &
                 browser_pids+=($!)
             else
-                echo "$(tput setaf 3)[DEBUG Browser $((i+1))] taskset --cpu-list $half_cores-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
                 update_threads "$half_cores-$((num_cores - 1))"
-                taskset --cpu-list $half_cores-$((num_cores - 1)) "$ELECTRON_BIN" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
+                taskset --cpu-list $half_cores-$((num_cores - 1)) "$electon_bin" "$current_dir/functions/tests/html/launch.js" "$file_path" > /dev/null 2>&1 &
                 browser_pids+=($!)
             fi
         else
             # All core
-            echo "$(tput setaf 8)[DEBUG] taskset --cpu-list 0-$((num_cores - 1)) $file_path$(tput sgr0)" | tee -a $output_log_file
             update_threads "0-$((num_cores - 1))"
-            taskset --cpu-list 0-$((num_cores - 1)) "$ELECTRON_BIN" "$current_dir/tests/browser/launch.js" "$file_path" > /dev/null 2>&1 &
+            taskset --cpu-list 0-$((num_cores - 1)) "$electon_bin" "$current_dir/functions/tests/html/launch.js" "$file_path" > /dev/null 2>&1 &
             browser_pids+=($!)
         fi
         rest
@@ -48,7 +44,7 @@ stop_browser_test() {
 }
 
 # Check blaclist
-willRunbrowser_test() {
+will_run_browser_test() {
     local core=$1
     local physical_cores=$(($(nproc) / 2))
     local core_second=$((core + physical_cores))

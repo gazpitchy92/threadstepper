@@ -7,13 +7,13 @@ bench() {
     local temp_dir=$(mktemp -d)
     for ((c=0; c<cores; c++)); do
         (
-            local end=$((SECONDS + duration))
+            local end=$((seconds + duration))
             local ops=0
             local x=123456789
             for ((i=0; i<50000; i++)); do
                 x=$(( (x * 1103515245 + 12345) & 0x7fffffff ))
             done
-            while [ $SECONDS -lt $end ]; do
+            while [ $seconds -lt $end ]; do
                 for ((i=0; i<5000; i++)); do
                     x=$(( (x * 1103515245 + 12345) & 0x7fffffff ))
                     ((ops++))
