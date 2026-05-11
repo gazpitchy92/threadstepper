@@ -6,7 +6,7 @@ from datetime import datetime
 
 from python.logs import clear_current_test, log_message, set_current_test
 
-
+# Clear error log
 def clear_error_log(self):
     try:
         if os.path.exists("./logs/errors.log"):
@@ -18,7 +18,7 @@ def clear_error_log(self):
     except Exception as e:
         log_message(self, f"Error clearing log: {str(e)}", "error")
 
-
+# Monitor error status
 def monitor_error_status(self):
     last_mtime = 0
     while True:
@@ -33,58 +33,42 @@ def monitor_error_status(self):
             pass
         time.sleep(5)
 
-
+# Update error log view
 def update_error_log(self):
     try:
         if os.path.exists("./logs/errors.log"):
             with open("./logs/errors.log", "r") as f:
                 lines = f.readlines()
-
-                if len(lines) > 1:
-                    content = "".join(lines[1:])
-                else:
-                    content = "(No error details)"
-
-                self.error_text.delete(1.0, tk.END)
-                self.error_text.insert(1.0, content)
-
-                highlight_error_log(self)
-
-                self.error_text.see(tk.END)
+            if len(lines) > 1:
+                content = "".join(lines[1:])
+            else:
+                content = "(No error details)"
+            self.error_text.delete(1.0, tk.END)
+            self.error_text.insert(1.0, content)
+            highlight_error_log(self)
+            self.error_text.see(tk.END)
         else:
             self.error_text.delete(1.0, tk.END)
             self.error_text.insert(1.0, "Error log file not found")
-
     except Exception as e:
         self.error_text.delete(1.0, tk.END)
         self.error_text.insert(1.0, f"Error reading error log: {str(e)}")
 
-
+# Highlight error log
 def highlight_error_log(self):
     content = self.error_text.get(1.0, tk.END)
-
     for tag in ["error_highlight", "warning_highlight", "info_highlight"]:
         self.error_text.tag_remove(tag, 1.0, tk.END)
-
-    self.error_text.tag_config(
-        "error_highlight", background="#f8d7da", foreground="#721c24"
-    )
-    self.error_text.tag_config(
-        "warning_highlight", background="#fff3cd", foreground="#856404"
-    )
-    self.error_text.tag_config(
-        "info_highlight", background="#d1ecf1", foreground="#0c5460"
-    )
+    self.error_text.tag_config("error_highlight", background="#f8d7da", foreground="#721c24")
+    self.error_text.tag_config("warning_highlight", background="#fff3cd", foreground="#856404")
+    self.error_text.tag_config("info_highlight", background="#d1ecf1", foreground="#0c5460")
 
     lines = content.split("\n")
     line_num = 1
     for line in lines:
         lower_line = line.lower()
 
-        if any(
-            word in lower_line
-            for word in ["error", "failed", "fatal", "exception", "crash"]
-        ):
+        if any(word in lower_line for word in ["error", "failed", "fatal", "exception", "crash"]):
             start_pos = f"{line_num}.0"
             end_pos = f"{line_num}.{len(line)}"
             self.error_text.tag_add("error_highlight", start_pos, end_pos)
@@ -99,14 +83,14 @@ def highlight_error_log(self):
 
         line_num += 1
 
-
+# Toggle error log
 def toggle_error_log(self):
     if self.error_log_visible:
         hide_error_log(self)
     else:
         show_error_log(self)
 
-
+# Show error log
 def show_error_log(self):
     self.error_log_container.grid()
     self.error_log_visible = True
@@ -114,7 +98,7 @@ def show_error_log(self):
     update_error_log(self)
     self.root.update()
 
-
+# Hide error log
 def hide_error_log(self):
     self.error_log_container.grid_remove()
     self.error_log_visible = False
@@ -122,7 +106,7 @@ def hide_error_log(self):
     self.bootstyle = "success-outline"
     self.root.update()
 
-
+# Update error status
 def update_error_status(self):
     try:
         status = False
@@ -143,9 +127,7 @@ def update_error_status(self):
                     f"Errors detected at {datetime.now().strftime('%H:%M:%S')}",
                 ]
             )
-            self.error_indicator.config(
-                text="ERRORS DETECTED ✘", bg="#f8d7da", fg="#721c24"
-            )
+            self.error_indicator.config(text="ERRORS DETECTED ✘", bg="#f8d7da", fg="#721c24")
             clear_current_test(self)
             set_current_test(self, "Failed!")
 
@@ -163,20 +145,15 @@ def update_error_status(self):
 
             if not self.error_log_visible:
                 show_error_log(self)
-
         else:
             self.error_indicator.config(text="NO ERRORS ✔", bg="#d4edda", fg="#155724")
 
         self.toggle_error_btn.config(
             text="▼ Error Logs" if self.error_log_visible else "▶ Error Logs"
         )
-
         return self.error_status
-
     except Exception as e:
         print(f"DEBUG update_error_status error: {e}")
         self.error_status = False
-        self.error_indicator.config(
-            text="ERROR READING STATUS", bg="#f8d7da", fg="#721c24"
-        )
+        self.error_indicator.config(text="ERROR READING STATUS", bg="#f8d7da", fg="#721c24")
         return False
