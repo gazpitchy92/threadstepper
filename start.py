@@ -129,6 +129,13 @@ class StressTestGUI:
         self.low_load_enabled_var = tk.BooleanVar(value=True)
         self.single_core_enabled_var = tk.BooleanVar(value=True)
         self.webgl_enabled_var = tk.BooleanVar(value=True)
+        # Map test groups
+        self.group_vars = {
+            "all_cores": [self.all_core_time_var, self.all_core_tests_var],
+            "low_load": [self.rapid_tests_var, self.rapid_time_var, self.random_tests_var, self.random_time_var],
+            "single_core": [self.light_time_var, self.medium_time_var, self.heavy_time_var],
+            "webgl": [self.browsers_var],
+        }
         # Layout
         main_container = ttk.Frame(self.root, padding=10)
         main_container.grid(row=0, column=0, sticky="nsew")
