@@ -141,10 +141,12 @@ def toggle_group_enabled(self, group_name, enabled):
         restore_group_defaults(self, group_name)
     else:
         set_group_values(self, group_name, 0)
-
-    if group_name == "single_core" and not enabled:
-        self.webgl_enabled_var.set(False)
-        set_group_values(self, "webgl", 0)
+    if group_name == "single_core":
+        self.webgl_enabled_var.set(enabled)
+        if enabled:
+            restore_group_defaults(self, "webgl")
+        else:
+            set_group_values(self, "webgl", 0)
 
 def load_default_settings():
     defaults = {}
