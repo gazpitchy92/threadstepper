@@ -16,9 +16,7 @@ def stop_timer(self):
 def reset_timer(self):
     self.timer_running = False
     self.timer_seconds = 0
-    self.root.after(
-        0, lambda: self.timer_label.config(text="00:00:00", fg="#28a745")
-    )
+    self.root.after(0, lambda: self.timer_label.config(text="00:00:00", fg="#28a745"))
 
 def update_timer(self):
     while True:

@@ -62,12 +62,10 @@ def highlight_error_log(self):
     self.error_text.tag_config("error_highlight", background="#f8d7da", foreground="#721c24")
     self.error_text.tag_config("warning_highlight", background="#fff3cd", foreground="#856404")
     self.error_text.tag_config("info_highlight", background="#d1ecf1", foreground="#0c5460")
-
     lines = content.split("\n")
     line_num = 1
     for line in lines:
         lower_line = line.lower()
-
         if any(word in lower_line for word in ["error", "failed", "fatal", "exception", "crash"]):
             start_pos = f"{line_num}.0"
             end_pos = f"{line_num}.{len(line)}"
@@ -80,7 +78,6 @@ def highlight_error_log(self):
             start_pos = f"{line_num}.0"
             end_pos = f"{line_num}.{len(line)}"
             self.error_text.tag_add("info_highlight", start_pos, end_pos)
-
         line_num += 1
 
 # Toggle error log
@@ -116,7 +113,6 @@ def update_error_status(self):
                 status = first_line.lower() == "true"
 
         self.error_status = status
-
         if self.error_status:
             subprocess.run(
                 [
@@ -130,7 +126,6 @@ def update_error_status(self):
             self.error_indicator.config(text="ERRORS DETECTED ✘", bg="#f8d7da", fg="#721c24")
             clear_current_test(self)
             set_current_test(self, "Failed!")
-
             if self.is_running:
                 self.stop_stress_test()
                 try:
