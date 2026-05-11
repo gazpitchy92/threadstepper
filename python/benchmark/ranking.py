@@ -48,8 +48,8 @@ def build_core_ranks_tab(self):
     canvas.bind("<Configure>", _on_canvas_configure)
     inner.columnconfigure(0, weight=1)
     # data
-    topology = _get_cpu_topology()
-    cppc_raw = _get_cppc_ranking()
+    topology = get_cpu_topology()
+    cppc_raw = get_cppc_ranking()
     cppc_by_cpu = {cpu: score for cpu, score in cppc_raw}
     core_cppc = {}
     sorted_cores = sorted(topology.keys())
@@ -66,7 +66,7 @@ def build_core_ranks_tab(self):
     # build cards
     for row_idx, core_id in enumerate(sorted_cores):
         threads = sorted(topology[core_id])
-        _build_core_card(
+        build_core_card(
             parent=inner,
             row=row_idx,
             core_id=core_id,
@@ -83,7 +83,7 @@ def build_core_ranks_tab(self):
             text="No CPU topology data found.",
             font=("Segoe UI", 10),
         ).grid(row=0, column=0, padx=20, pady=20, sticky="w")
-    _apply_log_scores(self.core_score_labels)
+    apply_log_scores(self.core_score_labels)
     self._cr_running = False
     self._cr_stop_flag = threading.Event()
     self._cr_thread = None
@@ -131,7 +131,7 @@ def build_core_ranks_tab(self):
             lbl.config(text="…")
         _tick()
         self._cr_thread = threading.Thread(
-            target=_run_rank_benchmark,
+            target=run_rank_benchmark,
             args=(self, sorted_cores, topology, cr_status, cr_start_btn, cr_stop_btn),
             daemon=False,
         )
@@ -139,7 +139,7 @@ def build_core_ranks_tab(self):
     def _do_stop():
         self._cr_stop_flag.set()
         self._cr_running = False
-        _kill_rank_group(self)
+        kill_rank_group(self)
         cr_status.config(text="Stopped")
         cr_start_btn.config(state="normal")
         cr_stop_btn.config(state="disabled")
@@ -167,7 +167,7 @@ def build_core_ranks_tab(self):
     cr_start_btn.pack(side="right", padx=(4, 0))
     self._cr_start_btn = cr_start_btn
 
-def _build_core_card(parent, row, core_id, threads, cppc_score, cppc_rank, total_cores, cppc_available, score_labels):
+def build_core_card(parent, row, core_id, threads, cppc_score, cppc_rank, total_cores, cppc_available, score_labels):
     # core card
     card = tk.Frame(parent, highlightthickness=1)
     card.grid(row=row, column=0, sticky="ew", padx=12, pady=4)
@@ -178,7 +178,7 @@ def _build_core_card(parent, row, core_id, threads, cppc_score, cppc_rank, total
     tk.Label(left, text=f"CORE {core_id:02d}", font=("Consolas", 11, "bold")).pack(anchor="w")
     if cppc_available:
         if cppc_rank is not None:
-            badge_text = _rank_badge(cppc_rank, total_cores)
+            badge_text = rank_badge(cppc_rank, total_cores)
             tk.Label(left, text=f"CPPC #{cppc_rank}  {badge_text}", font=("Segoe UI", 8)).pack(anchor="w", pady=(2, 0))
             if cppc_score is not None:
                 tk.Label(left, text=f"score {cppc_score}", font=("Segoe UI", 7)).pack(anchor="w")
@@ -206,7 +206,7 @@ def _build_core_card(parent, row, core_id, threads, cppc_score, cppc_rank, total
     score_lbl.pack(anchor="w", pady=(2, 0))
     score_labels[core_id] = score_lbl
 
-def _rank_badge(rank: int, total: int) -> str:
+def rank_badge(rank: int, total: int) -> str:
     if rank == 1:
         return "★ best"
     pct = rank / total
@@ -216,7 +216,7 @@ def _rank_badge(rank: int, total: int) -> str:
         return "● mid"
     return "▼ low"
 
-def _run_rank_benchmark(self, sorted_cores, topology, cr_status, cr_start_btn, cr_stop_btn):
+def run_rank_benchmark(self, sorted_cores, topology, cr_status, cr_start_btn, cr_stop_btn):
     for core_id in sorted_cores:
         if self._cr_stop_flag.is_set():
             break
@@ -287,7 +287,7 @@ def _run_rank_benchmark(self, sorted_cores, topology, cr_status, cr_start_btn, c
             self._cr_running = False
         self.win.after(0, _partial)
 
-def _read_ranks_log() -> dict[int, int]:
+def read_ranks_log() -> dict[int, int]:
     scores = {}
     if not os.path.exists(RANKS_LOG):
         return scores
@@ -301,14 +301,14 @@ def _read_ranks_log() -> dict[int, int]:
         pass
     return scores
 
-def _apply_log_scores(score_labels: dict):
-    scores = _read_ranks_log()
+def apply_log_scores(score_labels: dict):
+    scores = read_ranks_log()
     for core_id, score in scores.items():
         lbl = score_labels.get(core_id)
         if lbl:
             lbl.config(text=f"{score:,}", font=("Consolas", 13, "bold"))
 
-def _get_cpu_topology() -> dict[int, list[int]]:
+def get_cpu_topology() -> dict[int, list[int]]:
     topology = {}
     try:
         result = subprocess.run(["lscpu", "--parse=CPU,CORE"], capture_output=True, text=True)
@@ -340,7 +340,7 @@ def _get_cpu_topology() -> dict[int, list[int]]:
     n = os.cpu_count() or 1
     return {i: [i] for i in range(n)}
 
-def _get_cppc_ranking() -> list[tuple[int, int]]:
+def get_cppc_ranking() -> list[tuple[int, int]]:
     cppc = []
     base = "/sys/devices/system/cpu"
     try:
@@ -358,9 +358,9 @@ def _get_cppc_ranking() -> list[tuple[int, int]]:
 def _close(self):
     self._cr_stop_flag.set()
     self._cr_running = False
-    _kill_rank_group(self)
+    kill_rank_group(self)
 
-def _kill_rank_group(self):
+def kill_rank_group(self):
     pgid = getattr(self, "_cr_pgid", None)
     if pgid:
         try:
