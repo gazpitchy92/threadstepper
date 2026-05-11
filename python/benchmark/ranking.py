@@ -6,28 +6,12 @@ import time
 import tkinter as tk
 from tkinter import ttk
 
+from python.ui import make_section
+
 RANKS_LOG  = "./logs/ranks.log"
 RANK_SCRIPT = "./functions/benchmark/rank.sh"
 
 def build_core_ranks_tab(self):
-
-    def make_section(parent, title, **kwargs):
-        outer = ttk.Frame(parent, **kwargs)
-        header = ttk.Frame(outer)
-        header.pack(fill="x", pady=(0, 6))
-        lbl = ttk.Label(
-            header, text=title, font=("Segoe UI", 11, "bold"), foreground="#000000"
-        )
-        lbl.pack(side="left")
-        ttk.Separator(header, orient="horizontal").pack(
-            side="left", fill="x", expand=True, padx=(6, 0), pady=1
-        )
-        inner = ttk.Frame(outer)
-        inner.pack(fill="both", expand=True)
-        if not hasattr(self, "_section_labels"):
-            self._section_labels = []
-        self._section_labels.append(lbl)
-        return outer, inner
 
     tab = self.core_ranks_tab
     tab.columnconfigure(0, weight=1)
@@ -41,7 +25,7 @@ def build_core_ranks_tab(self):
     outer.rowconfigure(2, weight=0)
 
     # Header
-    header_frame, header_inner = make_section(outer, "⚃ Core Rankings", padding=6)
+    header_frame, header_inner = make_section(self, outer, "⚃ Core Rankings", padding=6)
     header_frame.grid(row=0, column=0, sticky="ew", pady=(0, 6))
 
     tk.Label(

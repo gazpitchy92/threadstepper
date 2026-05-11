@@ -220,3 +220,13 @@ def detect_cpu_topology(settings_path="./settings"):
                 f.write(content)
     except Exception:
         pass
+
+def check_browser_dependency(self):
+    result = subprocess.run(
+        "compgen -c | grep '^electron[0-9]' | sort -V | tail -1",
+        shell=True,
+        executable="/bin/bash",
+        capture_output=True,
+        text=True,
+    )
+    return bool(result.stdout.strip())

@@ -2,26 +2,9 @@ import os
 import tkinter as tk
 from tkinter import scrolledtext, ttk
 
+from python.ui import make_section
 
 def build_benchmark_tab(self):
-
-    def make_section(parent, title, **kwargs):
-        outer = ttk.Frame(parent, **kwargs)
-        header = ttk.Frame(outer)
-        header.pack(fill="x", pady=(0, 6))
-        lbl = ttk.Label(
-            header, text=title, font=("Segoe UI", 11, "bold"), foreground="#000000"
-        )
-        lbl.pack(side="left")
-        ttk.Separator(header, orient="horizontal").pack(
-            side="left", fill="x", expand=True, padx=(6, 0), pady=1
-        )
-        inner = ttk.Frame(outer)
-        inner.pack(fill="both", expand=True)
-        if not hasattr(self, "_section_labels"):
-            self._section_labels = []
-        self._section_labels.append(lbl)
-        return outer, inner
 
     self.benchmark_tab.columnconfigure(0, weight=1)
     self.benchmark_tab.rowconfigure(0, weight=1)
@@ -34,7 +17,7 @@ def build_benchmark_tab(self):
     body.rowconfigure(1, weight=1)
 
     # Output log
-    log_frame, log_inner = make_section(body, "◷ Benchmark Output", padding=6)
+    log_frame, log_inner = make_section(self, body, "◷ Benchmark Output", padding=6)
     log_frame.grid(row=0, column=0, sticky="nsew", pady=(0, 6))
     log_inner.columnconfigure(0, weight=1)
     log_inner.rowconfigure(0, weight=1)
@@ -58,7 +41,7 @@ def build_benchmark_tab(self):
     self.output_text.tag_config("blue", foreground="#4da3ff")
 
     # History
-    hist_frame, hist_inner = make_section(body, "☷ Benchmark History", padding=6)
+    hist_frame, hist_inner = make_section(self, body, "☷ Benchmark History", padding=6)
     hist_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 6))
 
     hist_inner.columnconfigure(0, weight=1)

@@ -48,18 +48,19 @@ from python.system import (
     on_close,
     refresh_system_info,
     reset_button,
+    check_browser_dependency
 )
 from python.temperature import monitor_temperature, update_temperature
-from python.ui import make_section
+from python.ui import make_section, configure_numeric_spinbox, setup_styles
+from python.timers import start_timer, stop_timer, reset_timer
 
 class StressTestGUI:
-    def __init__(self, root):
 
+    def __init__(self, root):
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
         self.root.title("Thread Stepper (3.8)")
         self.root.geometry("700x915")
-
         self.process = None
         self.is_running = False
         self.benchmark_mode = False
@@ -71,23 +72,13 @@ class StressTestGUI:
         self.timer_running = False
         self.timer_seconds = 0
         self.timer_thread = None
-
         self.setup_ui()
         self.start_monitors()
+
         full_reset(self)
         update_settings_content(self)
         register_settings_traces(self)
         clear_current_test(self)
-
-    def check_browser_dependency(self):
-        result = subprocess.run(
-            "compgen -c | grep '^electron[0-9]' | sort -V | tail -1",
-            shell=True,
-            executable="/bin/bash",
-            capture_output=True,
-            text=True,
-        )
-        return bool(result.stdout.strip())
 
     def open_benchmark_window(self):
         if self.benchmark_window_open:
@@ -101,16 +92,6 @@ class StressTestGUI:
         start_benchmark(self)
 
     def setup_ui(self):
-
-        def configure_numeric_spinbox(spinbox):
-            spinbox.configure(
-                validate="key",
-                validatecommand=(
-                    spinbox.register(lambda value: value.isdigit() or value == ""),
-                    "%P",
-                ),
-            )
-            return spinbox
 
         self.loops_var = tk.IntVar(value=1)
         self.browsers_var = tk.IntVar(value=1)
@@ -177,7 +158,7 @@ class StressTestGUI:
 
         self.install_dep_btn.pack(side="left")
 
-        if self.check_browser_dependency():
+        if check_browser_dependency(self):
             self.install_dep_btn.pack_forget()
 
         info_row = ttk.Frame(main_container)
@@ -438,7 +419,7 @@ class StressTestGUI:
             )
 
             spinbox = configure_numeric_spinbox(
-                ttk.Spinbox(parent, from_=0, to=999999, textvariable=var)
+                self, ttk.Spinbox(parent, from_=0, to=999999, textvariable=var)
             )
 
             spinbox.grid(row=row, column=1, sticky="ew", pady=1)
@@ -489,7 +470,7 @@ class StressTestGUI:
 
         self.browsers_label.grid(row=0, column=0, sticky="w", padx=(0, 0), pady=3)
 
-        self.browsers_spinbox = configure_numeric_spinbox(
+        self.browsers_spinbox = configure_numeric_spinbox(self, 
             ttk.Spinbox(
                 browser_inner, from_=0, to=99, width=6, textvariable=self.browsers_var
             )
@@ -497,7 +478,7 @@ class StressTestGUI:
 
         self.browsers_spinbox.grid(row=0, column=1, sticky="ew", pady=3)
 
-        if not self.check_browser_dependency():
+        if not check_browser_dependency(self):
             self.browsers_label.grid_remove()
             self.browsers_spinbox.grid_remove()
 
@@ -596,7 +577,7 @@ class StressTestGUI:
             side="left", padx=(0, 4)
         )
 
-        loops_spinbox = configure_numeric_spinbox(
+        loops_spinbox = configure_numeric_spinbox(self, 
             ttk.Spinbox(
                 runs_frame, from_=1, to=999, width=5, textvariable=self.loops_var
             )
@@ -668,50 +649,8 @@ class StressTestGUI:
 
         self.progress.grid_remove()
 
-        self.setup_styles()
+        setup_styles(self)
         apply_theme_on_load(self)
-
-    def setup_styles(self):
-        style = ttk.Style()
-        style.configure(
-            "Install.TButton",
-            foreground="blue",
-            font=("Arial", 12),
-        )
-        self.output_text.tag_config("error", foreground="red")
-        self.output_text.tag_config("success", foreground="green")
-        self.output_text.tag_config("warning", foreground="orange")
-        self.output_text.tag_config("info", foreground="blue")
-
-    def start_timer(self):
-        self.timer_seconds = 0
-        self.timer_running = True
-        self.timer_label.config(fg="#28a745")
-        if self.timer_thread is None or not self.timer_thread.is_alive():
-            self.timer_thread = threading.Thread(target=self.update_timer, daemon=True)
-            self.timer_thread.start()
-
-    def stop_timer(self):
-        self.timer_running = False
-        self.timer_label.config(fg="#dc3545")
-
-    def reset_timer(self):
-        self.timer_running = False
-        self.timer_seconds = 0
-        self.root.after(
-            0, lambda: self.timer_label.config(text="00:00:00", fg="#28a745")
-        )
-
-    def update_timer(self):
-        while True:
-            if self.timer_running:
-                hours = self.timer_seconds // 3600
-                minutes = (self.timer_seconds % 3600) // 60
-                seconds = self.timer_seconds % 60
-                time_str = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-                self.root.after(0, lambda t=time_str: self.timer_label.config(text=t))
-                self.timer_seconds += 1
-            time.sleep(1)
 
     def start_monitors(self):
         threading.Thread(target=monitor_error_status, args=(self,), daemon=True).start()
@@ -753,8 +692,8 @@ class StressTestGUI:
 
         full_reset(self)
         set_current_test(self, "Starting...")
-        self.reset_timer()
-        self.start_timer()
+        reset_timer(self)
+        start_timer(self)
         self.progress.grid()
         self.progress.start(10)
 
@@ -768,7 +707,7 @@ class StressTestGUI:
 
         if not os.path.exists("./threadstepper"):
             log_message(self, "Error: ./threadstepper not found!", "error")
-            self.stop_timer()
+            stop_timer(self)
             return
 
         self.is_running = True
@@ -841,14 +780,13 @@ class StressTestGUI:
         else:
             log_message(self, "Stopping testing, please wait...", "warning")
             self.status_bar.config(text="Stopping testing...")
-            self.stop_timer()
+            stop_timer(self)
             subprocess.run(["pkill", "-f", "threadstepper"])
             subprocess.run(["pkill", "-f", "logger.sh"])
             subprocess.run(["pkill", "-f", "bash -c"])
             subprocess.run(["pkill", "-f", "load_test.sh"])
             subprocess.run(["pkill", "-f", "load_worker.sh"])
             subprocess.run(["pkill", "-f", "launch.js"])
-            self.stop_timer()
             self.progress.stop()
             self.progress.grid_remove()
 
@@ -858,13 +796,13 @@ class StressTestGUI:
         if self.benchmark_mode:
             self.status_bar.config(text="Benchmark stopped")
             update_error_status(self)
-            self.stop_timer()
+            stop_timer(self)
             self.progress.stop()
             self.progress.grid_remove()
         else:
             self.status_bar.config(text="Testing stopped")
             update_error_status(self)
-            self.stop_timer()
+            stop_timer(self)
             self.progress.stop()
             self.progress.grid_remove()
         self.is_running = False

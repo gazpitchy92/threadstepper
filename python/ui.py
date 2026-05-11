@@ -25,3 +25,25 @@ def make_section(self, parent, title, **kwargs):
     self._section_labels.append(lbl)
 
     return outer, inner
+
+def configure_numeric_spinbox(self, spinbox):
+    spinbox.configure(
+        validate="key",
+        validatecommand=(
+            spinbox.register(lambda value: value.isdigit() or value == ""),
+            "%P",
+        ),
+    )
+    return spinbox
+
+def setup_styles(self):
+    style = ttk.Style()
+    style.configure(
+        "Install.TButton",
+        foreground="blue",
+        font=("Arial", 12),
+    )
+    self.output_text.tag_config("error", foreground="red")
+    self.output_text.tag_config("success", foreground="green")
+    self.output_text.tag_config("warning", foreground="orange")
+    self.output_text.tag_config("info", foreground="blue")

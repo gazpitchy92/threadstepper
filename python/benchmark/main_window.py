@@ -38,6 +38,7 @@ class BenchmarkWindow:
         self._build_ui()
         self._drain_log_queue()
         self._refresh_history()
+        
 
     # UI
     def _build_ui(self):
