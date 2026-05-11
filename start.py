@@ -53,6 +53,7 @@ from python.system import (
 from python.temperature import monitor_temperature, update_temperature
 from python.ui import make_section, configure_numeric_spinbox, setup_styles
 from python.timers import start_timer, stop_timer, reset_timer
+from python.testing import run_stress_test, start_stress_test, stop_stress_test, on_process_stop
 
 class StressTestGUI:
 
@@ -589,7 +590,7 @@ class StressTestGUI:
             control_frame,
             text="▶ Start",
             bootstyle="success",
-            command=self.start_stress_test,
+            command=lambda: start_stress_test(self),
         )
 
         self.start_button.pack(side="left", padx=(5, 0))
@@ -599,7 +600,7 @@ class StressTestGUI:
             text="⊠ Stop",
             state="disabled",
             bootstyle="danger",
-            command=self.stop_stress_test,
+            command=lambda: stop_stress_test(self),
         )
 
         self.stop_button.pack(side="left", padx=(5, 0))
