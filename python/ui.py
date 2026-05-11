@@ -288,7 +288,7 @@ def build_settings(self, parent):
     ).grid(row=0, column=0, sticky="w", pady=(0, 2), padx=2)
     single_frame.grid(row=1, column=2, sticky="nsew", padx=(5, 0), pady=(0, 2))
     make_entry_row(self, single_inner, "Low Time", self.light_time_var, 1)
-    make_entry_row(self, single_inner, "Medium Time", self.medium_time_var, 2)
+    make_entry_row(self, single_inner, "Medi Time", self.medium_time_var, 2)
     make_entry_row(self, single_inner, "High Time", self.heavy_time_var, 3)
     # Bottom row
     bottom_settings = ttk.Frame(settings_inner)
@@ -327,7 +327,7 @@ def build_settings(self, parent):
     ttk.Button(cores_inner, text="⚙ Configure", bootstyle="primary-outline", command=lambda: open_core_picker(self)).grid(
         row=0, column=0, sticky="ew"
     )
-    other_frame, other_inner = make_section(self, bottom_settings, "Other Options", padding=6)
+    other_frame, other_inner = make_section(self, bottom_settings, "⍼ Other Options", padding=6)
     other_frame.grid(row=0, column=2, sticky="nsew", padx=(5, 0))
     make_entry_row(self, other_inner, "Rest Time", self.rest_time_var, 0)
     # Save

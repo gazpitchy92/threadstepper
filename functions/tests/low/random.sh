@@ -28,7 +28,7 @@ random_stress() {
             if [[ ${#slice[@]} -eq 0 ]]; then
                 continue
             fi
-            ifs=',' read -ra bl <<< "$core_blacklist"
+            IFS=',' read -ra bl <<< "$core_blacklist"
             for core in "${slice[@]}"; do
                 blacklisted=false
                 for b in "${bl[@]}"; do
@@ -41,7 +41,7 @@ random_stress() {
                 continue
             fi
             # Run stressor
-            taskset_cores=$(ifs=,; echo "${filtered[*]}")
+            taskset_cores=$(IFS=,; echo "${filtered[*]}")
             vm_count=${#filtered[@]}
             echo "$(tput setaf 2)Testing high load on thread(s) [$taskset_cores] for ${random_time}s$(tput sgr0)" | tee -a "$output_log_file"
             update_threads "$taskset_cores"

@@ -17,7 +17,7 @@ alkl_core_test() {
     # Blacklist check helper
     is_blacklisted() {
         local core=$1
-        ifs=',' read -ra bl <<< "$core_blacklist"
+        IFS=',' read -ra bl <<< "$core_blacklist"
         for b in "${bl[@]}"; do
             [[ "$core" == "$b" ]] && return 0
         done
@@ -26,7 +26,7 @@ alkl_core_test() {
     # Filter list of threads
     filter_cores() {
         local filtered=()
-        ifs=',' read -ra cores <<< "$1"
+        IFS=',' read -ra cores <<< "$1"
         for core in "${cores[@]}"; do
             is_blacklisted "$core" || filtered+=("$core")
         done
