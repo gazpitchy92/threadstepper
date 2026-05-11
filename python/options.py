@@ -63,7 +63,7 @@ def update_settings_content(self):
                 content = f.read()
                 parse_settings_options(self, content)
                 sync_group_enabled_states(self)
-                self.root.update_idletasks()  # Force UI refresh
+                self.root.update_idletasks()
             self.status_bar.config(text="Settings loaded successfully")
         else:
             self.status_bar.config(
@@ -114,6 +114,7 @@ def save_settings(self):
                 f.write(preserved_content)
         self.settings_dirty = False
         self.unsaved_label.config(text="")
+        sync_group_enabled_states(self)
         log_message(self, "Settings saved", "success")
     except Exception as e:
         log_message(self, f"Error saving settings: {str(e)}", "error")
