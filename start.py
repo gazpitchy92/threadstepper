@@ -9,10 +9,10 @@ import time
 import tkinter as tk
 from datetime import datetime
 from tkinter import PhotoImage, filedialog, messagebox, scrolledtext, ttk
-
 import ttkbootstrap as tb
 from PIL import Image, ImageTk
 from ttkbootstrap.constants import *
+
 from python.benchmark.main_window import start_benchmark
 from python.clocks import monitor_clock_speed, update_clock_speed
 from python.core_picker import open_core_picker
@@ -50,7 +50,7 @@ from python.system import (
     reset_button,
 )
 from python.temperature import monitor_temperature, update_temperature
-
+from python.ui import make_section
 
 class StressTestGUI:
     def __init__(self, root):
@@ -101,30 +101,6 @@ class StressTestGUI:
         start_benchmark(self)
 
     def setup_ui(self):
-        def make_section(parent, title, **kwargs):
-            outer = ttk.Frame(parent, **kwargs)
-            header = ttk.Frame(outer)
-            header.pack(fill="x", pady=(0, 6))
-
-            lbl = ttk.Label(
-                header, text=title, font=("Segoe UI", 11, "bold"), foreground="#000000"
-            )
-
-            lbl.pack(side="left")
-
-            ttk.Separator(header, orient="horizontal").pack(
-                side="left", fill="x", expand=True, padx=(6, 0), pady=1
-            )
-
-            inner = ttk.Frame(outer)
-            inner.pack(fill="both", expand=True)
-
-            if not hasattr(self, "_section_labels"):
-                self._section_labels = []
-
-            self._section_labels.append(lbl)
-
-            return outer, inner
 
         def configure_numeric_spinbox(spinbox):
             spinbox.configure(
@@ -213,7 +189,7 @@ class StressTestGUI:
         info_row.rowconfigure(1, weight=1)
 
         system_frame, system_inner = make_section(
-            info_row, "⌕ System Information", padding=10
+            self, info_row, "⌕ System Information", padding=10
         )
 
         system_frame.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(0, 0))
@@ -304,7 +280,7 @@ class StressTestGUI:
         info_row.columnconfigure(2, weight=1)
 
         clock_frame_top, clock_inner_top = make_section(
-            info_row, "⬆ Peak Clock", padding=10
+            self, info_row, "⬆ Peak Clock", padding=10
         )
 
         clock_frame_top.grid(row=0, column=1, sticky="nsew", padx=(5, 0))
@@ -326,7 +302,7 @@ class StressTestGUI:
         self.clock_label_top.grid(row=0, column=0, sticky="nsew")
 
         temp_frame_top, temp_inner_top = make_section(
-            info_row, "❈ Peak Temp", padding=10
+            self, info_row, "❈ Peak Temp", padding=10
         )
 
         temp_frame_top.grid(row=0, column=2, sticky="nsew", padx=(5, 0))
@@ -348,7 +324,7 @@ class StressTestGUI:
         self.temp_label_top.grid(row=0, column=0, sticky="nsew")
 
         clock_frame_bottom, clock_inner_bottom = make_section(
-            info_row, "◇ Current Action", padding=10
+            self, info_row, "◇ Current Action", padding=10
         )
 
         clock_frame_bottom.grid(
@@ -373,7 +349,7 @@ class StressTestGUI:
         self.clock_label_bottom.grid(row=0, column=0, sticky="nsew")
 
         error_frame, error_inner = make_section(
-            main_container, "⁉ Error Status", padding=10
+            self, main_container, "⁉ Error Status", padding=10
         )
 
         error_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=(0, 2))
@@ -413,7 +389,7 @@ class StressTestGUI:
         self.toggle_error_btn.pack(side="right", padx=2)
 
         self.error_log_container, error_log_inner = make_section(
-            main_container, "✎ Error Logs", padding=5
+            self, main_container, "✎ Error Logs", padding=5
         )
 
         self.error_log_container.grid(row=3, column=0, sticky="ew", padx=5, pady=(0, 2))
@@ -467,14 +443,14 @@ class StressTestGUI:
 
             spinbox.grid(row=row, column=1, sticky="ew", pady=1)
 
-        high_frame, high_inner = make_section(settings_inner, "▦ All Cores", padding=6)
+        high_frame, high_inner = make_section(self, settings_inner, "▦ All Cores", padding=6)
 
         high_frame.grid(row=1, column=0, sticky="nsew", padx=(0, 0), pady=(0, 2))
 
         make_entry_row(high_inner, "Time", self.all_core_time_var, 0)
         make_entry_row(high_inner, "Tests", self.all_core_tests_var, 1)
 
-        low_frame, low_inner = make_section(settings_inner, "≡ Low Load", padding=6)
+        low_frame, low_inner = make_section(self, settings_inner, "≡ Low Load", padding=6)
 
         low_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=(0, 2))
 
@@ -484,7 +460,7 @@ class StressTestGUI:
         make_entry_row(low_inner, "Rand Time", self.random_time_var, 3)
 
         single_frame, single_inner = make_section(
-            settings_inner, "◫ Single Core", padding=6
+            self, settings_inner, "◫ Single Core", padding=6
         )
 
         single_frame.grid(row=1, column=2, sticky="nsew", padx=(5, 0), pady=(0, 2))
@@ -502,7 +478,7 @@ class StressTestGUI:
         bottom_settings.columnconfigure(2, weight=1)
 
         browser_frame, browser_inner = make_section(
-            bottom_settings, "☉ WebGL Tests", padding=6
+            self, bottom_settings, "☉ WebGL Tests", padding=6
         )
 
         browser_inner.columnconfigure(1, weight=1)
@@ -535,7 +511,7 @@ class StressTestGUI:
             self.browser_dep_label.grid(row=0, column=0, sticky="w", pady=(2, 0))
 
         cores_frame, cores_inner = make_section(
-            bottom_settings, "∼ Cores / Threads", padding=6
+            self, bottom_settings, "∼ Cores / Threads", padding=6
         )
 
         cores_inner.columnconfigure(0, weight=1)
@@ -550,7 +526,7 @@ class StressTestGUI:
         ).grid(row=0, column=0, sticky="ew")
 
         other_frame, other_inner = make_section(
-            bottom_settings, "Other Options", padding=6
+            self, bottom_settings, "Other Options", padding=6
         )
 
         other_frame.grid(row=0, column=2, sticky="nsew", padx=(5, 0))
@@ -575,7 +551,7 @@ class StressTestGUI:
         ).pack(side="right")
 
         output_frame, output_inner = make_section(
-            main_container, "⩾ Test Output", padding=10
+            self, main_container, "⩾ Test Output", padding=10
         )
 
         output_frame.grid(row=5, column=0, sticky="nsew", padx=5, pady=(0, 2))
