@@ -167,7 +167,6 @@ def build_core_ranks_tab(self):
     cr_start_btn.pack(side="right", padx=(4, 0))
     self._cr_start_btn = cr_start_btn
 
-
 def _build_core_card(parent, row, core_id, threads, cppc_score, cppc_rank, total_cores, cppc_available, score_labels):
     # core card
     card = tk.Frame(parent, highlightthickness=1)
@@ -207,7 +206,6 @@ def _build_core_card(parent, row, core_id, threads, cppc_score, cppc_rank, total
     score_lbl.pack(anchor="w", pady=(2, 0))
     score_labels[core_id] = score_lbl
 
-
 def _rank_badge(rank: int, total: int) -> str:
     if rank == 1:
         return "★ best"
@@ -217,7 +215,6 @@ def _rank_badge(rank: int, total: int) -> str:
     if pct <= 0.60:
         return "● mid"
     return "▼ low"
-
 
 def _run_rank_benchmark(self, sorted_cores, topology, cr_status, cr_start_btn, cr_stop_btn):
     for core_id in sorted_cores:
@@ -290,7 +287,6 @@ def _run_rank_benchmark(self, sorted_cores, topology, cr_status, cr_start_btn, c
             self._cr_running = False
         self.win.after(0, _partial)
 
-
 def _read_ranks_log() -> dict[int, int]:
     scores = {}
     if not os.path.exists(RANKS_LOG):
@@ -305,14 +301,12 @@ def _read_ranks_log() -> dict[int, int]:
         pass
     return scores
 
-
 def _apply_log_scores(score_labels: dict):
     scores = _read_ranks_log()
     for core_id, score in scores.items():
         lbl = score_labels.get(core_id)
         if lbl:
             lbl.config(text=f"{score:,}", font=("Consolas", 13, "bold"))
-
 
 def _get_cpu_topology() -> dict[int, list[int]]:
     topology = {}
@@ -346,7 +340,6 @@ def _get_cpu_topology() -> dict[int, list[int]]:
     n = os.cpu_count() or 1
     return {i: [i] for i in range(n)}
 
-
 def _get_cppc_ranking() -> list[tuple[int, int]]:
     cppc = []
     base = "/sys/devices/system/cpu"
@@ -362,12 +355,10 @@ def _get_cppc_ranking() -> list[tuple[int, int]]:
         return []
     return sorted(cppc, key=lambda x: x[1], reverse=True)
 
-
 def _close(self):
     self._cr_stop_flag.set()
     self._cr_running = False
     _kill_rank_group(self)
-
 
 def _kill_rank_group(self):
     pgid = getattr(self, "_cr_pgid", None)
