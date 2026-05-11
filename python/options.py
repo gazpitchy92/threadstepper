@@ -5,7 +5,6 @@ from tkinter import ttk
 
 from python.logs import log_message
 
-
 def parse_settings_options(self, content):
     for line in content.splitlines():
         if line.startswith("loops="):
@@ -38,12 +37,24 @@ def parse_settings_options(self, content):
         elif line.startswith("max_ram="):
             self.max_ram_var.set(int(line.split("=")[1]))
 
+def sync_group_enabled_states(self):
+    self.all_cores_enabled_var.set(
+        any(v.get() != 0 for v in self.group_vars["all_cores"])
+    )
+    self.low_load_enabled_var.set(
+        any(v.get() != 0 for v in self.group_vars["low_load"])
+    )
+    self.single_core_enabled_var.set(
+        any(v.get() != 0 for v in self.group_vars["single_core"])
+    )
+    self.webgl_enabled_var.set(
+        any(v.get() != 0 for v in self.group_vars["webgl"])
+    )
 
 def validate_core_blacklist(self, value):
     if value == "":
         return True
     return bool(re.fullmatch(r"\d+(,\d+)*", value))
-
 
 def update_settings_content(self):
     try:
@@ -51,6 +62,7 @@ def update_settings_content(self):
             with open("./config/user.settings", "r") as f:
                 content = f.read()
                 parse_settings_options(self, content)
+                sync_group_enabled_states(self)
                 self.root.update_idletasks()  # Force UI refresh
             self.status_bar.config(text="Settings loaded successfully")
         else:
@@ -59,7 +71,6 @@ def update_settings_content(self):
             )
     except Exception as e:
         log_message(self, f"Error loading settings: {str(e)}", "error")
-
 
 def save_settings(self):
     try:
@@ -106,7 +117,6 @@ def save_settings(self):
         log_message(self, "Settings saved", "success")
     except Exception as e:
         log_message(self, f"Error saving settings: {str(e)}", "error")
-
 
 def register_settings_traces(self):
     self.settings_dirty = False
