@@ -1,4 +1,4 @@
-ui/__pycache__
+python/__pycache__
+python/benchmark/__pycache__
 logs/*.log
 logs/*.pid
-
