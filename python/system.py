@@ -4,12 +4,13 @@ import re
 import subprocess
 
 import psutil
+
 from python.clocks import reset_clock_speed, update_clock_speed
 from python.errors import clear_error_log, update_error_log, update_error_status
 from python.logs import clear_current_test, clear_output, log_message
 from python.temperature import reset_temperature
 
-
+# Reset
 def reset_button(self):
     clear_output(self)
     reset_clock_speed(self)
@@ -17,7 +18,6 @@ def reset_button(self):
     clear_error_log(self)
     refresh_system_info(self)
     log_message(self, "Logs, Clocks and Errors have been reset", "info")
-
 
 def get_cpu_model():
     with open("/proc/cpuinfo") as f:
@@ -32,38 +32,29 @@ def get_cpu_model():
                 return name.strip()
     return "Unknown"
 
-
+# System
 def refresh_system_info(self):
     import psutil
-
     self.os_label.config(text=f" {platform.system()} {platform.release()}")
-
     try:
         freq = psutil.cpu_freq()
         min_ghz = freq.min / 1000
         max_ghz = freq.max / 1000
         ram_gb = psutil.virtual_memory().total / 1024**3
         cpu_model = get_cpu_model()
-
-        self.cores_label.config(
-            text=f" {psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}"
-        )
+        self.cores_label.config(text=f" {psutil.cpu_count(logical=False)}/{psutil.cpu_count(logical=True)}")
         self.cpu_freq.config(text=f" {min_ghz:.3f}-{max_ghz:.3f} GHz")
         self.model_label.config(text=f" {cpu_model}")
-
     except ImportError:
         self.cores_label.config(text=" N/A (install psutil)")
         self.cpu_freq.config(text=" N/A")
         self.model_label.config(text=f" N/A")
-
     try:
         with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
             governor = f.read().strip()
     except:
         governor = "N/A"
-
     self.governor_label.config(text=f" {governor}")
-
 
 def full_reset(self):
     try:
@@ -104,12 +95,11 @@ def on_close(self):
     except Exception as e:
         log_message(self, f"Error on close: {str(e)}", "error")
 
+# Topology
 def detect_cpu_topology(settings_path="./settings"):
     import re
-
     num_logical = os.cpu_count() or 1
-
-    # Build map: cpu_id -> core_id
+    # Build cpu to core map
     cpu_to_core = {}
     try:
         for cpu_path in os.listdir("/sys/devices/system/cpu"):
@@ -122,31 +112,26 @@ def detect_cpu_topology(settings_path="./settings"):
                     cpu_to_core[cpu_id] = int(f.read().strip())
     except Exception:
         pass
-
+    # Fallback topology
     if not cpu_to_core:
         topology = 0
     else:
-        # First cpu_id per physical core
+        # Map cores to first cpu id
         core_to_first_cpu = {}
         for cpu_id, core_id in cpu_to_core.items():
             if core_id not in core_to_first_cpu or cpu_id < core_to_first_cpu[core_id]:
                 core_to_first_cpu[core_id] = cpu_id
-
+        # Core ordering setup
         sorted_cores = sorted(core_to_first_cpu.keys())
         num_cores = len(sorted_cores)
         half_cores = num_cores // 2
-
-        # cross-die
+        # Cross die analysis
         cross_matches, cross_checks = 0, 0
         for i in range(half_cores):
             core_a, core_b = sorted_cores[i], sorted_cores[i + half_cores]
             cpu_a, cpu_b = core_to_first_cpu[core_a], core_to_first_cpu[core_b]
-            sib_path_a = (
-                f"/sys/devices/system/cpu/cpu{cpu_a}/topology/thread_siblings_list"
-            )
-            sib_path_b = (
-                f"/sys/devices/system/cpu/cpu{cpu_b}/topology/thread_siblings_list"
-            )
+            sib_path_a = f"/sys/devices/system/cpu/cpu{cpu_a}/topology/thread_siblings_list"
+            sib_path_b = f"/sys/devices/system/cpu/cpu{cpu_b}/topology/thread_siblings_list"
             try:
                 with open(sib_path_a) as f:
                     sib_a = set()
@@ -156,6 +141,7 @@ def detect_cpu_topology(settings_path="./settings"):
                             sib_a.update(range(int(a), int(b) + 1))
                         else:
                             sib_a.add(int(part))
+
                 with open(sib_path_b) as f:
                     sib_b = set()
                     for part in f.read().strip().split(","):
@@ -164,13 +150,13 @@ def detect_cpu_topology(settings_path="./settings"):
                             sib_b.update(range(int(a), int(b) + 1))
                         else:
                             sib_b.add(int(part))
+
                 cross_checks += 1
                 if cpu_b not in sib_a and cpu_a not in sib_b:
                     cross_matches += 1
             except Exception:
                 pass
-
-        # adjacent die
+        # Adjacent die analysis
         adj_matches, adj_checks = 0, 0
         for i in range(num_cores - 1):
             core_a, core_b = sorted_cores[i], sorted_cores[i + 1]
@@ -183,27 +169,28 @@ def detect_cpu_topology(settings_path="./settings"):
                     die_a = f.read().strip()
                 with open(die_path_b) as f:
                     die_b = f.read().strip()
+
                 if die_a == die_b:
                     adj_matches += 1
             except Exception:
                 if (core_b - core_a) == 1:
                     adj_matches += 1
-
+        # Ratio calculation
         cross_ratio = (cross_matches * 100 // cross_checks) if cross_checks else 0
         adj_ratio = (adj_matches * 100 // adj_checks) if adj_checks else 0
-
+        # Topology classification
         if cross_ratio >= 80:
             topology = 1
         elif adj_ratio >= 80:
             topology = 2
         else:
             topology = 0
-
     # Save topology
     try:
         if os.path.exists(settings_path):
             with open(settings_path, "r") as f:
                 content = f.read()
+
             if re.search(r"^cpu_topology=", content, re.MULTILINE):
                 content = re.sub(
                     r"^cpu_topology=.*",
@@ -213,6 +200,7 @@ def detect_cpu_topology(settings_path="./settings"):
                 )
             else:
                 content += f"\ncpu_topology={topology}"
+
             with open(settings_path, "w") as f:
                 f.write(content)
     except Exception:
