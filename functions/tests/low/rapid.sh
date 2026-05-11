@@ -21,7 +21,7 @@ rapid_test() {
             if [[ ${#active_cores[@]} -eq 0 ]]; then
                 echo "$(tput setaf 0)Skipping test as both thread(s) disabled$(tput sgr0)" | tee -a "$output_log_file"
             else
-                taskset_cores=$(IFS=,; echo "${active_cores[*]}")
+                taskset_cores=$(ifs=,; echo "${active_cores[*]}")
                 num_cores=${#active_cores[@]}
                 echo "$(tput setaf 2)Testing high load on thread(s) [$taskset_cores] of core [${active_cores[0]}] for ${rapid_time}s$(tput sgr0)" | tee -a "$output_log_file"
                 update_threads "$taskset_cores"
@@ -49,7 +49,7 @@ rapid_test() {
                 if [[ ${#active_cores[@]} -eq 0 ]]; then
                     echo "$(tput setaf 0)Skipping signle core test as both thread(s) disabled$(tput sgr0)" | tee -a "$output_log_file"
                 else
-                    taskset_cores=$(IFS=,; echo "${active_cores[*]}")
+                    taskset_cores=$(ifs=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
                     echo "$(tput setaf 2)Testing high load on thread(s) [$taskset_cores] of core [${active_cores[0]}] for ${rapid_time}s$(tput sgr0)" | tee -a "$output_log_file"
                     update_threads "$taskset_cores"
@@ -79,7 +79,7 @@ rapid_test() {
                 if [[ ${#active_cores[@]} -eq 0 ]]; then
                     echo "$(tput setaf 0)Skipping single core test as both thread(s) are disabled$(tput sgr0)" | tee -a "$output_log_file"
                 else
-                    taskset_cores=$(IFS=,; echo "${active_cores[*]}")
+                    taskset_cores=$(ifs=,; echo "${active_cores[*]}")
                     num_cores=${#active_cores[@]}
                     echo "$(tput setaf 2)Testing high load on thread(s) [$taskset_cores] of core [${active_cores[0]}] for ${rapid_time}s$(tput sgr0)" | tee -a "$output_log_file"
                     update_threads "$taskset_cores"

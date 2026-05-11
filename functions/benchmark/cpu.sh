@@ -40,22 +40,22 @@ find_best_core() {
 
 # Select core
 select_core() {
-    if [ -n "$SELECTED_CORE" ] && [ "$SELECTED_CORE" != "Auto" ]; then
-        BASE_CORE="$SELECTED_CORE"
-        if [ ! -f "/sys/devices/system/cpu/cpu$BASE_CORE/acpi_cppc/highest_perf" ]; then
-            BASE_CORE=$(find_best_core)
+    if [ -n "$selected_core" ] && [ "$selected_core" != "Auto" ]; then
+        base_core="$selected_core"
+        if [ ! -f "/sys/devices/system/cpu/cpu$base_core/acpi_cppc/highest_perf" ]; then
+            base_core=$(find_best_core)
         fi
     else
-        BASE_CORE=$(find_best_core)
+        base_core=$(find_best_core)
     fi
 }
 
 # Resolve SMT group
 resolve_threads() {
-    THREADS=$(get_threads "$BASE_CORE")
-    CORE_GROUP=$(normalize_core_group $THREADS)
-    CPUS=$(to_taskset "$CORE_GROUP")
-    CORE_COUNT=$(echo $CORE_GROUP | wc -w)
+    threads=$(get_threads "$base_core")
+    core_group=$(normalize_core_group $threads)
+    cpus=$(to_taskset "$core_group")
+    core_count=$(echo $core_group | wc -w)
 }
 
 # Sample cpu clock

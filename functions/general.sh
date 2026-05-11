@@ -61,8 +61,8 @@ output_options() {
 
 # cleanup exit of program
 cleanup() {
-    if [[ -z "$CLEANED_UP" ]]; then
-        CLEANED_UP=1
+    if [[ -z "$cleaned_up" ]]; then
+        cleaned_up=1
         stop_logger
         stop_stressor
         kill_phase

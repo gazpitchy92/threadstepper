@@ -3,16 +3,16 @@
 
 # Init vars
 source "$(dirname "$current_dir")/config/user.settings"
-NCPU=$(nproc)
-CORES_COUNT=$(( NCPU / 2 ))
+ncpu=$(nproc)
+cores_count=$(( ncpu / 2 ))
 current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUTPUT_LOG="$(dirname "$current_dir")/../logs/benchmark.log"
-SELECTED_CORE="$1"
+output_log="$(dirname "$current_dir")/../logs/benchmark.log"
+selected_core="$1"
 
 # Setup
-mkdir -p "$(dirname "$OUTPUT_LOG")"
-if [ ! -f "$OUTPUT_LOG" ]; then
-    > "$OUTPUT_LOG"
+mkdir -p "$(dirname "$output_log")"
+if [ ! -f "$output_log" ]; then
+    > "$output_log"
 fi
 
 # Functions
@@ -22,32 +22,32 @@ source "$(dirname "$current_dir")/benchmark/tests.sh"
 
 # ------ Calculate Times
 # Rest time
-REST_DURATION=$(( bm_rest_duration ))
+rest_duration=$(( bm_rest_duration ))
 # All Core
-MULTI_DURATION=$(( bm_all_duration ))
-MULTI_RUNS=$(( bm_all_tests ))
-MULTI_REST_DURATION=$(( MULTI_RUNS * REST_DURATION ))
-TOTAL_MULTI_DURATION=$(( MULTI_DURATION * MULTI_RUNS ))
-MULTI_DURATION_ESTIMATE=$(( (TOTAL_MULTI_DURATION + MULTI_REST_DURATION) ))
-MULTI_DURATION_PRINT=$(printf "%dm %02ds" \
-  "$(( MULTI_DURATION_ESTIMATE / 60 ))" \
-  "$(( MULTI_DURATION_ESTIMATE % 60 ))")
+multi_duration=$(( bm_all_duration ))
+multi_runs=$(( bm_all_tests ))
+multi_rest_duration=$(( multi_runs * rest_duration ))
+total_multi_duration=$(( multi_duration * multi_runs ))
+multi_duration_estimate=$(( (total_multi_duration + multi_rest_duration) ))
+multi_duration_print=$(printf "%dm %02ds" \
+  "$(( multi_duration_estimate / 60 ))" \
+  "$(( multi_duration_estimate % 60 ))")
 # Single Core
-SINGLE_DURATION=$(( bm_single_duration ))
-SINGLE_RUNS=$(( bm_single_tests ))
-SINGLE_REST_DURATION=$(( SINGLE_RUNS * REST_DURATION ))
-TOTAL_SINGLE_DURATION=$(( SINGLE_DURATION * SINGLE_RUNS ))
-SINGLE_DURATION_ESTIMATE=$(( (TOTAL_SINGLE_DURATION + SINGLE_REST_DURATION) ))
-SINGLE_DURATION_PRINT=$(printf "%dm %02ds" \
-  "$(( SINGLE_DURATION_ESTIMATE / 60 ))" \
-  "$(( SINGLE_DURATION_ESTIMATE % 60 ))")
+single_duration=$(( bm_single_duration ))
+single_runs=$(( bm_single_tests ))
+single_rest_duration=$(( single_runs * rest_duration ))
+total_single_duration=$(( single_duration * single_runs ))
+single_duration_estimate=$(( (total_single_duration + single_rest_duration) ))
+single_duration_print=$(printf "%dm %02ds" \
+  "$(( single_duration_estimate / 60 ))" \
+  "$(( single_duration_estimate % 60 ))")
 # Time calculations
-TOTAL_RUNS=$(( SINGLE_RUNS + MULTI_RUNS ))
-TOTAL_REST_DURATION=$(( TOTAL_RUNS * REST_DURATION ))
-TOTAL_DURATION_seconds=$(( TOTAL_REST_DURATION + TOTAL_SINGLE_DURATION + TOTAL_MULTI_DURATION ))
+total_runs=$(( single_runs + multi_runs ))
+total_rest_duration=$(( total_runs * rest_duration ))
+total_duration_seconds=$(( total_rest_duration + total_single_duration + total_multi_duration ))
 # Total time output
-mins=$(( TOTAL_DURATION_seconds / 60 ))
-secs=$(( TOTAL_DURATION_seconds % 60 ))
+mins=$(( total_duration_seconds / 60 ))
+secs=$(( total_duration_seconds % 60 ))
 echo "info Benchmark started at $(date +%H:%M:%S)"
 echo "info This will take approx. ${mins}m ${secs}s"
 # ------------
