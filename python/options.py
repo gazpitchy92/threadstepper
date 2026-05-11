@@ -97,6 +97,7 @@ def save_settings(self):
             f"max_ram={self.max_ram_var.get()}",
         ]
         preserved_content = ""
+        sync_group_enabled_states(self)
         if os.path.exists("./config/user.settings"):
             with open("./config/user.settings", "r") as f:
                 lines = f.readlines()
@@ -114,7 +115,6 @@ def save_settings(self):
                 f.write(preserved_content)
         self.settings_dirty = False
         self.unsaved_label.config(text="")
-        sync_group_enabled_states(self)
         log_message(self, "Settings saved", "success")
     except Exception as e:
         log_message(self, f"Error saving settings: {str(e)}", "error")
