@@ -3,17 +3,17 @@
 # Run benchmark
 bench() {
     local cores=$1
-    local duration=$2
+    local bench_duration=$2
     local temp_dir=$(mktemp -d)
     for ((c=0; c<cores; c++)); do
         (
-            local end=$((seconds + duration))
+            local bench_end=$((SECONDS + bench_duration))
             local ops=0
             local x=123456789
             for ((i=0; i<50000; i++)); do
                 x=$(( (x * 1103515245 + 12345) & 0x7fffffff ))
             done
-            while [ $seconds -lt $end ]; do
+            while [ $SECONDS -lt $bench_end ]; do
                 for ((i=0; i<5000; i++)); do
                     x=$(( (x * 1103515245 + 12345) & 0x7fffffff ))
                     ((ops++))
@@ -35,6 +35,7 @@ export -f bench
 # Single core test
 run_single() {
     single_vals=()
+    echo "Core count $((core_count))"
     for ((r=0; r<single_runs; r++)); do
         sleep "$rest_duration"
         taskset -c "$cpus" bash -c "bench $core_count $single_duration" > /tmp/_single_out &
