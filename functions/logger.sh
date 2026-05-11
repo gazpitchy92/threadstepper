@@ -44,37 +44,37 @@ log_cpu_temperature() {
 
 check_for_errors() {
     # Fetch errors
-    LOG_PRIORITY="err"
-    EXCLUDE=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave" "electron" "udev")
-    ERRORS_HARDWARE=$(journalctl --since="@${start_time}" -p "$LOG_PRIORITY" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
-    ERRORS_FLAG=$(journalctl --since="@${start_time}" -p "$LOG_PRIORITY" --no-pager -q 2>/dev/null)
-    ERRORS_DUMPED=$(journalctl --since="@${start_time}" --no-pager | grep -i "dumped core")
-    ERRORS_SEGFAULT=$(journalctl --since="@${start_time}" --no-pager | grep -i "segfault")
-    COREDUMPS=$(coredumpctl --since "@${start_time}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
-    [ -z "$COREDUMPS" ] && COREDUMPS=""
+    log_priority="err"
+    exclude=("libinput" "bluetooth" "cityfailed" "plasmashell" "mouse" "keyboard" "chrome" "firefox" "librewold" "floorp" "discord" "brave" "electron" "udev")
+    errors_hardware=$(journalctl --since="@${start_time}" -p "$log_priority" -k --no-pager -q 2>/dev/null | grep -E 'MCE|Machine Check|Hardware Error|EDAC|ECC|NVRM|Xid|amdgpu|i915|GPU fault|GPU HANG')
+    errors_flag=$(journalctl --since="@${start_time}" -p "$log_priority" --no-pager -q 2>/dev/null)
+    errors_dumped=$(journalctl --since="@${start_time}" --no-pager | grep -i "dumped core")
+    errors_segfault=$(journalctl --since="@${start_time}" --no-pager | grep -i "segfault")
+    coredumps=$(coredumpctl --since "@${start_time}" list --no-pager 2>/dev/null | awk 'gsub(/ /,"")>=5')
+    [ -z "$coredumps" ] && coredumps=""
     # Check for excluded
-    for word in "${EXCLUDE[@]}"; do
-        ERRORS_HARDWARE=$(echo "$ERRORS_HARDWARE" | grep -vi "$word")
-        ERRORS_FLAG=$(echo "$ERRORS_FLAG" | grep -vi "$word")
-        ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | grep -vi "$word")
-        ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | grep -vi "$word")
-        COREDUMPS=$(echo "$COREDUMPS" | grep -vi "$word")
+    for word in "${exclude[@]}"; do
+        errors_hardware=$(echo "$errors_hardware" | grep -vi "$word")
+        errors_flag=$(echo "$errors_flag" | grep -vi "$word")
+        errors_dumped=$(echo "$errors_dumped" | grep -vi "$word")
+        errors_segfault=$(echo "$errors_segfault" | grep -vi "$word")
+        coredumps=$(echo "$coredumps" | grep -vi "$word")
     done
     # Format error
-    ERRORS_HARDWARE=$(echo "$ERRORS_HARDWARE" | awk 'gsub(/ /,"")>=5')
-    ERRORS_FLAG=$(echo "$ERRORS_FLAG" | awk 'gsub(/ /,"")>=5')
-    ERRORS_DUMPED=$(echo "$ERRORS_DUMPED" | awk 'gsub(/ /,"")>=5')
-    ERRORS_SEGFAULT=$(echo "$ERRORS_SEGFAULT" | awk 'gsub(/ /,"")>=5')
+    errors_hardware=$(echo "$errors_hardware" | awk 'gsub(/ /,"")>=5')
+    errors_flag=$(echo "$errors_flag" | awk 'gsub(/ /,"")>=5')
+    errors_dumped=$(echo "$errors_dumped" | awk 'gsub(/ /,"")>=5')
+    errors_segfault=$(echo "$errors_segfault" | awk 'gsub(/ /,"")>=5')
     # Save error to file
-    if [ -n "$ERRORS_DUMPED" ] || [ -n "$ERRORS_SEGFAULT" ] || [ -n "$COREDUMPS" ] || [ -n "$ERRORS_FLAG" ] || [ -n "$ERRORS_HARDWARE" ]; then
+    if [ -n "$errors_dumped" ] || [ -n "$errors_segfault" ] || [ -n "$coredumps" ] || [ -n "$errors_flag" ] || [ -n "$errors_hardware" ]; then
         {
             echo "true"
             echo "=== Errors detected at $(date -Iseconds) ==="
-            [ -n "$ERRORS_HARDWARE" ] && echo "$ERRORS_HARDWARE"
-            [ -n "$ERRORS_FLAG" ] && echo "$ERRORS_FLAG"
-            [ -n "$ERRORS_DUMPED" ] && echo "$ERRORS_DUMPED"
-            [ -n "$ERRORS_SEGFAULT" ] && echo "$ERRORS_SEGFAULT"
-            [ -n "$COREDUMPS" ] && echo "=== Coredumps ===" && echo "$COREDUMPS"
+            [ -n "$errors_hardware" ] && echo "$errors_hardware"
+            [ -n "$errors_flag" ] && echo "$errors_flag"
+            [ -n "$errors_dumped" ] && echo "$errors_dumped"
+            [ -n "$errors_segfault" ] && echo "$errors_segfault"
+            [ -n "$coredumps" ] && echo "=== Coredumps ===" && echo "$coredumps"
             echo "========================================"
         } > "$error_log"
         exit 1

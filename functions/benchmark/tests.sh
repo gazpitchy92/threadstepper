@@ -35,31 +35,31 @@ export -f bench
 # Single core test
 run_single() {
     single_vals=()
-    for ((r=0; r<SINGLE_RUNS; r++)); do
-        sleep "$REST_DURATION"
-        taskset -c "$CPUS" bash -c "bench $CORE_COUNT $SINGLE_DURATION" > /tmp/_single_out &
+    for ((r=0; r<single_runs; r++)); do
+        sleep "$rest_duration"
+        taskset -c "$cpus" bash -c "bench $core_count $single_duration" > /tmp/_single_out &
         local bench_pid=$!
         sample_cpu "$bench_pid"
         wait "$bench_pid"
         single_vals+=($(<"/tmp/_single_out"))
     done
     single=$(median "${single_vals[@]}")
-    echo "◫ Single Core score is $((single / SINGLE_DURATION / 1000))"
+    echo "◫ Single Core score is $((single / single_duration / 1000))"
 }
 
 # Multi core test
 run_multi() {
     multi_vals=()
-    for ((r=0; r<MULTI_RUNS; r++)); do
-        sleep "$REST_DURATION"
-        bench $NCPU $MULTI_DURATION > /tmp/_multi_out &
+    for ((r=0; r<multi_runs; r++)); do
+        sleep "$rest_duration"
+        bench $ncpu $multi_duration > /tmp/_multi_out &
         local bench_pid=$!
         sample_cpu "$bench_pid"
         wait "$bench_pid"
         multi_vals+=($(<"/tmp/_multi_out"))
     done
     multi=$(median "${multi_vals[@]}")
-    echo "▦ All Core score is $((multi / MULTI_DURATION / 1000))"
+    echo "▦ All Core score is $((multi / multi_duration / 1000))"
 }
 
 # Sample clock in background
@@ -68,11 +68,11 @@ sample_cpu() {
     while kill -0 "$pid" 2>/dev/null; do
         local mhz=$(get_clock_mhz)
         local temp=$(get_cpu_temp)
-        if [[ -n "$mhz" && "$mhz" -gt "$PEAK_MHZ" ]]; then
-            PEAK_MHZ=$mhz
+        if [[ -n "$mhz" && "$mhz" -gt "$peak_mhz" ]]; then
+            peak_mhz=$mhz
         fi
-        if [[ -n "$temp" && "$temp" -gt "$PEAK_TEMP" ]]; then
-            PEAK_TEMP=$temp
+        if [[ -n "$temp" && "$temp" -gt "$peak_temp" ]]; then
+            peak_temp=$temp
         fi
         sleep 0.25
     done

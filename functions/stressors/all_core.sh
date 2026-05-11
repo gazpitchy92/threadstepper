@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-_STRESS_PIDS=()
+stress_pids=()
 
 # Stress algo methods
 calc_prng() {
@@ -83,15 +83,15 @@ start_stressor() {
     thread_count=$(echo "$cores_list" | tr ',' '\n' | wc -l)
     for ((c=0; c<thread_count; c++)); do
         taskset -c "$cores_list" bash -c "stress_worker $c $mode" &
-        _STRESS_PIDS+=($!)
+        stress_pids+=($!)
     done
 }
 
 # Kill bg stressors
 stop_stressor() {
-    for pid in "${_STRESS_PIDS[@]}"; do
+    for pid in "${stress_pids[@]}"; do
         kill "$pid" 2>/dev/null
         wait "$pid" 2>/dev/null
     done
-    _STRESS_PIDS=()
+    stress_pids=()
 }

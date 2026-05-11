@@ -2,34 +2,33 @@
 
 # Print single-core config
 print_single_info() {
-    DISPLAY_CORE=$(get_display_core)
-    echo "error ◫ Testing Single Core $DISPLAY_CORE [$CORE_GROUP] for ${SINGLE_DURATION_PRINT}"
+    display_core=$(get_display_core)
+    echo "error ◫ Testing Single Core $display_core [$core_group] for ${single_duration_print}"
 }
 
 # Print multi-core config
 print_multi_info() {
-    echo "error ▦ Testing All Cores for ${MULTI_DURATION_PRINT}"
+    echo "error ▦ Testing All Cores for ${multi_duration_print}"
 }
 
 # Save results
 save_results() {
-    local single_score=$((single / SINGLE_DURATION / 1000))
-    local multi_score=$((multi / MULTI_DURATION / 1000))
+    local single_score=$((single / single_duration / 1000))
+    local multi_score=$((multi / multi_duration / 1000))
     local timestamp=$(date +"%d %b %H:%M")
     local display_core=$(get_display_core)
-    local peak_ghz=$(awk "BEGIN {printf \"%.2f\", $PEAK_MHZ / 1000000}")
-    local peak_c=$(awk "BEGIN {printf \"%.1f\", $PEAK_TEMP / 1000}")
+    local peak_ghz=$(awk "BEGIN {printf \"%.2f\", $peak_mhz / 1000000}")
+    local peak_c=$(awk "BEGIN {printf \"%.1f\", $peak_temp / 1000}")
     echo "Peak Clock was ${peak_ghz}GHz"
     echo "Peak Temperature was ${peak_c}GHz"
-    echo "${peak_c},${peak_ghz},${display_core},${single_score},${multi_score},${timestamp}" >> "$OUTPUT_LOG"
-    tail -n 100 "$OUTPUT_LOG" > "${OUTPUT_LOG}.tmp" && mv "${OUTPUT_LOG}.tmp" "$OUTPUT_LOG"
+    echo "${peak_c},${peak_ghz},${display_core},${single_score},${multi_score},${timestamp}" >> "$output_log"
+    tail -n 100 "$output_log" > "${output_log}.tmp" && mv "${output_log}.tmp" "$output_log"
 }
 
 # Calculate score
 median() {
     local arr=($(printf '%s\n' "$@" | sort -n))
     local len=${#arr[@]}
-
     if [ $((len % 2)) -eq 1 ]; then
         echo ${arr[$((len/2))]}
     else
@@ -39,7 +38,7 @@ median() {
 
 # Get core from threads
 get_display_core() {
-    echo "$CORE_GROUP" | tr ' ' '\n' | sort -n | head -n 1
+    echo "$core_group" | tr ' ' '\n' | sort -n | head -n 1
 }
 
 # format printing time
