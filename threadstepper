@@ -43,54 +43,46 @@ update_progress "Startup" $loop_counter $loops
 # main loop
 start_time=$seconds
 for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
-
     # Init vars
     elapsed=$((seconds - start_time))
     elapsed_formatted=$(printf "%02d:%02d:%02d" $((elapsed/3600)) $(((elapsed/60)%60)) $((elapsed%60)))
-    highest_clock="$(<"$current_dir/logs/clock.log") Ghz"
     end_core=$((physical_cores - 2))
-
     # Startup
     if [[ "$loop_counter" -gt 1 ]]; then
         echo "$(tput setaf 5)Running loop $loop_counter of $loops ($elapsed_formatted)$(tput sgr0)" | tee -a "$output_log_file"
-        echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $highest_clock" | tee -a "$output_log_file"
     else
         echo "$(tput setaf 5)Starting loop $loop_counter of $loops $(tput sgr0)" | tee -a "$output_log_file"
     fi
-
-    # ------ Run Tests
     # All core tests
     if [ "$all_core_time" -eq 0 ] || [ "$all_core_tests" -eq 0 ]; then
-        echo "$(tput setaf 5)All Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)All Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
     else
         all_core_runner
     fi
-    # Low load tests
-    ## Rapid
+    # Rapid tests
     if [ "$rapid_time" -eq 0 ] || [ "$rapid_tests" -eq 0 ]; then
-        echo "$(tput setaf 5)Rapid tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)Rapid tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
     else
         rapid_runner
     fi
-    ## Random
+    # Random tests
     if [ "$random_time" -eq 0 ] || [ "$random_tests" -eq 0 ]; then
-        echo "$(tput setaf 5)Random tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)Random tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
     else
         rand_runner
     fi
     # Single core tests
     if [ "$light_time" -eq 0 ] && [ "$medium_time" -eq 0 ] && [ "heavy_time" -eq 0 ]; then
-        echo "$(tput setaf 5)Single Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+        echo "$(tput setaf 4)Single Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
     else
         single_core_runner "$start_core" "$end_core"
     fi
-    # ------------
-
-    # Update vars
-    elapsed=$((seconds - start_time))
-    elapsed_formatted=$(printf "%02d:%02d:%02d" $((elapsed/3600)) $(((elapsed/60)%60)) $((elapsed%60)))
+    # Finish loop
     highest_clock="$(<"$current_dir/logs/clock.log") Ghz"
+    higest_temp="$(<"$current_dir/logs/temperature.log") C"
     finished_loops=$loop_counter
+    echo "$(tput setaf 8)Highest CPU Clock: $highest_clock" | tee -a "$output_log_file"
+    echo "$(tput setaf 8)Highest CPU Temperature: $highest_clock" | tee -a "$output_log_file"
 done
 
 # Fin
