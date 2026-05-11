@@ -253,38 +253,43 @@ def build_settings(self, parent):
     settings_inner.columnconfigure(2, weight=1)
     # Test sections
     high_frame, high_inner = make_section(self, settings_inner, "▦ All Cores", padding=6)
+    high_inner.columnconfigure(0, weight=1, minsize=90)
     ttk.Checkbutton(
-        high_frame,
+        high_inner,
         text="Enabled",
         variable=self.all_cores_enabled_var,
         command=lambda: toggle_group_enabled(self, "all_cores", self.all_cores_enabled_var.get()),
-    ).pack(side="right")
+    ).grid(row=0, column=0, sticky="w", pady=(0, 2), padx=2)
     high_frame.grid(row=1, column=0, sticky="nsew", pady=(0, 2))
-    make_entry_row(self, high_inner, "Time", self.all_core_time_var, 0)
-    make_entry_row(self, high_inner, "Tests", self.all_core_tests_var, 1)
+    make_entry_row(self, high_inner, "Time", self.all_core_time_var, 1)
+    make_entry_row(self, high_inner, "Tests", self.all_core_tests_var, 2)
+
     low_frame, low_inner = make_section(self, settings_inner, "≡ Low Load", padding=6)
+    low_inner.columnconfigure(0, weight=1, minsize=90)
     ttk.Checkbutton(
-        low_frame,
+        low_inner,
         text="Enabled",
         variable=self.low_load_enabled_var,
         command=lambda: toggle_group_enabled(self, "low_load", self.low_load_enabled_var.get()),
-    ).pack(side="right")
+    ).grid(row=0, column=0, sticky="w", pady=(0, 2), padx=2)
     low_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=(0, 2))
-    make_entry_row(self, low_inner, "Rapid Tests", self.rapid_tests_var, 0)
-    make_entry_row(self, low_inner, "Rapid Time", self.rapid_time_var, 1)
-    make_entry_row(self, low_inner, "Rand Tests", self.random_tests_var, 2)
-    make_entry_row(self, low_inner, "Rand Time", self.random_time_var, 3)
+    make_entry_row(self, low_inner, "Rapid Tests", self.rapid_tests_var, 1)
+    make_entry_row(self, low_inner, "Rapid Time", self.rapid_time_var, 2)
+    make_entry_row(self, low_inner, "Rand Tests", self.random_tests_var, 3)
+    make_entry_row(self, low_inner, "Rand Time", self.random_time_var, 4)
+
     single_frame, single_inner = make_section(self, settings_inner, "◫ Single Core", padding=6)
+    single_inner.columnconfigure(0, weight=1, minsize=90)
     ttk.Checkbutton(
-        single_frame,
+        single_inner,
         text="Enabled",
         variable=self.single_core_enabled_var,
         command=lambda: toggle_group_enabled(self, "single_core", self.single_core_enabled_var.get()),
-    ).pack(side="right")
+    ).grid(row=0, column=0, sticky="w", pady=(0, 2), padx=2)
     single_frame.grid(row=1, column=2, sticky="nsew", padx=(5, 0), pady=(0, 2))
-    make_entry_row(self, single_inner, "Low Time", self.light_time_var, 0)
-    make_entry_row(self, single_inner, "Medium Time", self.medium_time_var, 1)
-    make_entry_row(self, single_inner, "High Time", self.heavy_time_var, 2)
+    make_entry_row(self, single_inner, "Low Time", self.light_time_var, 1)
+    make_entry_row(self, single_inner, "Medium Time", self.medium_time_var, 2)
+    make_entry_row(self, single_inner, "High Time", self.heavy_time_var, 3)
     # Bottom row
     bottom_settings = ttk.Frame(settings_inner)
     bottom_settings.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(2, 0))
@@ -297,7 +302,7 @@ def build_settings(self, parent):
         text="Enabled",
         variable=self.webgl_enabled_var,
         command=lambda: toggle_group_enabled(self, "webgl", self.webgl_enabled_var.get()),
-    ).pack(side="right")
+    ).pack(side="left")
     browser_inner.columnconfigure(1, weight=1)
     browser_frame.grid(row=0, column=0, sticky="nsew")
     self.browsers_label = ttk.Label(browser_inner, text="Instances")
