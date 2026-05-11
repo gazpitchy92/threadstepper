@@ -1,9 +1,12 @@
+import threading
+import time
+
 def start_timer(self):
     self.timer_seconds = 0
     self.timer_running = True
     self.timer_label.config(fg="#28a745")
     if self.timer_thread is None or not self.timer_thread.is_alive():
-        self.timer_thread = threading.Thread(target=self.update_timer, daemon=True)
+        self.timer_thread = threading.Thread(target=update_timer, args=(self,), daemon=True)
         self.timer_thread.start()
 
 def stop_timer(self):

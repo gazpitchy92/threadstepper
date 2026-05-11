@@ -47,3 +47,13 @@ def setup_styles(self):
     self.output_text.tag_config("success", foreground="green")
     self.output_text.tag_config("warning", foreground="orange")
     self.output_text.tag_config("info", foreground="blue")
+
+def make_entry_row(self, parent, label, var, row):
+    parent.columnconfigure(1, weight=1)
+    ttk.Label(parent, text=label).grid(
+        row=row, column=0, sticky="w", padx=(0, 6), pady=1
+    )
+    spinbox = configure_numeric_spinbox(
+        self, ttk.Spinbox(parent, from_=0, to=999999, textvariable=var)
+    )
+    spinbox.grid(row=row, column=1, sticky="ew", pady=1)
