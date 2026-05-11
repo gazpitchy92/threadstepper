@@ -2,7 +2,7 @@
 
 # Init vars
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKER="$(dirname "$CURRENT_DIR")/functions/stressors/load_worker.sh"
+WORKER="$(dirname "$current_dir")/functions/stressors/load_worker.sh"
 chmod +x "$WORKER"
 PHASE_PIDS=()
 

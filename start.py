@@ -79,7 +79,7 @@ class StressTestGUI:
     def __init__(self, root):
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", lambda: on_close(self))
-        self.root.title("Thread Stepper (3.9)")
+        self.root.title("Thread Stepper (3.10)")
         self.root.geometry("700x958")
         self.process = None
         self.is_running = False
