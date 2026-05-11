@@ -42,7 +42,7 @@ stress_worker() {
     cpu=$(taskset -cp $$ 2>/dev/null | awk -F': ' '{print $2}')
     do_work() {
         local result
-        result=$(bash -c "_calc_${name}")
+        result=$(bash -c "calc_${name}")
         if [[ "$result" -ne "$expected" ]]; then
             logger -p err "Thread Stepper: arithmetic error [$name] on CPU $cpu — expected $expected, got $result"
         fi
