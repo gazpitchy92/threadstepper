@@ -1,0 +1,27 @@
+#!/bin/bash
+loops=1
+browsers=4
+light_time=15
+medium_time=30
+heavy_time=60
+all_core_time=5
+all_core_tests=1
+rapid_tests=10
+rapid_time=2
+random_tests=5
+random_time=4
+rest_time=2
+core_blacklist=""
+max_ram=4
+
+# DO NOT EDIT
+output_log_file="$(pwd)/logs/output.log"
+output_threads_file="$(pwd)/logs/threads.log"
+output_progress_file="$(pwd)/logs/current.log"
+cpu_topology=1
+dark_mode=0
+bm_all_duration=15
+bm_all_tests=8
+bm_single_duration=6
+bm_single_tests=16
+bm_rest_duration=2

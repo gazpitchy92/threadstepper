@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # setup clean log files
-setupLogs(){
+setup_logs() {
     echo ""
     rm -f $output_log_file
     rm -f prime.txt
@@ -10,19 +10,19 @@ setupLogs(){
 
 # initial test output
 initial_output() {
-    outputOptions
+    output_options
     print_topology
-    checkDeps
+    check_deps
     echo "STARTING TESTS IN ${rest_time} SECONDS..."
     sleep $rest_time
-    setupLogs
-    starLogger
+    setup_logs
+    start_logger
 }
 
 # output help
-helpText(){
+helpText() {
     echo ""
-    usageText
+    usage_text
     echo ""
     echo "-l                number of Test Runs to perform (default: 1)"
     echo "-t                'cores' tests all cores"
@@ -37,12 +37,12 @@ helpText(){
 }
 
 # output usage help
-usageText(){
+usage_text() {
     echo "Usage: $0 [-l loops] [-t type (cores|threads)] [-b number of WebGL tests] [--second-half] [--first-half]"
 }
 
 # check dependencies
-checkDeps(){
+check_deps() {
     if command -v $(compgen -c | grep '^electron[0-9]' | sort -V | tail -1) &>/dev/null; then
         echo "$(tput setaf 2)Electron Found - WebGL Tests Enabled$(tput sgr0)"
     else
@@ -54,7 +54,7 @@ checkDeps(){
 }
 
 # output selected options and settings
-outputOptions(){
+output_options() {
     echo ""
     echo "$(tput setaf 6)Options" | tee -a $output_log_file
     echo "$(tput setaf 5)Loops: ${loops:-Not specified} $(tput sgr0)" | tee -a $output_log_file
@@ -79,10 +79,10 @@ outputOptions(){
 cleanup() {
     if [[ -z "$CLEANED_UP" ]]; then
         CLEANED_UP=1
-        stopLogger
+        stop_logger
         stop_stressor
         kill_phase
-        stopBrowserTest
+        stop_browser_test
         pkill -f "launch.js"
         pkill -f "bash -c"
         pkill -f "load_test.sh"
@@ -92,18 +92,19 @@ cleanup() {
 }
 
 # keep a log of the highest CPU clock
-starLogger() {
+start_logger() {
     current_dir=$(pwd)
     bash "$current_dir/functions/logger.sh" &
     echo $! > "$current_dir/logs/logger.pid"
 }
-stopLogger() {
+stop_logger() {
     if [[ -f "$current_dir/logs/logger.pid" ]]; then
         kill "$(cat "$current_dir/logs/logger.pid")" 2>/dev/null
         rm -f "$current_dir/logs/logger.pid"
     fi
 }
 
+# Sleep function
 rest() {
     echo "$(tput setaf 3)Resting for ${rest_time}s$(tput sgr0)" 
     sleep $rest_time

@@ -32,7 +32,7 @@ source "${SCRIPT_DIR}/tests.sh"
 source "${SCRIPT_DIR}/cpu.sh"
 source "${SCRIPT_DIR}/output.sh" 
 
-SETTINGS_FILE="${SCRIPT_DIR}/../../settings"
+SETTINGS_FILE="${SCRIPT_DIR}/../../config/user.settings"
 if [[ -f "$SETTINGS_FILE" ]]; then
     source "$SETTINGS_FILE"
 fi
