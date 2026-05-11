@@ -6,7 +6,7 @@ from tkinter import scrolledtext, ttk
 from PIL import Image, ImageTk
 
 # Theme on load
-def apply_theme_on_load(self, settings_path="./settings"):
+def apply_theme_on_load(self, settings_path="./config/user.settings"):
     try:
         if os.path.exists(settings_path):
             with open(settings_path, "r") as f:
@@ -22,7 +22,7 @@ def apply_theme_on_load(self, settings_path="./settings"):
         pass
 
 # Save dark mode
-def save_dark_mode(self, mode, settings_path="./settings"):
+def save_dark_mode(self, mode, settings_path="./config/user.settings"):
     try:
         if os.path.exists(settings_path):
             with open(settings_path, "r") as f:

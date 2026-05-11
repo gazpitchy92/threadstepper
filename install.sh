@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./settings
+source ./config/user.settings
 current_dir=$(pwd)
 clear
 

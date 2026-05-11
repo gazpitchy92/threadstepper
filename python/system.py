@@ -96,7 +96,7 @@ def on_close(self):
         log_message(self, f"Error on close: {str(e)}", "error")
 
 # Topology
-def detect_cpu_topology(settings_path="./settings"):
+def detect_cpu_topology(settings_path="./config/user.settings"):
     import re
     num_logical = os.cpu_count() or 1
     # Build cpu to core map

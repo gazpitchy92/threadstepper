@@ -47,8 +47,8 @@ def validate_core_blacklist(self, value):
 
 def update_settings_content(self):
     try:
-        if os.path.exists("./settings"):
-            with open("./settings", "r") as f:
+        if os.path.exists("./config/user.settings"):
+            with open("./config/user.settings", "r") as f:
                 content = f.read()
                 parse_settings_options(self, content)
                 self.root.update_idletasks()  # Force UI refresh
@@ -88,8 +88,8 @@ def save_settings(self):
         ]
 
         preserved_content = ""
-        if os.path.exists("./settings"):
-            with open("./settings", "r") as f:
+        if os.path.exists("./config/user.settings"):
+            with open("./config/user.settings", "r") as f:
                 lines = f.readlines()
                 found_marker = False
                 for i, line in enumerate(lines):
@@ -98,7 +98,7 @@ def save_settings(self):
                         found_marker = True
                         break
 
-        with open("./settings", "w") as f:
+        with open("./config/user.settings", "w") as f:
             f.write("\n".join(out) + "\n")
             if preserved_content:
                 if not preserved_content.startswith("\n"):

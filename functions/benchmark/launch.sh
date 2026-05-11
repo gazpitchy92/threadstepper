@@ -2,7 +2,7 @@
 
 
 # Init vars
-source "$(dirname "$CURRENT_DIR")/settings"
+source "$(dirname "$CURRENT_DIR")/config/user.settings"
 NCPU=$(nproc)
 CORES_COUNT=$(( NCPU / 2 ))
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

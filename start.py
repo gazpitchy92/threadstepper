@@ -166,8 +166,8 @@ class StressTestGUI:
 # Entry point
 def main():
     os.makedirs("./logs", exist_ok=True)
-    if not os.path.exists("./settings"):
-        with open("./settings", "w") as f:
+    if not os.path.exists("./config/user.settings"):
+        with open("./config/user.settings", "w") as f:
             f.write("#!/bin/bash\n\n# Test Configuration\nTHREADS=4\nDURATION=60\nINTENSITY=high\n")
     detect_cpu_topology()
     if not os.path.exists("./logs/clock.log"):

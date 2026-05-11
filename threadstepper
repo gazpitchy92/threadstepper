@@ -4,7 +4,7 @@ trap cleanup SIGINT SIGTERM
 
 # ------ Includes
 # Settings
-source ./settings
+source ./config/user.settings
 # Operation
 source ./functions/topology.sh
 source ./functions/testing.sh
