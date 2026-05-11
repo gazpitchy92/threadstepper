@@ -4,7 +4,7 @@ trap cleanup SIGINT SIGTERM
 
 # ------ Includes
 # Settings
-source ./settings
+source ./config/user.settings
 # Operation
 source ./functions/topology.sh
 source ./functions/testing.sh
@@ -60,12 +60,30 @@ for ((loop_counter=1; loop_counter<=loops; loop_counter++)); do
 
     # ------ Run Tests
     # All core tests
-    all_core_tests
+    if [ "$all_core_time" -eq 0 ] || [ "$all_core_tests" -eq 0 ]; then
+        echo "$(tput setaf 5)All Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+    else
+        all_core_tests
+    fi
     # Low load tests
-    rapid_tests
-    rand_tests
+    ## Rapid
+    if [ "$rapid_time" -eq 0 ] || [ "$rapid_tests" -eq 0 ]; then
+        echo "$(tput setaf 5)Rapid tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+    else
+        rapid_tests
+    fi
+    ## Random
+    if [ "$random_time" -eq 0 ] || [ "$random_tests" -eq 0 ]; then
+        echo "$(tput setaf 5)Random tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+    else
+        rand_tests
+    fi
     # Single core tests
-    single_core_tests
+    if [ "$light_time" -eq 0 ] && [ "$medium_time" -eq 0 ] && [ "heavy_time" -eq 0 ]; then
+        echo "$(tput setaf 5)Single Core tests are disabled, skipping! $(tput sgr0)" | tee -a "$output_log_file"
+    else
+        single_core_tests
+    fi
     # ------------
 
     # Count loops

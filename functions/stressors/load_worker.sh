@@ -5,6 +5,7 @@ CPU=$(echo "$cpu" | tr -d ' ') DURATION=$3
 ERROR_COUNT=0
 ITERATION=0
 
+# Validate test result
 cpu_validate() {
     local n=10000
     local expected=$(( n * (n + 1) / 2 ))
@@ -19,6 +20,7 @@ cpu_validate() {
     fi
 }
 
+# Stress algo
 busy_work() {
     local size=5000
     local arr=()
@@ -29,14 +31,15 @@ busy_work() {
     done
 }
 
+# Run test iteration
 run_iteration() {
     (( ITERATION++ ))
     busy_work
     cpu_validate
 }
 
+# Main
 end=$(( $(date +%s) + DURATION ))
-
 case $MODE in
     low)
         while (( $(date +%s) < end )); do
@@ -62,7 +65,6 @@ case $MODE in
         done
         ;;
 esac
-
 if (( ERROR_COUNT != 0 )); then
     logger -p err "Thread Stepper: [CPU $CPU] Iterations: $ITERATION | Errors: $ERROR_COUNT | FAIL"
 fi

@@ -8,15 +8,15 @@ from datetime import datetime
 from tkinter import scrolledtext, ttk
 import ttkbootstrap as tb
 
-from ui.benchmark.testing import build_benchmark_tab
-from ui.benchmark.ranking import build_core_ranks_tab
+from python.benchmark.testing import build_benchmark_tab
+from python.benchmark.ranking import build_core_ranks_tab
+
 
 def start_benchmark(app):
     BenchmarkWindow(app)
 
 
 class BenchmarkWindow:
-
     SCRIPT = "./functions/benchmark/launch.sh"
     LOG_PATH = "./logs/benchmark.log"
 
@@ -27,14 +27,12 @@ class BenchmarkWindow:
         self.log_queue = queue.Queue()
         self.timer_running = False
         self.timer_seconds = 0
-
         self.win = tk.Toplevel(app.root)
         self.win.title("Benchmark")
         self.win.geometry("720x600")
         self.win.resizable(False, False)
         self.win.protocol("WM_DELETE_WINDOW", self._close)
         self.win.transient(app.root)
-
         self._build_ui()
         self._drain_log_queue()
         self._refresh_history()
@@ -43,17 +41,13 @@ class BenchmarkWindow:
     def _build_ui(self):
         self.win.columnconfigure(0, weight=1)
         self.win.rowconfigure(0, weight=1)
-
         self.notebook = ttk.Notebook(self.win)
         self.notebook.grid(row=0, column=0, sticky="nsew")
         self.notebook.bind("<<NotebookTabChanged>>", self._on_tab_change)
-
         self.benchmark_tab = ttk.Frame(self.notebook)
         self.core_ranks_tab = ttk.Frame(self.notebook)
-
         self.notebook.add(self.benchmark_tab, text="◷ Benchmark")
         self.notebook.add(self.core_ranks_tab, text="⚃ Core Rankings")
-
         build_benchmark_tab(self)
         build_core_ranks_tab(self)
 
@@ -68,16 +62,13 @@ class BenchmarkWindow:
     def _refresh_history(self):
         for row in self.history_tree.get_children():
             self.history_tree.delete(row)
-
         if not os.path.exists(self.LOG_PATH):
             return
-
         try:
             with open(self.LOG_PATH, "r") as f:
                 lines = [l.strip() for l in f.readlines() if l.strip()]
         except OSError:
             return
-
         lines = list(reversed(lines))
         parsed = []
         for line in lines:
@@ -85,12 +76,10 @@ class BenchmarkWindow:
             if len(parts) != 6:
                 continue
             parsed.append(parts)
-
         best_single = max((int(p[3]) for p in parsed), default=0)
         best_multi = max((int(p[4]) for p in parsed), default=0)
         best_clock = max((float(p[1]) for p in parsed), default=0)
         best_temp = max((float(p[0]) for p in parsed), default=0)
-
         for i, parts in enumerate(parsed):
             peak_temp, peak_ghz, core_used, single_score, multi_score, date = parts
             single_star = "➤ " if int(single_score) == best_single else ""
@@ -105,13 +94,7 @@ class BenchmarkWindow:
             self.history_tree.insert(
                 "",
                 "end",
-                values=(
-                    date,
-                    single_display,
-                    multi_display,
-                    peak_display,
-                    temp_display,
-                ),
+                values=(date, single_display, multi_display, peak_display, temp_display),
                 tags=tag,
             )
 
@@ -122,7 +105,6 @@ class BenchmarkWindow:
         if not os.path.exists(self.SCRIPT):
             self._log(f"Error: {self.SCRIPT} not found!", "error")
             return
-
         self.is_running = True
         self.start_btn.config(state="disabled")
         self.stop_btn.config(state="normal")
@@ -182,7 +164,6 @@ class BenchmarkWindow:
         if self.is_running and self.process:
             self.process.terminate()
             self.process.wait()
-
         self.app.benchmark_window_open = False
         self.win.destroy()
 
@@ -190,17 +171,14 @@ class BenchmarkWindow:
     def _reset_log(self):
         if self.is_running:
             return
-
         try:
             open(self.LOG_PATH, "w").close()
         except OSError:
             self._log("Error: could not clear log file.", "error")
             return
-
         self.output_text.config(state="normal")
         self.output_text.delete("1.0", "end")
         self.output_text.config(state="disabled")
-
         self._refresh_history()
         self._log("Benchmark history cleared.", "warning")
 
@@ -225,9 +203,7 @@ class BenchmarkWindow:
                     tag = "error"
                     msg = msg[6:]
                 self.output_text.config(state="normal")
-                self.output_text.insert(
-                    "end", msg + "\n", tag if tag != "plain" else ""
-                )
+                self.output_text.insert("end", msg + "\n", tag if tag != "plain" else "")
                 self.output_text.see("end")
                 self.output_text.config(state="disabled")
         except queue.Empty:

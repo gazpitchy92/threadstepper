@@ -4,12 +4,10 @@
 get_threads() {
     local cpu=$1
     local file="/sys/devices/system/cpu/cpu${cpu}/topology/thread_siblings_list"
-
     if [ ! -f "$file" ]; then
         echo "$cpu"
         return
     fi
-
     cat "$file" | tr ',' ' ' | tr -d '\n'
 }
 
@@ -28,18 +26,15 @@ find_best_core() {
     local best=-1 max=-1
     for cpu in /sys/devices/system/cpu/cpu[0-9]*; do
         local perf_file="$cpu/acpi_cppc/highest_perf"
-
         if [ -f "$perf_file" ]; then
             local val=$(cat "$perf_file")
             local num=${cpu##*/cpu}
-
             if [ "$val" -gt "$max" ]; then
                 max=$val
                 best=$num
             fi
         fi
     done
-
     echo ${best:-0}
 }
 
@@ -47,7 +42,6 @@ find_best_core() {
 select_core() {
     if [ -n "$SELECTED_CORE" ] && [ "$SELECTED_CORE" != "Auto" ]; then
         BASE_CORE="$SELECTED_CORE"
-
         if [ ! -f "/sys/devices/system/cpu/cpu$BASE_CORE/acpi_cppc/highest_perf" ]; then
             BASE_CORE=$(find_best_core)
         fi

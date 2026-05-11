@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ThreadStepper 1</title>
+  <title>Thread Stepper - WebGL 1</title>
   <script src="three.min.js"></script>
   <style>
     body {
@@ -28,25 +28,19 @@
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     let currentObject = new THREE.Mesh(new THREE.BoxGeometry(), material);
     scene.add(currentObject);
-
     const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry());
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
     const line = new THREE.LineSegments(edges, lineMaterial);
     scene.add(line);
-
     camera.position.z = 5;
-
     let zoomIn = true;
     let zoomAmount = 0.02;
-
     function getRandomColor() {
       return new THREE.Color(Math.random(), Math.random(), Math.random());
     }
-
     function switchObject() {
       scene.remove(currentObject);
       const randomShape = Math.floor(Math.random() * 3);
@@ -59,7 +53,6 @@
       }
       scene.add(currentObject);
     }
-
     function animate() {
       requestAnimationFrame(animate);
 

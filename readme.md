@@ -5,7 +5,7 @@ A stability and stress testing tool for AMD Curve Optimizer and PBO on Linux. De
 
 Most stress tests (mprime, systester, y-cruncher, etc.) apply a continuous, predictable load across all cores at the same time. This works well for thermal testing, but it can miss instability that appears during normal use, especially when undervolting.
 
-## Latest Updates - Version 3.8
+## Latest Updates - Version 3.9
 
 - Replaced 7z and Stress-ng with our own testing engine
 - Browser (WebGL) tests no longer require ungoogled-chromium
@@ -35,44 +35,44 @@ Cycles through different load combinations on each core and thread group, with c
 
 ## Screenshots
 
-![running](https://i.ibb.co/kgNmWwp7/Screenshot-20260510-065718-1.png)
+![running](./screenshots/main.png)
 
 ### Error Detection
 
-![errors](https://i.ibb.co/vFzz9LF/Screenshot-20260510-065850-1.png)
+![errors](./screenshots/error.png)
 
 ### Benchmarking and Core Ranking
 
-![benchmark](https://i.ibb.co/wNdLrDCY/benchy.png)
+![benchmark](./screenshots/benchmark.png)
 
 ### WebGL Tests
 
-![browser](https://i.ibb.co/zTT4LvRG/Screenshot-20260509-003545-1.png)
+![webgl](./screenshots/webgl.png)
 
 ### CPU Load examples
 
 #### All Cores
 
-![full](https://i.ibb.co/cKCKc3wh/Screenshot-20260501-223547.png)
+![allcore](./screenshots/all.png)
 
 #### Single Core
 - **Low**
 
-![low](https://i.ibb.co/JWKq5XbL/s-low.png)
+![low](./screenshots/low.png)
 - **Medium**
 
-![medium](https://i.ibb.co/N6byGwNH/Screenshot-20260509-024326.png)
+![medium](./screenshots/medium.png)
 - **High**
 
-![high](https://i.ibb.co/4R57V25Z/s-high.png)
+![high](./screenshots/high.png)
 
 #### Low Load
 - **Rand Test**
 
-![random](https://i.ibb.co/3th93hd/random.png)
+![random](./screenshots/rand.png)
 - **Rapid Test**
 
-![rapid](https://i.ibb.co/2YL2hKf0/rapid.png)
+![rapid](./screenshots/rapid.png)
 
 
 ## Requirements

@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # main test runner
-runTests(){
+run_tests() {
     local core=$1
     update_progress "Single Core Tests" $loop_counter $loops 
-    singleCoreTests $core
+    single_core_tests $core
     check_errors
     if (( browsers != 0 )); then
         if compgen -c | grep -q '^electron[0-9]'; then
             update_progress "WebGL Tests" $loop_counter $loops
-            if willRunBrowserTest "$core"; then
-                browserTest
-                singleCoreTests $core
-                stopBrowserTest
+            if willRunbrowser_test "$core"; then
+                browser_test
+                single_core_tests $core
+                stop_browser_test
             fi
             check_errors
         else
@@ -25,7 +25,7 @@ runTests(){
 all_core_tests() {
     for ((all_core_counter=1; all_core_counter<=all_core_tests; all_core_counter++)); do
         update_progress "All Core ${all_core_counter}/${all_core_tests}" $loop_counter $loops 
-        allCoreTest
+        alkl_core_test
         check_errors
         rest
     done
@@ -36,7 +36,7 @@ rapid_tests() {
     for ((rapid_counter=1; rapid_counter<=rapid_tests; rapid_counter++)); do
         echo "$(tput setaf 4)Running rapid test "$rapid_counter"/"$rapid_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rapid Tests ${rapid_counter}/${rapid_tests}" $loop_counter $loops 
-        rapidTest
+        rapid_test
         check_errors
         rest
     done
@@ -47,7 +47,7 @@ rand_tests() {
     for ((random_counter=1; random_counter<=random_tests; random_counter++)); do
         echo "$(tput setaf 4)Running random test "$random_counter"/"$random_tests"$(tput sgr0)" | tee -a "$output_log_file"
         update_progress "Rand Tests ${random_counter}/${random_tests}" $loop_counter $loops 
-        randomStress
+        random_stress
         check_errors
         rest
     done
@@ -72,7 +72,7 @@ single_core_tests() {
         fi
 
         rest
-        runTests "$core"
+        run_tests "$core"
 
         ELAPSED=$((SECONDS - START_TIME))
         ELAPSED_FORMATTED=$(printf "%02d:%02d:%02d" $((ELAPSED/3600)) $(((ELAPSED/60)%60)) $((ELAPSED%60)))
@@ -95,7 +95,7 @@ single_core_tests() {
 }
 
 # Updates progress file for UI
-update_progress(){ 
+update_progress() { 
     local test=$1
     local all_loop=$2
     local all_outof=$3
@@ -104,7 +104,7 @@ update_progress(){
 }
 
 # Update current threads being tested
-update_threads(){
+update_threads() {
     local threads=$1
     echo "${threads}" > "$output_threads_file"
 }
