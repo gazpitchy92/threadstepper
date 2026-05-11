@@ -13,7 +13,7 @@ initial_output() {
     output_options
     print_topology
     check_deps
-    echo "STARTING TESTS IN ${rest_time} SECONDS..."
+    echo "STARTING TESTS IN ${rest_time} seconds..."
     sleep $rest_time
     setup_logs
     start_logger
