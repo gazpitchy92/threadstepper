@@ -21,14 +21,14 @@ source ./functions/tests/low/random.sh
 source ./functions/tests/all_core/cumulative.sh
 # ------------
 
-# setup
+# Setup
+electon_bin=$(compgen -c | grep '^electron[0-9]' | sort -V | tail -1)
 initial_output
-ELECTRON_BIN=$(compgen -c | grep '^electron[0-9]' | sort -V | tail -1)
 
-# clear ram cache
+# Clear ram cache
 echo 3 | sudo tee /proc/sys/vm/drop_caches >/dev/null 2>&1
 
-# calculate cores
+# Calculate cores
 num_cores=$(nproc)
 num_cores=${num_cores:-1}
 physical_cores=$((num_cores / 2))

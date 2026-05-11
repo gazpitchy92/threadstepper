@@ -9,7 +9,7 @@ run_tests() {
     if (( browsers != 0 )); then
         if compgen -c | grep -q '^electron[0-9]'; then
             update_progress "WebGL Tests" $loop_counter $loops
-            if willRunbrowser_test "$core"; then
+            if will_run_browser_test "$core"; then
                 browser_test
                 single_core_tests $core
                 stop_browser_test
