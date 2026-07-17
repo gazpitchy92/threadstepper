@@ -11,13 +11,10 @@ run_phase() {
     local cores=$1
     local mode=$2
     IFS=',' read -ra core_list <<< "$cores"
-    echo "core_list ${core_list[*]}"
     for cpu in "${core_list[@]}"; do
-        echo "launch worker ${cpu}"
         taskset -c "$cpu" bash "$worker" "$mode" "$cpu" 99999 &
         phase_pids+=("$!")
     done
-    echo "phase_pids worker ${phase_pids[*]}"
 }
 
 # Kill bg stressor
