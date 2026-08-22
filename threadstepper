@@ -78,7 +78,7 @@ done
 # Fin
 highest_clock="$(<"$current_dir/logs/clock.log") Ghz"
 elapsed=$((seconds - start_time))
-elapsed_formatted=$(printf "%02d:%02d:%02d" $((elapsed/3600)) $(((elapsed/60)%60)) $((elapsed%60))
+elapsed_formatted=$(printf "%02d:%02d:%02d" $((elapsed/3600)) $(((elapsed/60)%60)) $((elapsed%60)))
 echo "$(tput setaf 3)Loops $finished_loops/$loops completed! ($elapsed_formatted)$(tput sgr0)" | tee -a "$output_log_file"
 echo "$(tput setaf 8)[DEBUG] Highest CPU Clock: $highest_clock" | tee -a "$output_log_file"
 cleanup
